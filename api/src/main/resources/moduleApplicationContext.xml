@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:component-scan base-package="org.openmrs.module.mchapp" />
+
+    <!-- Add here beans related to the API context -->
+    <!--<bean id="mchapp.app.stores" factory-bean="kenyacore.appFactoryBean" factory-method="createInstance">
+        <constructor-arg value="mchapp.stores"/>
+        <constructor-arg value="MCH Stores"/>
+        <constructor-arg value="mchapp/stores.page"/>
+        <constructor-arg value="mchapp:apps/mch.png"/>
+        <constructor-arg value="3000"/>
+    </bean>-->
+	<bean id="mchServiceIm"
+			class="org.openmrs.module.mchapp.api.impl.MchServiceImpl">
+	</bean>
+	<bean id="mchEncounterServiceIm"
+			class="org.openmrs.module.mchapp.api.impl.MchEncounterServiceImpl">
+	</bean>
+
+    <bean id="immunizationService"
+          class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager">
+            <ref bean="transactionManager"/>
+        </property>
+        <property name="target">
+            <bean class="org.openmrs.module.mchapp.api.impl.ImmunizationServiceImpl">
+                <property name="dao">
+                    <bean class="org.openmrs.module.mchapp.db.hibernate.HibernateImmunizationCommoditiesDAO">
+                        <property name="sessionFactory">
+                            <ref bean="sessionFactory"/>
+                        </property>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+        <property name="preInterceptors">
+            <ref bean="serviceInterceptors"/>
+        </property>
+        <property name="transactionAttributeSource">
+            <ref bean="transactionAttributeSource"/>
+        </property>
+    </bean>
+
+	<!-- Services accessible via Context.getService() -->
+	<bean parent="serviceContext">
+		<property name="moduleService">
+			<list>
+				<value>org.openmrs.module.mchapp.api.MchService</value>
+				<ref local="mchServiceIm" />
+			</list>
+		</property>
+	</bean>
+	<bean parent="serviceContext">
+		<property name="moduleService">
+			<list>
+				<value>org.openmrs.module.mchapp.api.MchEncounterService</value>
+				<ref local="mchEncounterServiceIm" />
+			</list>
+		</property>
+	</bean>
+
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list>
+                <value>org.openmrs.module.mchapp.api.ImmunizationService</value>
+                <ref local="immunizationService"/>
+            </list>
+        </property>
+    </bean>
+
+</beans>

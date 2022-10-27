@@ -1,0 +1,25 @@
+package org.openmrs.module.mchapp;
+
+import java.util.Arrays;
+import java.util.List;
+
+public class MchProfileConcepts {
+	
+	public static final List<String> ANC_PROFILE_CONCEPTS = Arrays.asList("1053AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" //parity
+	    , "5624AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" //gravida
+	    , "1427AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" //lmp
+	    , "5596AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" //edd
+	    , "5596AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" //edd
+	    , "299AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" //vdrl
+	    , "21AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" //hb
+	    , "1356AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" //HIV Test
+	    , "1356AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" //HIV Re-test
+	);
+	
+	public static final List<String> PNC_PROFILE_CONCEPTS = Arrays.asList("5599AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", //date of delivery
+	    "1572AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", // place of delivery
+	    "5630AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", //mode of delivery
+	    "8f3ed313-e2ea-48df-b211-69bb3f232b20" //state of baby
+	);
+	
+}

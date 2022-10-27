@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module configVersion="1.2">
+
+    <!-- Base Module Properties -->
+    <id>${project.parent.artifactId}</id>
+    <name>${project.parent.name}</name>
+    <version>${project.parent.version}</version>
+    <package>org.openmrs.module.mchapp</package>
+    <author>HealthIT</author>
+    <description>
+        Management of the MCH store for the EHR work
+    </description>
+
+    <activator>org.openmrs.module.mchapp.MCHAppActivator</activator>
+
+    <require_version>${openMRSVersion}</require_version>
+    <require_modules>
+        <require_module>org.openmrs.module.uicommons</require_module>
+        <require_module>org.openmrs.module.uiframework</require_module>
+        <require_module version="${hospitalcorVersion}">org.openmrs.module.hospitalcore</require_module>
+        <require_module version="${patientdashboardappVersion}">org.openmrs.module.patientdashboardapp</require_module>
+        <require_module version="${ehrconfigsVersion}">org.openmrs.module.ehrconfigs</require_module>
+        <require_module version="${ehrinventoryVersion}"> org.openmrs.module.ehrinventory</require_module>
+        <require_module version="${metadatadeployVersion}">org.openmrs.module.metadatadeploy</require_module>
+        <require_module version="${kenyaemrVersion}">org.openmrs.module.kenyaemr</require_module>
+        <require_module>org.openmrs.module.kenyaemr</require_module>
+    </require_modules>
+    <!-- Extensions -->
+    <extension>
+        <point>org.openmrs.admin.list</point>
+        <class>org.openmrs.module.mchapp.extension.html.AdminList</class>
+    </extension>
+
+    <!-- AOP
+    <advice>
+        <point>org.openmrs.api.FormService</point>
+        <class>@MODULE_PACKAGE@.advice.DuplicateFormAdvisor</class>
+    </advice>
+     /AOP -->
+
+
+    <!--	 Required Privileges -->
+<!--    <privilege>-->
+<!--        <name>App: mchapp</name>-->
+<!--        <description>Allows user to Access MCH Clinic</description>-->
+<!--    </privilege>-->
+    <!--	 /Required Privileges -->
+
+
+    <!-- Required Global Properties
+    <globalProperty>
+        <property>@MODULE_ID@.someProperty</property>
+        <defaultValue></defaultValue>
+        <description>
+            A description of the global property goes here.  The description
+            should explain enough for administrators to understand the purpose
+            and possible values for the global property.
+        </description>
+    </globalProperty>
+    /Required Global Properties -->
+    <!-- Required global properties -->
+
+
+    <!--
+    <dwr>
+        <allow>
+            <create creator="new" javascript="DWRFormEntryService">
+                <param name="class" value="org.openmrs.module.@MODULE_ID@.web.DWRFormEntryService"/>
+                <include method="enterForm"/>
+            </create>
+        </allow>
+
+        <signatures>
+            <![CDATA[
+            import @MODULE_PACKAGE@.web.DWRFormEntryService;
+            DWRFormEntryService.enterForm(Integer patientId, Integer formId, boolean useEncounter, List<String> fields);
+            ]]>
+        </signatures>
+    </dwr>
+    -->
+
+    <!-- Servlets -->
+    <!-- Accessed through the url /pageContext()/moduleServlet/<moduleId>/<servlet-name>
+    <servlet>
+        <servlet-name>formDownload</servlet-name>
+        <servlet-class>@MODULE_PACKAGE@.web.FormDownloadServlet</servlet-class>
+    </servlet>
+    -->
+    <!-- /Servlets -->
+
+
+    <!-- Internationalization -->
+    <!-- All message codes should start with @MODULE_ID@.* -->
+    <messages>
+        <lang>en</lang>
+        <file>messages.properties</file>
+    </messages>
+    <!-- /Internationalization -->
+
+    <!-- Maps hibernate file's, if present -->
+    <mappingFiles>
+        ImmunizationStoreTransactionType.hbm.xml
+        ImmunizationStoreDrug.hbm.xml
+        ImmunizationStorePatientTransaction.hbm.xml
+        ImmunizationStoreDrugTransactionDetail.hbm.xml
+        ImmunizationEquipment.hbm.xml
+        ImmunizationStockout.hbm.xml
+    </mappingFiles>
+</module>
+
