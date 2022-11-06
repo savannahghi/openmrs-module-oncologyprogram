@@ -85,7 +85,7 @@ public class MainPageController {
 			program = Context.getProgramWorkflowService().getProgramByUuid(EhrMchMetadata._MchProgram.CWC_PROGRAM);
 			minEnrollmentDate.add(Calendar.YEAR, -MAX_CWC_DURATION);
 			possibleProgramOutcomes = mchService.getPossibleOutcomes(program.getProgramId());
-			cwcFollowUps = Context.getConceptService().getConceptByName("CWC FOLLOW UP").getAnswers();
+			//cwcFollowUps = Context.getConceptService().getConceptByName("CWC FOLLOW UP").getAnswers();
 			model.addAttribute("cwcFollowUpList", cwcFollowUps);
 		} else {
 			return "redirect:" + uiUtils.pageLink("mchapp", "enroll") + "?patientId=" + patient.getPatientId() + "&queueId="
