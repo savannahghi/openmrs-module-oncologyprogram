@@ -1,0 +1,57 @@
+package org.openmrs.module.treatmentapp.fragment.controller;
+
+import org.openmrs.api.context.Context;
+import org.openmrs.module.treatmentapp.model.ImmunizationStoreDrug;
+import org.openmrs.module.treatmentapp.ImmunizationDrugStock;
+import org.openmrs.module.treatmentapp.api.ImmunizationService;
+import org.openmrs.ui.framework.SimpleObject;
+import org.openmrs.ui.framework.UiUtils;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * Created by daugm on 10/5/2016.
+ */
+public class StoresDrugStockFragmentController {
+	
+	public void controller() {
+	}
+	
+	public List<SimpleObject> listCurrentDrugStock(UiUtils ui) {
+		ImmunizationService immunizationService = Context.getService(ImmunizationService.class);
+		List<ImmunizationStoreDrug> stockDrugs = immunizationService.getAvailableDrugBatches(null);
+		List<ImmunizationDrugStock> drugStockBalances = new ArrayList<ImmunizationDrugStock>();
+		
+		List<Integer> drugs = new ArrayList<Integer>();
+		
+		for (ImmunizationStoreDrug immunizationStoreDrug : stockDrugs) {
+			int drug = immunizationStoreDrug.getInventoryDrug().getId();
+			if (!drugs.contains(drug)) {
+				drugs.add(drug);
+				
+				List<ImmunizationStoreDrug> currentDrugs = immunizationService
+				        .getImmunizationStoreDrugByName(immunizationStoreDrug.getInventoryDrug().getName());
+				int drugQuantity = 0;
+				
+				for (ImmunizationStoreDrug currentDrug : currentDrugs) {
+					drugQuantity += currentDrug.getCurrentQuantity();
+				}
+				
+				ImmunizationDrugStock immunizationDrugStock = new ImmunizationDrugStock(drugQuantity, immunizationStoreDrug);
+				drugStockBalances.add(immunizationDrugStock);
+			}
+		}
+		
+		if (stockDrugs != null) {
+			return SimpleObject.fromCollection(drugStockBalances, ui, "immunizationStoreDrug.id",
+			    "immunizationStoreDrug.batchNo", "immunizationStoreDrug.inventoryDrug.id",
+			    "immunizationStoreDrug.inventoryDrug.name", "immunizationStoreDrug.inventoryDrug.category.name",
+			    "immunizationStoreDrug.inventoryDrug.reorderQty", "immunizationStoreDrug.inventoryDrug.attribute",
+			    "drugQuantity");
+		}
+		
+		return SimpleObject.fromCollection(Collections.EMPTY_LIST, ui);
+	}
+}

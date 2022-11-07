@@ -74,7 +74,7 @@
             var data = jq("form#postnatalExaminationsForm").serialize();
             data = data + "&" + objectToQueryString.convert(drugOrders.drug_orders);
 			
-            jq.post('${ui.actionLink("mchapp", "postnatalExamination", "savePostnatalExaminationInformation")}',
+            jq.post('${ui.actionLink("treatmentapp", "postnatalExamination", "savePostnatalExaminationInformation")}',
 				data,
 				function (data) {
 					if (data.status === "success") {
@@ -94,7 +94,7 @@
 				completionDateYmd: completionDateYmd,
 				outcomeId: outcomeId
 			}
-			jq.getJSON('${ ui.actionLink("mchapp", "cwcTriage", "updatePatientProgram") }', updateData)
+			jq.getJSON('${ ui.actionLink("treatmentapp", "cwcTriage", "updatePatientProgram") }', updateData)
 				.success(function (data) {
 					SubmitInformation();
 				}).error(function (xhr, status, err) {
@@ -116,7 +116,7 @@
         jq("#searchExaminations").autocomplete({
             minLength:0,
             source: function (request, response) {
-                jq.getJSON('${ ui.actionLink("mchapp", "examinationFilter", "searchFor") }', {
+                jq.getJSON('${ ui.actionLink("treatmentapp", "examinationFilter", "searchFor") }', {
                     findingQuery: request.term
                 }).success(function(data) {
                     examinations = data;

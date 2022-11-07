@@ -1,4 +1,4 @@
-<% def returnUrl = ui.pageLink("mchapp", "triage") %>
+<% def returnUrl = ui.pageLink("treatmentapp", "triage") %>
 <script>
 	jq(function(){
 		jq("#triage-left-menu").on("click", ".triage-summary", function(){
@@ -8,7 +8,7 @@
 			jq(".triage-summary").removeClass("selected");
 			jq(triageSummary).addClass("selected");
 			
-			jq.getJSON('${ ui.actionLink("mchapp", "triageSummary" ,"getTriageSummaryDetails") }',
+			jq.getJSON('${ ui.actionLink("treatmentapp", "triageSummary" ,"getTriageSummaryDetails") }',
 				{ 'encounterId' : jq(triageSummary).find(".encounter-id").val() }
 			).success(function (data) {
 				var triageDetailTemplate =  _.template(jq("#triage-detail-template").html());
@@ -23,7 +23,7 @@
 		jq("#triage-left-menu").on("click", ".edit-link",function(e){
 			e.preventDefault();
 			var encounterId = jq(this).parents(".triage-summary").find(".encounter-id").val()
-			window.location.href ="${ui.pageLink("mchapp", "triage", [patientId: patientId, queueId: queueId,isEdit:true])}encounterId=" + encounterId;
+			window.location.href ="${ui.pageLink("treatmentapp", "triage", [patientId: patientId, queueId: queueId,isEdit:true])}encounterId=" + encounterId;
 		});
 		
 

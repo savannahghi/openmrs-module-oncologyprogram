@@ -14,9 +14,9 @@
 	ui.includeJavascript("uicommons", "navigator/exitHandlers.js")
 
 	ui.includeJavascript("ehrcashier", "moment.js")
-    ui.includeJavascript("mchapp", "object-to-query-string.js")
-    ui.includeJavascript("mchapp", "drugOrder.js")
-	ui.includeJavascript("mchapp", "includes-polyfill.js")
+    ui.includeJavascript("treatmentapp", "object-to-query-string.js")
+    ui.includeJavascript("treatmentapp", "drugOrder.js")
+	ui.includeJavascript("treatmentapp", "includes-polyfill.js")
 
 	ui.includeCss("ehrconfigs", "onepcssgrid.css")
 	ui.includeCss("patientdashboardapp", "patientdashboardapp.css");
@@ -25,7 +25,7 @@
 
 %>
 <script type="text/javascript">
-    var successUrl = "${ui.pageLink('mchapp','main',[patientId: patient, queueId: queueId])}";
+    var successUrl = "${ui.pageLink('treatmentapp','main',[patientId: patient, queueId: queueId])}";
 	
 	var symptoms = [];
     var symptomsArray = [];
@@ -626,40 +626,26 @@
     </div>
 </div>
 
-${ui.includeFragment("mchapp","mchProfile")}
+${ui.includeFragment("treatmentapp","mchProfile")}
 
 <div class="mch-tabs" style="margin-top:5px!important;">
 	<ul>
-		<li id="cn"><a href="#clinical-notes">
-			<% if (opdConcept.equalsIgnoreCase("MCH CLINIC")) { %>
-				<span class="title">Clinical Notes</span>
-			<% } else if (opdConcept.equalsIgnoreCase("MCH IMMUNIZATION")){ %>
-				<span class="title">Immunizations</span>
-			<% } %>
-		</a></li>
+		<li id="cn"><a href="#clinical-notes">Chemotherapy</a></li>
 		<li id="ti"><a href="#triage-info">Triage Information</a></li>
 		<li id="cs"><a href="#clinical-summary">Clinical History</a></li>
 		<li id="lr"><a href="#investigations">Lab Reports</a></li>
 	</ul>
 	
 	<div id="clinical-notes">
-		<% if (enrolledInAnc){ %>
-			${ui.includeFragment("mchapp","antenatalExamination", [patientId: patient.patientId, queueId: queueId])}
-		<% } else if (enrolledInPnc) { %>
-			${ui.includeFragment("mchapp","postnatalExamination", [patientId: patient.patientId, queueId: queueId])}
-		<% } else if (enrolledInCwc) { %>
-			${ui.includeFragment("mchapp","childWelfareExamination", [patientId: patient.patientId, queueId: queueId])}
-		<% } else { %>
-			${ui.includeFragment("mchapp","programSelection", [patientId: patient.patientId, queueId: queueId])}
-		<% } %>
+			${ui.includeFragment("treatmentapp","postnatalExamination", [patientId: patient.patientId, queueId: queueId])}
 	</div>
 
 	<div id="triage-info">
-		${ ui.includeFragment("mchapp", "triageSummary", [patientId: patientId]) }
+		${ ui.includeFragment("treatmentapp", "triageSummary", [patientId: patientId]) }
 	</div>
 	
 	<div id="clinical-summary">
-		${ ui.includeFragment("mchapp", "visitSummary", [patientId: patientId]) }
+		${ ui.includeFragment("treatmentapp", "visitSummary", [patientId: patientId]) }
 	</div>
 	
 	<div id="investigations">

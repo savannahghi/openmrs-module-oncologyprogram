@@ -38,7 +38,7 @@
 						//enrollPncDialog.show();
 					}
 				} else {
-					handleEnrollInProgram("${ui.actionLink('mchapp', 'programSelection', '" + programme + "')}",
+					handleEnrollInProgram("${ui.actionLink('treatmentapp', 'programSelection', '" + programme + "')}",
 							successUrl
 					);
 				}
@@ -93,7 +93,7 @@
 
 					var data = jq("form#enrollAncDialog").serialize();
 
-					jq.post('${ui.actionLink("mchapp", "programSelection", "enrollInAnc")}',
+					jq.post('${ui.actionLink("treatmentapp", "programSelection", "enrollInAnc")}',
 						data,
 						null,
 						'json'
@@ -136,7 +136,7 @@
 
 					var data = jq("form#enrollPncDialog").serialize();
 
-					jq.post('${ui.actionLink("mchapp", "programSelection", "enrollInPnc")}',
+					jq.post('${ui.actionLink("treatmentapp", "programSelection", "enrollInPnc")}',
 						data,
 						null,
 						'json'

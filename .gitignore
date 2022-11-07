@@ -5,5 +5,5 @@
 /.classpath
 .idea/
 *.iml
-api/mchapp-api.iml
-omod/mchapp-omod.iml
+api/treatmentapp-api.iml
+omod/treatmentapp-omod.iml

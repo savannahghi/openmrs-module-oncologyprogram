@@ -6,7 +6,7 @@
     ui.includeJavascript("ehrconfigs", "jquery.dataTables.min.js")
     ui.includeCss("ehrconfigs", "referenceapplication.css")
     ui.includeCss("uicommons", "datatables/dataTables_jui.css")
-	ui.includeCss("mchapp", "views.css")	
+	ui.includeCss("treatmentapp", "views.css")
 %>
 
 <script>
@@ -23,7 +23,7 @@
         });
 		
         jq("#returnToDrugList").on("click", function (e) {
-            window.location.href = emr.pageLink("mchapp", "stores");
+            window.location.href = emr.pageLink("treatmentapp", "stores");
         });		
 	});
 </script>
@@ -58,7 +58,7 @@
             </li>
 			
 			<li>
-                <a href="${ui.pageLink('mchapp', 'stores')}">
+                <a href="${ui.pageLink('treatmentapp', 'stores')}">
 					<i class="icon-chevron-right link"></i>MCH Stores
 				</a>
             </li>

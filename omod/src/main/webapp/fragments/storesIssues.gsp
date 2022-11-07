@@ -19,7 +19,7 @@
             toDate: jq('#issueDate-field').val()
         }
 
-        jq.getJSON('${ ui.actionLink("mchapp", "storesIssues", "listImmunizationIssues") }', requestData)
+        jq.getJSON('${ ui.actionLink("treatmentapp", "storesIssues", "listImmunizationIssues") }', requestData)
                 .success(function (data) {
                     updateIssuesResults(data);
                 }).error(function (xhr, status, err) {
@@ -58,7 +58,7 @@
             drgName: drgName
         }
 
-        jq.getJSON('${ ui.actionLink("mchapp", "storesIssues", "getBatchesForSelectedDrug") }', requestData)
+        jq.getJSON('${ ui.actionLink("treatmentapp", "storesIssues", "getBatchesForSelectedDrug") }', requestData)
                 .success(function (data) {
                     if (data.status === "success") {
                         jq(".confirm").show();
@@ -135,7 +135,7 @@
             var requestData = {
                 issueBatchNo: issueBatchNo
             }
-            jq.getJSON('${ ui.actionLink("mchapp", "storesIssues", "getImmunizationDrugDetailByBatch") }', requestData)
+            jq.getJSON('${ ui.actionLink("treatmentapp", "storesIssues", "getImmunizationDrugDetailByBatch") }', requestData)
                     .success(function (data) {
                         var currentQuantity = data.currentQuantity;
                         if(jq("#issueQuantity").val() > currentQuantity){

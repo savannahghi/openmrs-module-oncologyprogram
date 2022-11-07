@@ -26,7 +26,7 @@
 
             <li>
                 <i class="icon-chevron-right link"></i>
-                <a href="${ui.pageLink('mchapp', 'stores')}">MCH Stores</a>
+                <a href="${ui.pageLink('treatmentapp', 'stores')}">MCH Stores</a>
             </li>
 
             <li>

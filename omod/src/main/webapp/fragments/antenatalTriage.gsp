@@ -91,13 +91,13 @@
             var data = jq("form#antenatal-triage-form").serialize();
 
             jq.post(
-                '${ui.actionLink("mchapp", "antenatalTriage", "saveAntenatalTriageInformation")}',
+                '${ui.actionLink("treatmentapp", "antenatalTriage", "saveAntenatalTriageInformation")}',
                 data,
                 function (data) {
                     if (data.status === "success") {
                         //show success message
                         if(data.isEdit){
-                        	window.location = "${ui.pageLink("mchapp", "main",[patientId: patientId, queueId: queueId])}";
+                        	window.location = "${ui.pageLink("treatmentapp", "main",[patientId: patientId, queueId: queueId])}";
                         }else{
                             window.location = "${ui.pageLink("patientqueueapp", "mchTriageQueue")}"
                           	 }
@@ -231,7 +231,7 @@
 
 <div class="template-holder" style="display:none;">
 	<div class="patient-profile-editor">
-		${ui.includeFragment("mchapp", "antenatalDetails")}
+		${ui.includeFragment("treatmentapp", "antenatalDetails")}
 	</div>
 </div>
 <div class="">&nbsp;</div>

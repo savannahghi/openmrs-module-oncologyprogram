@@ -12,7 +12,7 @@
 			toDate:		jq('#outsDate-field').val()
 		}
 		
-		jq.getJSON('${ ui.actionLink("mchapp", "storesDrugStock", "listCurrentDrugStock") }', requestData)
+		jq.getJSON('${ ui.actionLink("treatmentapp", "storesDrugStock", "listCurrentDrugStock") }', requestData)
 			.success(function (data) {
 				updateDrugStockResults(data);
 			}).error(function (xhr, status, err) {

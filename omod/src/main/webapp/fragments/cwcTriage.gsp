@@ -54,12 +54,12 @@
             var data = jq("form#cwc-triage-form").serialize();
 
             jq.post(
-                    '${ui.actionLink("mchapp", "cwcTriage", "saveCwcTriageInfo")}',
+                    '${ui.actionLink("treatmentapp", "cwcTriage", "saveCwcTriageInfo")}',
                     data,
                     function (data) {
                         if (data.status === "success") {
                             if (data.isEdit) {
-                                window.location = "${ui.pageLink("mchapp", "main",[patientId: patientId, queueId: queueId])}";
+                                window.location = "${ui.pageLink("treatmentapp", "main",[patientId: patientId, queueId: queueId])}";
                             }else {
                                 window.location = "${ui.pageLink("patientqueueapp", "mchTriageQueue")}";
                             }

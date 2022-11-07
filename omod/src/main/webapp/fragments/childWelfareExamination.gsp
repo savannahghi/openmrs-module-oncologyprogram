@@ -28,7 +28,7 @@
             var data = jq("form#cwcExaminationsForm").serialize();
             data = data + "&" + objectToQueryString.convert(drugOrders["drug_orders"]);
 
-            jq.post('${ui.actionLink("mchapp", "childWelfareExamination", "saveCwcExaminationInformation")}',
+            jq.post('${ui.actionLink("treatmentapp", "childWelfareExamination", "saveCwcExaminationInformation")}',
                     data,
                     function (data) {
                         if (data.status === "success") {
@@ -48,7 +48,7 @@
                 completionDateYmd: completionDateYmd,
                 outcomeId: outcomeId
             }
-            jq.getJSON('${ ui.actionLink("mchapp", "cwcTriage", "updatePatientProgram") }', updateData)
+            jq.getJSON('${ ui.actionLink("treatmentapp", "cwcTriage", "updatePatientProgram") }', updateData)
 				.success(function (data) {
 					SubmitInformation();
 				}).error(function (xhr, status, err) {
@@ -149,7 +149,7 @@
                         patientId:${patient?.patientId}
                     }
 
-                    jq.getJSON('${ ui.actionLink("mchapp", "cwcTriage", "changeToState") }', stateData)
+                    jq.getJSON('${ ui.actionLink("treatmentapp", "cwcTriage", "changeToState") }', stateData)
 						.success(function (data) {
 							jq().toastmessage('showNoticeToast', data.message);
 
@@ -327,7 +327,7 @@
         jq("#searchExaminations").autocomplete({
             minLength: 0,
             source: function (request, response) {
-                jq.getJSON('${ ui.actionLink("mchapp", "examinationFilter", "searchFor") }', {
+                jq.getJSON('${ ui.actionLink("treatmentapp", "examinationFilter", "searchFor") }', {
                     findingQuery: request.term
                 }).success(function (data) {
                     examinations = data;
@@ -702,13 +702,13 @@
             patientProgramId: patientProgramId,
             programWorkflowId: programWorkflowId
         }
-        jq.getJSON('${ ui.actionLink("mchapp", "cwcTriage", "getPossibleNextStates") }', params)
+        jq.getJSON('${ ui.actionLink("treatmentapp", "cwcTriage", "getPossibleNextStates") }', params)
                 .success(function (data) {
                     //load drop down
                 }).error(function (xhr, status, err) {
                     jq().toastmessage('showErrorToast', "AJAX error!" + err);
                 });
-        jq.getJSON('${ ui.actionLink("mchapp", "cwcTriage", "getPatientStates") }', params)
+        jq.getJSON('${ ui.actionLink("treatmentapp", "cwcTriage", "getPatientStates") }', params)
                 .success(function (data) {
                     //load list of previous vaccines
                     var tableId = "workflowTable_" + programWorkflowId;
@@ -770,7 +770,7 @@
             onDateDMY: onDateDMY
         }
 
-        jq.getJSON('${ ui.actionLink("mchapp", "cwcTriage", "changeToState") }', stateData)
+        jq.getJSON('${ ui.actionLink("treatmentapp", "cwcTriage", "changeToState") }', stateData)
                 .success(function (data) {
                     jq().toastmessage('showNoticeToast', data.message);
                     return data.status;
@@ -845,7 +845,7 @@
         var requestData = {
             drgName: drgName
         }
-        jq.getJSON('${ ui.actionLink("mchapp", "childWelfareExamination", "getBatchesForSelectedDrug") }', requestData)
+        jq.getJSON('${ ui.actionLink("treatmentapp", "childWelfareExamination", "getBatchesForSelectedDrug") }', requestData)
 			.success(function (data) {
 				var options = jq("#vaccine-batch");
 				options.empty();
@@ -869,7 +869,7 @@
         var requestData = {
             drgName: jq('#vaccine-state :selected').text().split("(")[0].trim()
         }
-        jq.getJSON('${ ui.actionLink("mchapp", "childWelfareExamination", "getBatchesForSelectedDrug") }', requestData)
+        jq.getJSON('${ ui.actionLink("treatmentapp", "childWelfareExamination", "getBatchesForSelectedDrug") }', requestData)
 			.success(function (data) {
 				var options = jq("#vaccine-batch");
 				options.empty();

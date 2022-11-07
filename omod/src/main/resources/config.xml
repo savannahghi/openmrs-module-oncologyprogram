@@ -5,13 +5,13 @@
     <id>${project.parent.artifactId}</id>
     <name>${project.parent.name}</name>
     <version>${project.parent.version}</version>
-    <package>org.openmrs.module.mchapp</package>
+    <package>org.openmrs.module.treatmentapp</package>
     <author>HealthIT</author>
     <description>
         Management of the MCH store for the EHR work
     </description>
 
-    <activator>org.openmrs.module.mchapp.MCHAppActivator</activator>
+    <activator>org.openmrs.module.treatmentapp.MCHAppActivator</activator>
 
     <require_version>${openMRSVersion}</require_version>
     <require_modules>
@@ -28,7 +28,7 @@
     <!-- Extensions -->
     <extension>
         <point>org.openmrs.admin.list</point>
-        <class>org.openmrs.module.mchapp.extension.html.AdminList</class>
+        <class>org.openmrs.module.treatmentapp.extension.html.AdminList</class>
     </extension>
 
     <!-- AOP

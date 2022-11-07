@@ -38,7 +38,7 @@
             drgName: drgName
         }
 
-        jq.getJSON('${ ui.actionLink("mchapp", "storesIssues", "getBatchesForSelectedDrug") }', requestData)
+        jq.getJSON('${ ui.actionLink("treatmentapp", "storesIssues", "getBatchesForSelectedDrug") }', requestData)
 			.success(function (data) {
 				if (data.status === "success") {
 				} else if (data.status === "fail") {
@@ -166,7 +166,7 @@
 		jq('#stockOutList').on("click", ".update-stockouts", function(){
 			var idnt = jq(this).data('idnt');
 			
-			jq.getJSON('${ ui.actionLink("mchapp", "storesOuts", "getImmunizationStockoutTransaction") }', {transactionId: idnt})
+			jq.getJSON('${ ui.actionLink("treatmentapp", "storesOuts", "getImmunizationStockoutTransaction") }', {transactionId: idnt})
 				.success(function (data) {
 					var depletedDate = data.depletedOn;
 					
@@ -205,7 +205,7 @@
                         jq().toastmessage('showErrorToast', "Check that the required fields have been filled");
                         return false;
                     }
-                    jq.getJSON('${ ui.actionLink("mchapp", "storesReceipts", "saveImmunizationReceipts") }', requestData)
+                    jq.getJSON('${ ui.actionLink("treatmentapp", "storesReceipts", "saveImmunizationReceipts") }', requestData)
 						.success(function (data) {
 							if (data.status === "success") {
 								jq().toastmessage('showSuccessToast', "Receipt Added Successfully");
@@ -257,7 +257,7 @@
 					
 					console.log(issueData.issueAccount);
 										
-                    jq.getJSON('${ ui.actionLink("mchapp", "storesIssues", "saveImmunizationIssues") }', issueData)
+                    jq.getJSON('${ ui.actionLink("treatmentapp", "storesIssues", "saveImmunizationIssues") }', issueData)
                             .success(function (data) {
                                 if (data.status === "success") {
                                     jq().toastmessage('showSuccessToast', data.message);
@@ -302,7 +302,7 @@
                         return false;
                     }
 										
-                    jq.getJSON('${ ui.actionLink("mchapp", "storesIssues", "saveImmunizationIssuesToAccount") }', requestData)
+                    jq.getJSON('${ ui.actionLink("treatmentapp", "storesIssues", "saveImmunizationIssuesToAccount") }', requestData)
                             .success(function (data) {
                                 if (data.status === "success") {
                                     jq().toastmessage('showSuccessToast', data.message);
@@ -358,7 +358,7 @@
                         rtnsRemarks: jq("#rtnsRemarks").val(),
                         patientId: null
                     }
-                    jq.getJSON('${ ui.actionLink("mchapp", "storesReturns", "saveImmunizationReturns") }', returnsData)
+                    jq.getJSON('${ ui.actionLink("treatmentapp", "storesReturns", "saveImmunizationReturns") }', returnsData)
                             .success(function (data) {
                                 if (data.status === "success") {
                                     jq().toastmessage('showSuccessToast', data.message);
@@ -396,7 +396,7 @@
                         supplierRtnsBatchNo: 	jq("#supplierRtnsBatchNo option:selected").text(),
                         supplierRtnsRemarks: 	jq("#supplierRtnsRemarks").val()
                     }
-                    jq.getJSON('${ ui.actionLink("mchapp", "storesReturns", "saveImmunizationReturnsToSupplier") }', requestData)
+                    jq.getJSON('${ ui.actionLink("treatmentapp", "storesReturns", "saveImmunizationReturnsToSupplier") }', requestData)
                             .success(function (data) {
                                 if (data.status === "success") {
                                     jq().toastmessage('showSuccessToast', data.message);
@@ -437,7 +437,7 @@
                         jq().toastmessage('showErrorToast', "Check that the required fields have been filled");
                         return false;
                     }
-                    jq.getJSON('${ ui.actionLink("mchapp", "storesOuts", "saveImmunizationStockout") }', stockoutsData)
+                    jq.getJSON('${ ui.actionLink("treatmentapp", "storesOuts", "saveImmunizationStockout") }', stockoutsData)
                             .success(function (data) {
                                 if (data.status === "success") {
                                     jq().toastmessage('showSuccessToast', data.message);
@@ -478,7 +478,7 @@
                         return false;
                     }
 					
-                    jq.getJSON('${ ui.actionLink("mchapp", "storesOuts", "updateImmunizationStockout") }', stockoutsData)
+                    jq.getJSON('${ ui.actionLink("treatmentapp", "storesOuts", "updateImmunizationStockout") }', stockoutsData)
 						.success(function (data) {
 							if (data.status === "success") {
 								jq().toastmessage('showSuccessToast', data.message);
@@ -522,7 +522,7 @@
                         return false;
                     }
 
-                    jq.getJSON('${ ui.actionLink("mchapp", "storesEquipments", "saveImmunizationEquipment") }', equipmentData)
+                    jq.getJSON('${ ui.actionLink("treatmentapp", "storesEquipments", "saveImmunizationEquipment") }', equipmentData)
                             .success(function (data) {
                                 if (data.status === "success") {
                                     jq().toastmessage('showSuccessToast', data.message);
@@ -804,19 +804,19 @@
             </ul>
 
             <div id="drugStock">
-                ${ui.includeFragment("mchapp", "storesDrugStock")}
+                ${ui.includeFragment("treatmentapp", "storesDrugStock")}
             </div>
 			
 			<div id="transactions">
-                ${ui.includeFragment("mchapp", "storesTransactions")}
+                ${ui.includeFragment("treatmentapp", "storesTransactions")}
             </div>
 
             <div id="stockouts">
-                ${ui.includeFragment("mchapp", "storesOuts")}
+                ${ui.includeFragment("treatmentapp", "storesOuts")}
             </div>
 
             <div id="equipments">
-                ${ui.includeFragment("mchapp", "storesEquipments")}
+                ${ui.includeFragment("treatmentapp", "storesEquipments")}
             </div>
         </div>
     </div>

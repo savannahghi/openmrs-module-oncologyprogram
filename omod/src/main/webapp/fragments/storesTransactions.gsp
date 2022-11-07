@@ -42,7 +42,7 @@
 			toDate:		jq('#rcptDate-field').val()
 		}
 		
-		jq.getJSON(emr.fragmentActionLink("mchapp", "storesTransactions", "listImmunizationTransactions"), requestData)
+		jq.getJSON(emr.fragmentActionLink("treatmentapp", "storesTransactions", "listImmunizationTransactions"), requestData)
 			.success(function (data) {
 				updateTransactionsResults(data);
 			}).error(function (xhr, status, err) {
@@ -166,7 +166,7 @@
                 var catId = ui.item.value.category.id;
                 var drgId = ui.item.value.id;
 				
-				jq.getJSON('${ ui.actionLink("mchapp", "storesReceipts", "checkForUnclosedStockouts") }', {drugId : drgId}).success(function (data) {
+				jq.getJSON('${ ui.actionLink("treatmentapp", "storesReceipts", "checkForUnclosedStockouts") }', {drugId : drgId}).success(function (data) {
 					if (data == 1){
 						jq('#closeStockouts').show(300);
 					} else{
@@ -303,7 +303,7 @@
 		jq("#accountName").autocomplete({
             minLength: 3,
             source: function (request, response) {
-                jq.getJSON('${ ui.actionLink("mchapp", "StoresTransactions", "fetchDistinctTransactionAccounts") }',
+                jq.getJSON('${ ui.actionLink("treatmentapp", "StoresTransactions", "fetchDistinctTransactionAccounts") }',
                         {
                             searchPhrase: request.term
                         }
@@ -329,7 +329,7 @@
 		jq("#supplierName").autocomplete({
             minLength: 3,
             source: function (request, response) {
-                jq.getJSON('${ ui.actionLink("mchapp", "StoresTransactions", "fetchDistinctSupplierAccounts") }',
+                jq.getJSON('${ ui.actionLink("treatmentapp", "StoresTransactions", "fetchDistinctSupplierAccounts") }',
                         {
                             searchPhrase: request.term
                         }
