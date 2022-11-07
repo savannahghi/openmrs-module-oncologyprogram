@@ -579,7 +579,7 @@
 
             <li>
                 <i class="icon-chevron-right link"></i>
-                SURGERY
+                Chemotherapy
             </li>
         </ul>
     </div>
@@ -637,7 +637,7 @@ ${ui.includeFragment("treatmentapp","mchProfile")}
 	</ul>
 	
 	<div id="clinical-notes">
-			${ui.includeFragment("treatmentapp","postnatalExamination", [patientId: patient.patientId, queueId: queueId])}
+			${ui.includeFragment("treatmentapp","chemoTherapy", [patientId: patient.patientId, queueId: queueId])}
 	</div>
 
 	<div id="triage-info">
