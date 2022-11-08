@@ -98,7 +98,9 @@
 <div class="onerow">
 	<div id="div-left-menu" style="padding-top: 15px;" class="col15 clear">
 		<ul id="ul-left-menu" class="left-menu">
-			<% programSummaries.each { summary -> %>
+
+		<% if (programSummaries.size > 0 ) { %>
+		<% programSummaries.each { summary -> %>
 			<li class="menu-item program-summary" visitid="54" style="border-right:1px solid #ccc; margin-right: 15px; width: 168px; height: 18px;">
 				<input type="hidden" class="encounter-id" value="${summary.encounterId}" >
 				<span class="menu-date">
@@ -120,9 +122,16 @@
 			</li>
 
 			<% } %>
-
-			<li style="height: 30px; margin-right: 15px; width: 168px;" class="menu-item">
+		<% }  else { %>
+			<li class="menu-item program-summary"  style="border-right:1px solid #ccc; margin-right: 15px; width: 168px; height: 18px;">
+			<span class="menu-title">
+				<i class="icon-stethoscope"></i>
+				No Current Cycles in Progress
+			</span>
+			<span class="arrow-border"></span>
+			<span class="arrow"></span>
 			</li>
+		<% } %>
 		</ul>
 	</div>
 

@@ -95,8 +95,8 @@ public class PatientRegimen implements Serializable {
 		this.createdAt = createdAt;
 	}
 	
-	public PatientRegimen(int id, String medication, String dose, String route, String dosingUnit, String comment, String tag,
-						  String program) {
+	public PatientRegimen(int id, String medication, String dose, String route, String dosingUnit, String comment,
+	    String tag, String program) {
 		this.id = id;
 		this.medication = medication;
 		this.dose = dose;
