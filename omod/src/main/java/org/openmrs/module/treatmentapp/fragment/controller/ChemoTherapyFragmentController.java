@@ -38,6 +38,9 @@ public class ChemoTherapyFragmentController {
 		//getRegimens takes a mandatory patient, and optional regimen type and tag
 		List<PatientRegimen> patientRegimens = patientRegimenService.getRegimens(patient,regimen,tag,cycleId);
 
+		List<RegimenType> regimenTypes = patientRegimenService.getRegimenTypes(voided:false); //voided = true/false
+
+
 		 */
 		
 		MchService mchService = Context.getService(MchService.class);
@@ -81,6 +84,7 @@ public class ChemoTherapyFragmentController {
 		model.addAttribute("patient", patient);
 		model.addAttribute("programSummaries", visitSummaries);
 		//		model.addAttribute("programSummaries", patientRegimens);
+		//		model.addAttribute("regimens", regimenTypes);
 	}
 	
 	//	public SimpleObject getProgramSummaryDetails(@RequestParam("cycleId") Integer cycle, UiUtils ui) {

@@ -605,7 +605,7 @@
 		
 		<div id="stacont" class="status-container">
 				<span class="status active"></span>
-				Visit Status
+				Cycle Status
 			</div>
 		<div class="tag">Outpatient</div>
 		<div class="tad">Last Visit: ${ui.formatDatePretty(previousVisit)}</div>
@@ -614,6 +614,9 @@
 
         
     </div>
+
+
+
 
     <div class="identifiers">
         <em>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Patient ID</em>
@@ -624,6 +627,31 @@
             <i class="icon-tags small" style="font-size: 16px"></i><small>Category:</small> ${patientCategory}
         </div>
     </div>
+   <div class="identifiers">
+       <p>Regimen Details</p>
+       <em>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Current:</em>
+       <span>CHOP</span>
+       <br>
+       <em>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Cycle:</em>
+       <span>3 of 6</span>
+       <br>
+       <em>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Status:</em>
+       <span>Active</span>
+       <br>
+   </div>
+    <div class="identifiers">
+        <p>Diagnosis</p>
+        <em>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Diagnosis:</em>
+        <span>Breast Cancer</span>
+        <br>
+        <em>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Grading:</em>
+        <span>Grade 3</span>
+        <br>
+        <em>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Staging:</em>
+        <span>Grade 3</span>
+        <br>
+    </div>
+
 </div>
 
 ${ui.includeFragment("treatmentapp","mchProfile")}

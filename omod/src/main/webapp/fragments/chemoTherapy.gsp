@@ -1,3 +1,7 @@
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 <script>
 	jq(function(){
 		jq("#ul-left-menu").on("click", ".program-summary", function(){
@@ -43,6 +47,8 @@
 			jq('#cs').show();
 		}else{
 			jq('#cs').hide();
+			var enrollTemplate =  _.template(jq("#enroll-template").html());
+            jq("#chemo-detail").html(enrollTemplate());
 		}
 
 		/*jq('#ul-left-menu').slimScroll({
@@ -196,6 +202,51 @@
 	<h3>DRUGS PRESCRIPTION SUMMARY INFORMATION</h3>
 </div>
 
+<div class="panel-group" id="accordion">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
+        Collapsible Group 1</a>
+      </h4>
+    </div>
+    <div id="collapse1" class="panel-collapse collapse in">
+      <div class="panel-body">Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+      sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+      minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+      commodo consequat.</div>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">
+        Collapsible Group 2</a>
+      </h4>
+    </div>
+    <div id="collapse2" class="panel-collapse collapse">
+      <div class="panel-body">Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+      sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+      minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+      commodo consequat.</div>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">
+        Collapsible Group 3</a>
+      </h4>
+    </div>
+    <div id="collapse3" class="panel-collapse collapse">
+      <div class="panel-body">Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+      sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+      minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+      commodo consequat.</div>
+    </div>
+  </div>
+</div>
+
 <table id="chemoList">
 	<thead>
 	<tr style="border-bottom: 1px solid #eee;">
@@ -217,11 +268,22 @@
 		<td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.route}}</td>
 		<td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.dosingUnit}}</td>
 		<td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.comment}}</td>
-		<td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;"></td>
+		<td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;"><a><i class="icon-edit link" title="Edit Drug"></i></a>&nbsp;&nbsp;&nbsp;<a><i class="icon-trash link" title="Delete Drug"></i></a></td>
 	</tr>
 	{{ }); }}
 	</tbody>
 </table>
+</script>
+
+<script id="enroll-template" type="text/template">
+<div class="info-header">
+	<div><span>Diagnosis</span><span>Breast Cancer</span></div>
+	<div><span>Staging</span><span>Stage 2</span></div>
+	<div><span>Grading</span><span>Grade 3</span></div>
+	<div><span>Doctor's Notes</span><span>The patient presents with the stage 2 breast cancer and should begin a round of chemotherapy on CHOP program</span></div>
+	<div><span>Vitals</span><span>Previously recorded vitals link</span></div>
+</div>
+<div><button>Start patient's regimen</button></div>
 </script>
 
 <script id="empty-template" type="text/template">
