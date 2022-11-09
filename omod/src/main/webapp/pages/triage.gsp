@@ -8,7 +8,7 @@
 	ui.includeJavascript("patientqueueapp", "queue.js")
 %>
 <script type="text/javascript">
-    var successUrl = "${ui.pageLink('mchapp','triage',[patientId: patient, queueId: queueId])}";
+    var successUrl = "${ui.pageLink('treatmentapp','triage',[patientId: patient, queueId: queueId])}";
     function isValidDate(str) {
         var d = moment(str, 'D/M/YYYY');
         var dt = moment(str, 'D MMMM YY');
@@ -317,11 +317,11 @@
 </div>
 
 <% if (enrolledInAnc) { %>
-${ui.includeFragment("mchapp", "antenatalTriage", [patientId: patientId, queueId: queueId])}
+${ui.includeFragment("treatmentapp", "antenatalTriage", [patientId: patientId, queueId: queueId])}
 <% } else if (enrolledInPnc) { %>
-${ui.includeFragment("mchapp", "postnatalTriage", [patientId: patientId, queueId: queueId])}
+${ui.includeFragment("treatmentapp", "postnatalTriage", [patientId: patientId, queueId: queueId])}
 <% } else if (enrolledInCwc) { %>
-${ui.includeFragment("mchapp", "cwcTriage", [patientId: patientId])}
+${ui.includeFragment("treatmentapp", "cwcTriage", [patientId: patientId])}
 <% } else { %>
-${ui.includeFragment("mchapp", "programSelection", [patientId: patientId, queueId: queueId])}
+${ui.includeFragment("treatmentapp", "programSelection", [patientId: patientId, queueId: queueId])}
 <% } %>

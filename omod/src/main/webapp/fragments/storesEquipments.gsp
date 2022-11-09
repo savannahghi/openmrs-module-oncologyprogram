@@ -22,7 +22,7 @@
             equipmentType: jq('#equipmentType').val()
 		}
 		
-		jq.getJSON('${ ui.actionLink("mchapp", "storesEquipments", "listImmunizationEquipment") }', requestData)
+		jq.getJSON('${ ui.actionLink("treatmentapp", "storesEquipments", "listImmunizationEquipment") }', requestData)
 			.success(function (data) {			
 				updateEquipmentResults(data);
 			}).error(function (xhr, status, err) {
@@ -117,7 +117,7 @@
                         return false;
                     }
 
-                    jq.getJSON('${ ui.actionLink("mchapp", "storesEquipments", "updateImmunizationEquipment") }', equipmentData)
+                    jq.getJSON('${ ui.actionLink("treatmentapp", "storesEquipments", "updateImmunizationEquipment") }', equipmentData)
                             .success(function (data) {
                                 if (data.status === "success") {
                                     jq().toastmessage('showSuccessToast', data.message);
@@ -148,7 +148,7 @@
 		jq('#equipmentList').on('click', '.edit-equipments', function(){
 			var equipmentId = jq(this).data('idnt');
 			
-			jq.getJSON('${ ui.actionLink("mchapp", "storesEquipments", "getImmunizationEquipmentDetails") }', {equipmentId: equipmentId})
+			jq.getJSON('${ ui.actionLink("treatmentapp", "storesEquipments", "getImmunizationEquipmentDetails") }', {equipmentId: equipmentId})
 				.success(function (data) {
 					equipmentDetails.id(data.id);
 					equipmentDetails.model(data.model);

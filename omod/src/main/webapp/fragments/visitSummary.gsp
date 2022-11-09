@@ -9,7 +9,7 @@
 			jq(".visit-summary").removeClass("selected");
 			jq(visitSummary).addClass("selected");
 			
-			jq.getJSON('${ ui.actionLink("mchapp", "visitSummary" ,"getVisitSummaryDetails") }',
+			jq.getJSON('${ ui.actionLink("treatmentapp", "visitSummary" ,"getVisitSummaryDetails") }',
 				{ 'encounterId' : jq(visitSummary).find(".encounter-id").val() }
 			).success(function (data) {
 				var visitDetailTemplate =  _.template(jq("#visit-detail-template").html());
@@ -32,7 +32,7 @@
 			jq("#printSection").print({
 				globalStyles: 	false,
 				mediaPrint: 	false,
-				stylesheet: 	'${ui.resourceLink("mchapp", "styles/printout.css")}',
+				stylesheet: 	'${ui.resourceLink("treatmentapp", "styles/printout.css")}',
 				iframe: 		false,
 				width: 			600,
 				height:			700

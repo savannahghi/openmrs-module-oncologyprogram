@@ -8,7 +8,7 @@
 	ui.includeJavascript("patientqueueapp", "queue.js")
 %>
 <script type="text/javascript">
-    var successUrl = "${ui.pageLink('mchapp','main',[patientId: patient, queueId: queueId])}";
+    var successUrl = "${ui.pageLink('treatmentapp','main',[patientId: patient, queueId: queueId])}";
     
 	function isValidDate(str) {
         var d = moment(str, 'D/M/YYYY');
@@ -364,4 +364,4 @@
     </div>
 </div>
 
-${ui.includeFragment("mchapp", "programSelection", [patientId: patientId, queueId: queueId, source: 'clinic'])}
+${ui.includeFragment("treatmentapp", "programSelection", [patientId: patientId, queueId: queueId, source: 'clinic'])}

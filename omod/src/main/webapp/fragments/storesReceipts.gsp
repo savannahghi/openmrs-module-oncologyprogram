@@ -12,7 +12,7 @@
 			toDate:		jq('#rcptDate-field').val()
 		}
 		
-		jq.getJSON(emr.fragmentActionLink("mchapp", "storesReceipts", "listImmunizationReceipts"), requestData)
+		jq.getJSON(emr.fragmentActionLink("treatmentapp", "storesReceipts", "listImmunizationReceipts"), requestData)
 			.success(function (data) {
 				updateReceiptResults(data);
 			}).error(function (xhr, status, err) {

@@ -13,7 +13,7 @@
 			toDate:		 jq('#returnDate-field').val()
 		}
 		
-		jq.getJSON('${ ui.actionLink("mchapp", "storesReturns", "listImmunizationReturns") }', requestData)
+		jq.getJSON('${ ui.actionLink("treatmentapp", "storesReturns", "listImmunizationReturns") }', requestData)
 			.success(function (data) {
 				updateReturnsResults(data);
 			}).error(function (xhr, status, err) {
@@ -57,7 +57,7 @@
             drgId: drgId,
             drgName: drgName
         }
-        jq.getJSON('${ ui.actionLink("mchapp", "storesIssues", "getBatchesForSelectedDrug") }', requestData)
+        jq.getJSON('${ ui.actionLink("treatmentapp", "storesIssues", "getBatchesForSelectedDrug") }', requestData)
                 .success(function (data) {
                     if (data.status === "success") {
                         jq(".confirm").show();

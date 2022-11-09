@@ -29,7 +29,7 @@ e<script>
 			var data = jq("form#antenatalExaminationsForm").serialize();
             data = data + "&" + objectToQueryString.convert(drugOrders["drug_orders"]);
 
-            jq.post('${ui.actionLink("mchapp", "antenatalExamination", "saveAntenatalExaminationInformation")}',
+            jq.post('${ui.actionLink("treatmentapp", "antenatalExamination", "saveAntenatalExaminationInformation")}',
               data,
               function (data) {
                   if (data.status === "success") {
@@ -49,7 +49,7 @@ e<script>
 				completionDateYmd: completionDateYmd,
 				outcomeId: outcomeId
 			}
-			jq.getJSON('${ ui.actionLink("mchapp", "cwcTriage", "updatePatientProgram") }', updateData)
+			jq.getJSON('${ ui.actionLink("treatmentapp", "cwcTriage", "updatePatientProgram") }', updateData)
 				.success(function (data) {
 					SubmitInformation();
 				}).error(function (xhr, status, err) {
@@ -156,7 +156,7 @@ e<script>
                         quantity: null
 					}
 
-					jq.getJSON('${ ui.actionLink("mchapp", "cwcTriage", "changeToState") }', stateData)
+					jq.getJSON('${ ui.actionLink("treatmentapp", "cwcTriage", "changeToState") }', stateData)
 					.success(function (data) {
 						jq().toastmessage('showSuccessToast', data.message);
 
@@ -212,7 +212,7 @@ e<script>
 					});
 					var savingMessage = jq().toastmessage('showSuccessToast', 'Please wait as Information is being Saved...');
 			
-					jq.getJSON('${ ui.actionLink("mchapp", "antenatalExamination", "saveTetanusToxoid") }', {
+					jq.getJSON('${ ui.actionLink("treatmentapp", "antenatalExamination", "saveTetanusToxoid") }', {
 						patientId: '${patient.id}',
 						drugId: 188,
 						formulation: 438,
@@ -248,7 +248,7 @@ e<script>
 				if (jq(this).attr('id') == 'update-tetanus-vaccine'){
 					jq.ajax({
 						type: "GET",
-						url: '${ ui.actionLink("mchapp", "antenatalExamination", "getTetanusToxoidCount") }',
+						url: '${ ui.actionLink("treatmentapp", "antenatalExamination", "getTetanusToxoidCount") }',
 						data: ({
 							patientId: ${patient.id}
 						}),
@@ -430,7 +430,7 @@ e<script>
 		jq("#searchExaminations").autocomplete({
             minLength:0,
             source: function (request, response) {
-                jq.getJSON('${ ui.actionLink("mchapp", "examinationFilter", "searchFor") }', {
+                jq.getJSON('${ ui.actionLink("treatmentapp", "examinationFilter", "searchFor") }', {
                     findingQuery: request.term
                 }).success(function(data) {
                     examinations = data;
@@ -949,7 +949,7 @@ e<script>
             completionDateYmd: completionDateYmd,
             outcomeId: outcomeId
         }
-        jq.getJSON('${ ui.actionLink("mchapp", "cwcTriage", "updatePatientProgram") }', updateData)
+        jq.getJSON('${ ui.actionLink("treatmentapp", "cwcTriage", "updatePatientProgram") }', updateData)
                 .success(function (data) {
                     jq().toastmessage('showSuccessToast', data.message);
                     refreshPage();
@@ -969,13 +969,13 @@ e<script>
             patientProgramId: patientProgramId,
             programWorkflowId: programWorkflowId
         }
-        jq.getJSON('${ ui.actionLink("mchapp", "cwcTriage", "getPossibleNextStates") }', params)
+        jq.getJSON('${ ui.actionLink("treatmentapp", "cwcTriage", "getPossibleNextStates") }', params)
                 .success(function (data) {
                     //load drop down
                 }).error(function (xhr, status, err) {
                     jq().toastmessage('showErrorToast', "AJAX error!" + err);
                 });
-        jq.getJSON('${ ui.actionLink("mchapp", "cwcTriage", "getPatientStates") }', params)
+        jq.getJSON('${ ui.actionLink("treatmentapp", "cwcTriage", "getPatientStates") }', params)
                 .success(function (data) {
                     //load list of previous vaccines
                     var tableId = "workflowTable_" + programWorkflowId;
@@ -1038,7 +1038,7 @@ e<script>
             onDateDMY: onDateDMY
         }
 
-        jq.getJSON('${ ui.actionLink("mchapp", "cwcTriage", "changeToState") }', stateData)
+        jq.getJSON('${ ui.actionLink("treatmentapp", "cwcTriage", "changeToState") }', stateData)
 		.success(function (data) {
 			jq().toastmessage('showSuccessToast', data.message);
 			return data.status;

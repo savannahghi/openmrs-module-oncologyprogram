@@ -50,13 +50,13 @@
 			var data = jq("form#pnc-triage-form").serialize();
 
 			jq.post(
-				'${ui.actionLink("mchapp", "postnatalTriage", "savePostnatalTriageInformation")}',
+				'${ui.actionLink("treatmentapp", "postnatalTriage", "savePostnatalTriageInformation")}',
 				data,
 				function (data) {
 					if (data.status === "success") {
 						//show success message
 						if(data.isEdit){
-							window.location = "${ui.pageLink("mchapp", "main",[patientId: patientId, queueId: queueId])}";
+							window.location = "${ui.pageLink("treatmentapp", "main",[patientId: patientId, queueId: queueId])}";
 						}else{
 							window.location = "${ui.pageLink("patientqueueapp", "mchTriageQueue")}"
 							 }
