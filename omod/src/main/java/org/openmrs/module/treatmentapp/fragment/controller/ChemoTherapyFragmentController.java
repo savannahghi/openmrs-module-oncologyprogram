@@ -106,4 +106,40 @@ public class ChemoTherapyFragmentController {
 		return SimpleObject.create("drugs", drugs);
 	}
 	
+	public SimpleObject updatePatientRegimen(@RequestParam("regimenId") Integer regimenId, UiUtils ui) {
+		
+		List<PatientRegimen> chemoDetails = new ArrayList<PatientRegimen>();
+		// TODO - Create these
+		/*
+		PatientRegimenService patientRegimenService = Context.getService(PatientRegimenService.class);
+		//getRegimens takes a mandatory patient, and optional regimen type and tag
+		List<PatientRegimen> patientRegimens = patientRegimenService.getRegimens(patient,regimen,tag,cycle);
+
+		 */
+		chemoDetails.add(new PatientRegimen(1, "Sodium Chloride", "750 ml", "Oral", "Vial", "Before Meals",
+		        "Pre Medication", "CHOP Protocol Cycles"));
+		List<SimpleObject> drugs = SimpleObject.fromCollection(chemoDetails, ui, "id", "medication", "dose", "route",
+		    "dosingUnit", "comment", "tag", "program");
+		//		return SimpleObject.create("chemoDetails", chemoDetails);
+		return SimpleObject.create("drugs", drugs);
+	}
+	
+	public SimpleObject deletePatientRegimen(@RequestParam("regimenId") Integer regimenId, UiUtils ui) {
+		
+		List<PatientRegimen> chemoDetails = new ArrayList<PatientRegimen>();
+		// TODO - Create these
+		/*
+		PatientRegimenService patientRegimenService = Context.getService(PatientRegimenService.class);
+		//getRegimens takes a mandatory patient, and optional regimen type and tag
+		List<PatientRegimen> patientRegimens = patientRegimenService.getRegimens(patient,regimen,tag,cycle);
+
+		 */
+		chemoDetails.add(new PatientRegimen(1, "Sodium Chloride", "750 ml", "Oral", "Vial", "Before Meals",
+		        "Pre Medication", "CHOP Protocol Cycles"));
+		List<SimpleObject> drugs = SimpleObject.fromCollection(chemoDetails, ui, "id", "medication", "dose", "route",
+		    "dosingUnit", "comment", "tag", "program");
+		//		return SimpleObject.create("chemoDetails", chemoDetails);
+		return SimpleObject.create("drugs", drugs);
+	}
+	
 }
