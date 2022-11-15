@@ -89,9 +89,10 @@
 		jq('#ul-left-menu').scrollTop(0);
 		jq('#slimScrollDiv').scrollTop(0);
 
-		const data = '[{"title":"General","icon":"bi-gear-fill","childrens":[{"title":"Home","icon":"bi-house-fill","path":"/"},{"title":"About","icon":"bi-info-circle-fill","path":"/about"},{"title":"Contact","icon":"bi-phone-fill","childrens":[{"title":"Facebook","icon":"bi-facebook"},{"title":"Twitter","icon":"bi-twitter"},{"title":"Instagram","icon":"bi-instagram"}]},{"title":"FAQ","icon":"bi-question-circle-fill"}]},{"title":"Account","icon":"bi-info-circle-fill","childrens":[{"title":"Login","path":"/login"},{"title":"Register","path":"/register"},{"title":"Forgot Password","path":"/forgot-password"},{"title":"Reset Password","path":"/reset-password"}]},{"title":"Profile","icon":"bi-person-fill","childrens":[{"title":"Profile","path":"/profile"},{"title":"Settings","childrens":[{"title":"Account","path":"/settings/account"},{"title":"Billing","childrens":[{"title":"Payment","path":"/settings/billing/payment"},{"title":"Subscription","path":"/settings/billing/subscription"}]},{"title":"Notifications","path":"/settings/notifications"}]},{"title":"Logout","path":"/logout"}]},{"title":"Advance","icon":"bi-view-list","childrens":[{"title":"Search","path":"/search"},{"title":"History","path":"/history"}]},{"title":"Support","icon":"bi-question-circle-fill","path":"/support"},{"title":"Report Bug","icon":"bi-bug","path":"/report-bug"}]';
+const data = '[{"title":"General","icon":"bi-gear-fill","childrens":[{"title":"Home","icon":"bi-house-fill","path":"/"},{"title":"About","icon":"bi-info-circle-fill","path":"/about"},{"title":"Contact","icon":"bi-phone-fill","childrens":[{"title":"Facebook","icon":"bi-facebook"},{"title":"Twitter","icon":"bi-twitter"},{"title":"Instagram","icon":"bi-instagram"}]},{"title":"FAQ","icon":"bi-question-circle-fill"}]},{"title":"Account","icon":"bi-info-circle-fill","childrens":[{"title":"Login","path":"/login"},{"title":"Register","path":"/register"},{"title":"Forgot Password","path":"/forgot-password"},{"title":"Reset Password","path":"/reset-password"}]},{"title":"Profile","icon":"bi-person-fill","childrens":[{"title":"Profile","path":"/profile"},{"title":"Settings","childrens":[{"title":"Account","path":"/settings/account"},{"title":"Billing","childrens":[{"title":"Payment","path":"/settings/billing/payment"},{"title":"Subscription","path":"/settings/billing/subscription"}]},{"title":"Notifications","path":"/settings/notifications"}]},{"title":"Logout","path":"/logout"}]},{"title":"Advance","icon":"bi-view-list","childrens":[{"title":"Search","path":"/search"},{"title":"History","path":"/history"}]},{"title":"Support","icon":"bi-question-circle-fill","path":"/support"},{"title":"Report Bug","icon":"bi-bug","path":"/report-bug"}]';
 
-        const parsedData = JSON.parse(data);
+const parsedData = JSON.parse(data);
+let cycleFormed = false;
 
 'use strict';
 
@@ -100,10 +101,14 @@ const e = React.createElement;
 class SideBar extends React.Component{
     constructor(props) {
         super(props);
-        this.state = { open: false };
     }
     render(){
-        return e('div', { className: 'sidebar' },parsedData.map((item,index) => { return e(SideBarItem,{item,key: index})}) )
+      if(parsedData.length > 0){
+        return e('div', { className: 'sidebar' },e('span', {className: "sidebar-header" }, e('i', {className: "icon-stethoscope" }),"  Chemotherapy"),parsedData.map((item,index) => { return e(SideBarItem,{item,key: index})}),e('button', { className: 'bt-side', onClick: () => this.setState({ liked: true })  }, e('i', {className: "icon-plus" }), " Add a Cycle") )
+      }else{
+        return e('div', { className: 'sidebar' },"No current cycles in progress")
+      }
+        
     }
 }
 
@@ -117,7 +122,6 @@ class SideBarItem extends React.Component{
 
     const {item} = this.props;
     if(item.childrens){
-
         const subs = item.childrens.map((item,index) => { return e(SideBarItem,{item,key: index})})
         return e('div', { className: this.state.open ? 'sidebar-item open' : 'sidebar-item'  },
             e('div', { className: 'sidebar-title' },
@@ -137,22 +141,95 @@ class SideBarItem extends React.Component{
     }
 }
 
+class ChemoCycle extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = {
+      premedications:[],
+      chemotherapy:[],
+      summaryNotes:"",
+      outcome:""
+    }
 
-class LikeButton extends React.Component {
+  }
+
+  render(){
+
+    let {cycleItem} = this.props.cycleItem;
+    console.log(cycleItem)
+
+    if(cycleItem){
+      this.state.premedications = cycleItem.premedications;
+      this.state.chemotherapy = cycleItem.premedications;
+      this.state.summaryNotes = cycleItem.summaryNotes;
+      this.state.outcome = cycleItem.outcome;
+    }
+
+
+    return e('div', { className: 'cont' },
+    e('div', { className: 'contItem' },
+      e('div', { className: 'inf' },
+          e('div', { }, "Diagnosis:"),
+          e('div', { }, "Staging: "),
+          e('div', { }, "Grading: "),
+          e('div', { }, "Doctor's notes:"),
+          e('div', { }, "Vitals: ")),
+      e('div', { className: 'inf' },
+          e('div', { }, "Breast Cancer"),
+          e('div', { }, "Stage 2"),
+          e('div', { }, "Grade 3"),
+          e('div', { }, "The patient presents with stage 2 breast cancer and should begin a round of chemotherapy on the CHOP regimen "),
+          e('div', { }, "Vitals: Previously recorded vitals link"))),
+      e('button', { className: 'bt' }, e('i', {className: "icon-plus" }), " Start patient's regimen"));
+    
+    
+  }
+
+}
+
+class MainContainer extends React.Component{
+  constructor(props){
+    super(props);
+  }
+
+  render(){
+    if(parsedData.length > 0){
+      return e('div', { className: 'cont' }, e('p', { className: 'inf' }, "Select a cycle on the left to view the therapy drugs or click on Add Cycle to add a new cycle cycleFormed" + cycleFormed));
+    }else{
+      return e('div', { className: 'cont' },
+      e('div', { className: 'contItem' },
+        e('div', { className: 'inf' },
+            e('div', { }, "Diagnosis:"),
+            e('div', { }, "Staging: "),
+            e('div', { }, "Grading: "),
+            e('div', { }, "Doctor's notes:"),
+            e('div', { }, "Vitals: ")),
+        e('div', { className: 'inf' },
+            e('div', { }, "Breast Cancer"),
+            e('div', { }, "Stage 2"),
+            e('div', { }, "Grade 3"),
+            e('div', { }, "The patient presents with stage 2 breast cancer and should begin a round of chemotherapy on the CHOP regimen "),
+            e('div', { }, "Vitals: Previously recorded vitals link"))),
+        e('button', { className: 'bt' }, e('i', {className: "icon-plus" }), " Start patient's regimen"));
+    }
+    
+  }
+}
+
+
+class ChemoContainer extends React.Component {
     constructor(props) {
         super(props);
     }
 
     render() {
-        return e('div',{ className: 'man' },
-        e(SideBar), e('div', { className: 'cont' }, e('h1', { className: 'tit' }, "My React App"), e('p', { className: 'inf' }, "Select a cycle on the left to view the therapy drugs"), e('button', { className: 'bt' }, "Explore Now")),
-        );
+        return e('div',{ className: 'man' },e(SideBar), e(MainContainer));
     }
 }
 
-        const domContainer = document.querySelector('#like_button_container');
-        const root = ReactDOM.createRoot(domContainer);
-        root.render(e(LikeButton));
+const domContainer = document.querySelector('#like_button_container');
+const root = ReactDOM.createRoot(domContainer);
+root.render(e(ChemoContainer));
 
 	});
 
@@ -201,21 +278,20 @@ class LikeButton extends React.Component {
 <style>
 
 .man{
-
-margin: 0;
-padding: 0;
-box-sizing: border-box;
-height: 100vh;
-display: flex;
-color: #agf;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    height: 70vh;
+    display: flex;
+    color: #agf;
 }
 
 .sidebar{
-width: 260px;
-flex-shrink: 0;
-background-color: rgba(22,22,22,0.4);
-height: 100%;
-overflow: auto;
+    width: 260px;
+    flex-shrink: 0;
+    background-color: rgba(22,22,22,0.4);
+    height: 100%;
+    overflow: auto;
 }
 
 .cont{
@@ -228,6 +304,15 @@ overflow: auto;
   flex-direction: column;
   justify-content: center;
   text-align: center;
+}
+
+.contItem{
+  flex-grow: 1;
+  padding: 2em;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  text-align: left;
 }
 
 .tit{
@@ -250,10 +335,24 @@ font-size: 3em;
   letter-spacing: 1px;
   box-shadow: 0 3px 5px rgba(0, 0, 0, .4);
   font-weight: bold;
-  text-transform: uppercase;
+  text-transform: capitalize;
   border-radius: 3px;
   background-color: rgb(134, 49, 0);
-  color: #fff;
+}
+
+.bt-side{
+    margin: 0 auto;
+    border: none;
+    outline: none;
+    font-size: 1em;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, .4);
+    font-weight: bold;
+    text-transform: capitalize;
+    border-radius: 3px;
+    background-color: rgb(134, 49, 0);
+    position: absolute;
+    left: 4px;
+    bottom: 5px;
 }
 
 
@@ -262,6 +361,16 @@ font-size: 3em;
   display: block;
   transition: background-color .15s;
   border-radius: 5px;
+}
+
+.sidebar-header{
+    padding: .75em 1em;
+    display: block;
+    border-radius: 5px;
+    font-weight: bold;
+    text-transform: capitalize;
+    font-size: 1.4em;
+    justify-content: space-between;
 }
 .sidebar-item:hover{
   background-color: rgba(255, 255, 255, .1);
@@ -344,95 +453,7 @@ font-size: 3em;
 }
 </style>
 
-<div class="onerow">
-	<div id="div-left-menu" style="padding-top: 15px;" class="col15 clear">
-		<ul id="ul-left-menu" class="left-menu">
 
-		<% if (programSummaries.size > 0 ) { %>
-		<% programSummaries.each { summary -> %>
-			<li class="menu-item program-summary" visitid="54" style="border-right:1px solid #ccc; margin-right: 15px; width: 168px; height: 18px;">
-				<input type="hidden" class="encounter-id" value="${summary.encounterId}" >
-				<span class="menu-date">
-					<i class="icon-time"></i>
-					<span id="vistdate">
-						${ui.formatDatetimePretty(summary.visitDate)}
-					</span>
-				</span>
-				<span class="menu-title">
-					<i class="icon-stethoscope"></i>
-					<% if (summary.outcome) { %>
-					${ summary.outcome }
-					<% }  else { %>
-					No Outcome Yet
-					<% } %>
-				</span>
-				<span class="arrow-border"></span>
-				<span class="arrow"></span>
-			</li>
-
-			<% } %>
-		<% }  else { %>
-			<li class="menu-item program-summary"  style="border-right:1px solid #ccc; margin-right: 15px; width: 168px; height: 18px;">
-			<span class="menu-title">
-				<i class="icon-stethoscope"></i>
-				No Current Cycles in Progress
-			</span>
-			<span class="arrow-border"></span>
-			<span class="arrow"></span>
-			</li>
-		<% } %>
-		</ul>
-	</div>
-
-	<div class="col16 dashboard opdRecordsPrintDiv" style="min-width: 78%">
-		<div id="printSection">
-			<div id="person-detail">
-				<h3>PATIENT SUMMARY INFORMATION</h3>
-
-				<label>
-					<span class='status active'></span>
-					Identifier:
-				</label>
-				<span>${patient.getPatientIdentifier()}</span>
-				<br/>
-
-				<label>
-					<span class='status active'></span>
-					Full Names:
-				</label>
-				<span>${patient.givenName} ${patient.familyName} ${patient.middleName?patient.middleName:''}</span>
-				<br/>
-
-				<label>
-					<span class='status active'></span>
-					Age:
-				</label>
-				<span>${patient.age} (${ui.formatDatePretty(patient.birthdate)})</span>
-				<br/>
-
-				<label>
-					<span class='status active'></span>
-					Gender:
-				</label>
-				<span>${gender}</span>
-				<br/>
-			</div>
-
-			<div class="info-section" id="program-detail">
-
-			</div>
-
-			<div class="info-sections" id="chemo-detail" style="margin: 0px 10px 0px 5px;">
-
-			</div>
-		</div>
-
-		<button id="opdRecordsPrintButton" class="task" style="float: right; margin: 10px;">
-			<i class="icon-print small"></i>
-			Print
-		</button>
-	</div>
-</div>
 
 <div class="main-content" style="border-top: 1px none #ccc;">
 	<div id=""></div>
