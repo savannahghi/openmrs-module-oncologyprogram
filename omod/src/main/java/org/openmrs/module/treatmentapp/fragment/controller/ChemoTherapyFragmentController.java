@@ -2,11 +2,14 @@ package org.openmrs.module.treatmentapp.fragment.controller;
 
 import org.openmrs.*;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.hospitalcore.InventoryCommonService;
 import org.openmrs.module.hospitalcore.PatientDashboardService;
+import org.openmrs.module.hospitalcore.model.Cycle;
+import org.openmrs.module.hospitalcore.model.PatientRegimen;
+import org.openmrs.module.hospitalcore.model.Regimen;
 import org.openmrs.module.treatmentapp.EhrMchMetadata;
 import org.openmrs.module.treatmentapp.api.MchService;
 import org.openmrs.module.treatmentapp.model.VisitSummary;
-import org.openmrs.module.treatmentapp.model.PatientRegimen;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
@@ -31,17 +34,6 @@ public class ChemoTherapyFragmentController {
 		
 		PatientDashboardService dashboardService = Context.getService(PatientDashboardService.class);
 		Patient patient = Context.getPatientService().getPatient(patientId);
-		
-		//		TODO - Create these
-		/*
-		PatientRegimenService patientRegimenService = Context.getService(PatientRegimenService.class);
-		//getRegimens takes a mandatory patient, and optional regimen type and tag
-		List<PatientRegimen> patientRegimens = patientRegimenService.getRegimens(patient,regimen,tag,cycleId);
-
-		List<RegimenType> regimenTypes = patientRegimenService.getRegimenTypes(voided:false); //voided = true/false
-
-
-		 */
 		
 		MchService mchService = Context.getService(MchService.class);
 		EncounterType mchEncType = null;
@@ -82,27 +74,23 @@ public class ChemoTherapyFragmentController {
 			}
 		}
 		model.addAttribute("patient", patient);
+		
 		model.addAttribute("programSummaries", visitSummaries);
-		//		model.addAttribute("programSummaries", patientRegimens);
-		//		model.addAttribute("regimens", regimenTypes);
+		// model.addAttribute("programSummaries", patientRegimens);
+		// model.addAttribute("regimens", regimenTypes);
 	}
 	
-	//	public SimpleObject getProgramSummaryDetails(@RequestParam("cycleId") Integer cycle, UiUtils ui) {
-	public SimpleObject getProgramSummaryDetails(@RequestParam("encounterId") Integer encounterId, UiUtils ui) {
+	public SimpleObject getChemotherapyCycleDetails(@RequestParam("id") Integer cycleId, UiUtils ui) {
 		
-		List<PatientRegimen> chemoDetails = new ArrayList<PatientRegimen>();
-		// TODO - Create these
-		/*
-		PatientRegimenService patientRegimenService = Context.getService(PatientRegimenService.class);
+		List<PatientRegimen> chemoDetails;
+		
+		InventoryCommonService patientRegimenService = Context.getService(InventoryCommonService.class);
 		//getRegimens takes a mandatory patient, and optional regimen type and tag
-		List<PatientRegimen> patientRegimens = patientRegimenService.getRegimens(patient,regimen,tag,cycle);
-
-		 */
-		chemoDetails.add(new PatientRegimen(1, "Sodium Chloride", "750 ml", "Oral", "Vial", "Before Meals",
-		        "Pre Medication", "CHOP Protocol Cycles"));
-		List<SimpleObject> drugs = SimpleObject.fromCollection(chemoDetails, ui, "id", "medication", "dose", "route",
-		    "dosingUnit", "comment", "tag", "program");
-		//		return SimpleObject.create("chemoDetails", chemoDetails);
+		
+		Cycle cycle = patientRegimenService.getCycleById(cycleId);
+		chemoDetails = patientRegimenService.getPatientRegimen(null, cycle, false);
+		List<SimpleObject> drugs = SimpleObject.fromCollection(chemoDetails, ui, "id", "drugId.name", "dose", "route",
+		    "unit.name", "comment", "tag");
 		return SimpleObject.create("drugs", drugs);
 	}
 	
@@ -111,16 +99,17 @@ public class ChemoTherapyFragmentController {
 		List<PatientRegimen> chemoDetails = new ArrayList<PatientRegimen>();
 		// TODO - Create these
 		/*
-		PatientRegimenService patientRegimenService = Context.getService(PatientRegimenService.class);
-		//getRegimens takes a mandatory patient, and optional regimen type and tag
-		List<PatientRegimen> patientRegimens = patientRegimenService.getRegimens(patient,regimen,tag,cycle);
-
+		 * PatientRegimenService patientRegimenService =
+		 * Context.getService(PatientRegimenService.class);
+		 * //getRegimens takes a mandatory patient, and optional regimen type and tag
+		 * List<PatientRegimen> patientRegimens =
+		 * patientRegimenService.getRegimens(patient,regimen,tag,cycle);
+		 *
 		 */
-		chemoDetails.add(new PatientRegimen(1, "Sodium Chloride", "750 ml", "Oral", "Vial", "Before Meals",
-		        "Pre Medication", "CHOP Protocol Cycles"));
+		
 		List<SimpleObject> drugs = SimpleObject.fromCollection(chemoDetails, ui, "id", "medication", "dose", "route",
 		    "dosingUnit", "comment", "tag", "program");
-		//		return SimpleObject.create("chemoDetails", chemoDetails);
+		// return SimpleObject.create("chemoDetails", chemoDetails);
 		return SimpleObject.create("drugs", drugs);
 	}
 	
@@ -129,16 +118,17 @@ public class ChemoTherapyFragmentController {
 		List<PatientRegimen> chemoDetails = new ArrayList<PatientRegimen>();
 		// TODO - Create these
 		/*
-		PatientRegimenService patientRegimenService = Context.getService(PatientRegimenService.class);
-		//getRegimens takes a mandatory patient, and optional regimen type and tag
-		List<PatientRegimen> patientRegimens = patientRegimenService.getRegimens(patient,regimen,tag,cycle);
-
+		 * PatientRegimenService patientRegimenService =
+		 * Context.getService(PatientRegimenService.class);
+		 * //getRegimens takes a mandatory patient, and optional regimen type and tag
+		 * List<PatientRegimen> patientRegimens =
+		 * patientRegimenService.getRegimens(patient,regimen,tag,cycle);
+		 *
 		 */
-		chemoDetails.add(new PatientRegimen(1, "Sodium Chloride", "750 ml", "Oral", "Vial", "Before Meals",
-		        "Pre Medication", "CHOP Protocol Cycles"));
+		
 		List<SimpleObject> drugs = SimpleObject.fromCollection(chemoDetails, ui, "id", "medication", "dose", "route",
 		    "dosingUnit", "comment", "tag", "program");
-		//		return SimpleObject.create("chemoDetails", chemoDetails);
+		// return SimpleObject.create("chemoDetails", chemoDetails);
 		return SimpleObject.create("drugs", drugs);
 	}
 	

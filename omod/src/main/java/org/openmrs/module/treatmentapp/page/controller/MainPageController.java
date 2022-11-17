@@ -6,14 +6,19 @@ import org.openmrs.PatientProgram;
 import org.openmrs.Program;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.hospitalcore.HospitalCoreService;
+import org.openmrs.module.hospitalcore.InventoryCommonService;
 import org.openmrs.module.hospitalcore.PatientQueueService;
+import org.openmrs.module.hospitalcore.model.Cycle;
 import org.openmrs.module.hospitalcore.model.OpdPatientQueue;
 import org.openmrs.module.hospitalcore.model.PatientSearch;
+import org.openmrs.module.hospitalcore.model.Regimen;
 import org.openmrs.module.treatmentapp.EhrMchMetadata;
 import org.openmrs.module.treatmentapp.api.ListItem;
 import org.openmrs.module.treatmentapp.api.MchService;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.page.PageModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
@@ -28,8 +33,19 @@ public class MainPageController {
 	
 	private static final int MAX_ANC_PNC_DURATION = 9;
 	
+	protected Logger logger = LoggerFactory.getLogger(getClass());
+	
 	public String get(@RequestParam("patientId") Patient patient, @RequestParam(value = "queueId") Integer queueId,
 	        PageModel model, UiUtils uiUtils) {
+		
+		InventoryCommonService inventoryCommonService = Context.getService(InventoryCommonService.class);
+		List<Regimen> regimens = inventoryCommonService.getRegimens(false);
+		List<Cycle> patientCycles = inventoryCommonService.getCycle(patient, false);
+		
+		//		TODO Playground
+		
+		model.addAttribute("regimens", regimens);
+		model.addAttribute("patientCycles", patientCycles);
 		
 		MchService mchService = Context.getService(MchService.class);
 		model.addAttribute("patient", patient);
@@ -51,44 +67,49 @@ public class MainPageController {
 		
 		Program program = null;
 		Calendar minEnrollmentDate = Calendar.getInstance();
-		List<ListItem> possibleProgramOutcomes = new ArrayList<ListItem>();
+		List<ListItem> possibleProgramOutcomes;
 		Collection<ConceptAnswer> cwcFollowUps = new ArrayList<ConceptAnswer>();
 		PatientQueueService queueService = Context.getService(PatientQueueService.class);
 		OpdPatientQueue patientQueue = queueService.getOpdPatientQueueById(queueId);
-		String opdConcept = patientQueue.getOpdConceptName();
 		
+		String opdConcept = null;
 		if (patientQueue != null) {
+			opdConcept = patientQueue.getOpdConceptName();
 			model.addAttribute("opdConcept", opdConcept); //MCH IMMUNIZATION or MCH CLINIC
-		}
-		
-		if (opdConcept.equalsIgnoreCase("FAMILY PLANNING CLINIC")) {
-			return "redirect:" + uiUtils.pageLink("fpapp", "main") + "?patientId=" + patient.getPatientId() + "&queueId="
-			        + queueId;
-		} else if (enrolledInANC) {
-			model.addAttribute("title", "ANC Clinic");
-			minEnrollmentDate.add(Calendar.MONTH, -MAX_ANC_PNC_DURATION);
-			program = Context.getProgramWorkflowService().getProgramByUuid(EhrMchMetadata._MchProgram.ANC_PROGRAM);
-			possibleProgramOutcomes = mchService.getPossibleOutcomes(program.getProgramId());
-		} else if (enrolledInPNC) {
-			model.addAttribute("title", "PNC Clinic");
-			minEnrollmentDate.add(Calendar.MONTH, -MAX_ANC_PNC_DURATION);
-			program = Context.getProgramWorkflowService().getProgramByUuid(EhrMchMetadata._MchProgram.PNC_PROGRAM);
-			possibleProgramOutcomes = mchService.getPossibleOutcomes(program.getProgramId());
-		} else if (enrolledInCWC) {
-			if (opdConcept.equalsIgnoreCase("MCH CLINIC")) {
-				model.addAttribute("title", "CWC Clinic");
-			} else if (opdConcept.equalsIgnoreCase("MCH IMMUNIZATION")) {
-				model.addAttribute("title", "CWC IMMUNIZATION");
-			}
 			
-			program = Context.getProgramWorkflowService().getProgramByUuid(EhrMchMetadata._MchProgram.CWC_PROGRAM);
-			minEnrollmentDate.add(Calendar.YEAR, -MAX_CWC_DURATION);
-			possibleProgramOutcomes = mchService.getPossibleOutcomes(program.getProgramId());
-			//cwcFollowUps = Context.getConceptService().getConceptByName("CWC FOLLOW UP").getAnswers();
-			model.addAttribute("cwcFollowUpList", cwcFollowUps);
+			if (opdConcept.equalsIgnoreCase("FAMILY PLANNING CLINIC")) {
+				return "redirect:" + uiUtils.pageLink("fpapp", "main") + "?patientId=" + patient.getPatientId()
+				        + "&queueId=" + queueId;
+			} else if (enrolledInANC) {
+				model.addAttribute("title", "ANC Clinic");
+				minEnrollmentDate.add(Calendar.MONTH, -MAX_ANC_PNC_DURATION);
+				program = Context.getProgramWorkflowService().getProgramByUuid(EhrMchMetadata._MchProgram.ANC_PROGRAM);
+				possibleProgramOutcomes = mchService.getPossibleOutcomes(program.getProgramId());
+			} else if (enrolledInPNC) {
+				model.addAttribute("title", "PNC Clinic");
+				minEnrollmentDate.add(Calendar.MONTH, -MAX_ANC_PNC_DURATION);
+				program = Context.getProgramWorkflowService().getProgramByUuid(EhrMchMetadata._MchProgram.PNC_PROGRAM);
+				possibleProgramOutcomes = mchService.getPossibleOutcomes(program.getProgramId());
+			} else if (enrolledInCWC) {
+				if (opdConcept.equalsIgnoreCase("MCH CLINIC")) {
+					model.addAttribute("title", "CWC Clinic");
+				} else if (opdConcept.equalsIgnoreCase("MCH IMMUNIZATION")) {
+					model.addAttribute("title", "CWC IMMUNIZATION");
+				}
+				
+				program = Context.getProgramWorkflowService().getProgramByUuid(EhrMchMetadata._MchProgram.CWC_PROGRAM);
+				minEnrollmentDate.add(Calendar.YEAR, -MAX_CWC_DURATION);
+				possibleProgramOutcomes = mchService.getPossibleOutcomes(program.getProgramId());
+				model.addAttribute("possibleProgramOutcomes", possibleProgramOutcomes);
+				
+				//cwcFollowUps = Context.getConceptService().getConceptByName("CWC FOLLOW UP").getAnswers();
+				model.addAttribute("cwcFollowUpList", cwcFollowUps);
+			} else {
+				return "redirect:" + uiUtils.pageLink("treatmentapp", "enroll") + "?patientId=" + patient.getPatientId()
+				        + "&queueId=" + queueId;
+			}
 		} else {
-			return "redirect:" + uiUtils.pageLink("treatmentapp", "enroll") + "?patientId=" + patient.getPatientId()
-			        + "&queueId=" + queueId;
+			logger.error("No patient queue with stated ID");
 		}
 		
 		//        TODO modify code to ensure that the last program enrolled is pulled
@@ -107,7 +128,6 @@ public class MainPageController {
 		}
 		
 		model.addAttribute("patientProgram", patientProgram);
-		model.addAttribute("possibleProgramOutcomes", possibleProgramOutcomes);
 		
 		HospitalCoreService hospitalCoreService = Context.getService(HospitalCoreService.class);
 		PatientSearch patientSearch = hospitalCoreService.getPatientByPatientId(patient.getPatientId());
