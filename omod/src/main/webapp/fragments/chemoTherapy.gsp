@@ -8,12 +8,8 @@
 <script>
 
     jq(function(){
-      const data = {"drugs": [{"name":"CHOP Protocol", "icon":"icon-hospital", "cycles":[{"id": 1,"name":"cycle 1 of 6", "icon":"icon-stethoscope"},{"id": 2,"name":"cycle 2 of 6", "icon":"icon-stethoscope"}] },{"name":"ACT Protocol", "icon":"icon-medkit"}]}
-      // const data = {"drugs": []}
-
-		console.log("============XXXX+++++++++");
-		console.log('${regimens}');
-		console.log('${patientCycles}');
+      const data = ${patientCycles};
+	  console.log('${patientCycles}');
 
       if(data.drugs.length > 0){
         // Populate side bar

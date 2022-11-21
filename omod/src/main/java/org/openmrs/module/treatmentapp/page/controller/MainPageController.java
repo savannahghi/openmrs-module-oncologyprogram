@@ -1,20 +1,15 @@
 package org.openmrs.module.treatmentapp.page.controller;
 
-import org.openmrs.ConceptAnswer;
-import org.openmrs.Patient;
-import org.openmrs.PatientProgram;
-import org.openmrs.Program;
+import org.openmrs.*;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.hospitalcore.HospitalCoreService;
 import org.openmrs.module.hospitalcore.InventoryCommonService;
 import org.openmrs.module.hospitalcore.PatientQueueService;
-import org.openmrs.module.hospitalcore.model.Cycle;
-import org.openmrs.module.hospitalcore.model.OpdPatientQueue;
-import org.openmrs.module.hospitalcore.model.PatientSearch;
-import org.openmrs.module.hospitalcore.model.Regimen;
+import org.openmrs.module.hospitalcore.model.*;
 import org.openmrs.module.treatmentapp.EhrMchMetadata;
 import org.openmrs.module.treatmentapp.api.ListItem;
 import org.openmrs.module.treatmentapp.api.MchService;
+import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.page.PageModel;
 import org.slf4j.Logger;
@@ -39,13 +34,21 @@ public class MainPageController {
 	        PageModel model, UiUtils uiUtils) {
 		
 		InventoryCommonService inventoryCommonService = Context.getService(InventoryCommonService.class);
-		List<Regimen> regimens = inventoryCommonService.getRegimens(false);
-		List<Cycle> patientCycles = inventoryCommonService.getCycle(patient, false);
+		List<Regimen> regimens = inventoryCommonService.getRegimens(patient, null, false);
+
+		List<SimpleObject> chemoProfile = new ArrayList<SimpleObject>();
+		for (Regimen regimen : regimens) {
+			SimpleObject profileInfo = new SimpleObject();
+			profileInfo.put("name", regimen.getRegimenType().getName());
+			profileInfo.put("icon", "icon-hospital");
+			profileInfo.put("cycles", SimpleObject.fromCollection(regimen.getCycles(), uiUtils, "id", "name", "icon"));
+			chemoProfile.add(profileInfo);
+		}
 		
-		//		TODO Playground
+		String details = SimpleObject.create("drugs", chemoProfile).toJson();
 		
 		model.addAttribute("regimens", regimens);
-		model.addAttribute("patientCycles", patientCycles);
+		model.addAttribute("patientCycles", details);
 		
 		MchService mchService = Context.getService(MchService.class);
 		model.addAttribute("patient", patient);
@@ -143,5 +146,38 @@ public class MainPageController {
 		model.addAttribute("date", new Date());
 		
 		return null;
+	}
+	
+	class ChemoWrapper {
+		
+		String name;
+		
+		String icon;
+		
+		List<PatientRegimen> cycles;
+		
+		public String getName() {
+			return name;
+		}
+		
+		public void setName(String name) {
+			this.name = name;
+		}
+		
+		public String getIcon() {
+			return icon;
+		}
+		
+		public void setIcon(String icon) {
+			this.icon = icon;
+		}
+		
+		public List<PatientRegimen> getCycles() {
+			return cycles;
+		}
+		
+		public void setCycles(List<PatientRegimen> cycles) {
+			this.cycles = cycles;
+		}
 	}
 }
