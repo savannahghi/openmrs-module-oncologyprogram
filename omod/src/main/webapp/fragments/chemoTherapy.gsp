@@ -7,7 +7,16 @@
 
 <script>
 
-    jq(function(){
+function toggleCssClass(e){
+  e.parentNode.parentNode.classList.toggle("open");
+}
+
+    function processClick(e){
+      handleClicks();
+    }
+
+     jq(function () {
+      //const data = {"drugs": [{"name":"CHOP Protocol", "icon":"icon-hospital", "cycles":[{"id": 1,"name":"cycle 1 of 6", "icon":"icon-stethoscope"},{"id": 2,"name":"cycle 2 of 6", "icon":"icon-stethoscope"}] },{"name":"ACT Protocol", "icon":"icon-medkit"}]}
       const data = ${patientCycles};
 	  console.log('${patientCycles}');
 
@@ -40,26 +49,62 @@
           jq.getJSON('${ ui.actionLink("treatmentapp", "chemoTherapy" ,"getChemotherapyCycleDetails") }',
               { 'id' : cycleId }
           ).success(function (data) {
-
-            if (data.drugs.length > 0) {
+              console.log(data);
               var chemoTemplate =  _.template(jq("#chemo-template").html());
               jq("#defaultContainer").html(chemoTemplate(data));
-            }
-            else {
-              var chemoTemplate =  _.template(jq("#default-template").html());
-              jq("#defaultContainer").html(chemoTemplate(data));
-            }
-
-            jq("#opdRecordsPrintButton").show(100);
           })
+          .fail(function() { console.log("error occurred while fetching cycle details"); })
+          .always(function() { console.log("Completed fetching cycle details"); });
+        });
+
+
+        function handleClicks(){
+          console.log("Another Approach to it");
+        }
+
+        var adddrugdialog = emr.setupConfirmationDialog({
+            dialogOpts: {
+                overlayClose: false,
+                close: true
+            },
+            selector: '#prescription-dialog',
+            actions: {
+                confirm: function () {
+                    if (!drugDialogVerified()) {
+                        jq().toastmessage('showErrorToast', 'Ensure fields marked in red have been properly filled before you continue')
+                        return false;
+                    }
+
+                    addDrug();
+                    jq("#drugForm")[0].reset();
+                    jq('select option[value!="0"]', '#drugForm').remove();
+                    adddrugdialog.close();
+                },
+                cancel: function () {
+                    jq("#drugForm")[0].reset();
+                    jq('select option[value!="0"]', '#drugForm').remove();
+                    adddrugdialog.close();
+                }
+            }
+        });
+
+        jq("#test").on("click", function (e) {
+            console.log()
         });
 
     });
 
-
-function toggleCssClass(e){
-  e.parentNode.parentNode.classList.toggle("open");
+    function openForm() {
+  document.getElementById("myForm").style.display = "block";
 }
+
+function closeForm() {
+  document.getElementById("myForm").style.display = "none";
+}
+
+
+
+
 
 </script>
 
@@ -101,6 +146,21 @@ function toggleCssClass(e){
   flex-direction: row;
   justify-content: center;
   text-align: left;
+}
+
+.chemoItem{
+  flex-grow: 1;
+  /* padding: 2em; */
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  text-align: left;
+      padding: .75em 1em;
+    display: block;
+    font-weight: bold;
+    text-transform: capitalize;
+    font-size: 1.4em;
+    justify-content: space-between;
 }
 
 .tit{
@@ -163,6 +223,10 @@ font-size: 3em;
 .sidebar-item:hover{
   background-color: rgba(255, 255, 255, .1);
 }
+.add-drug:hover{
+  background-color: rgba(255, 255, 255, .1);
+  cursor: pointer;
+}
 
 
 .sidebar-item.selected{
@@ -207,6 +271,15 @@ font-size: 3em;
   width: 1.7em;
 }
 
+.form-popup {
+  background: gray;
+  position: absolute;
+  float: left;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
 </style>
 
 <div class = "man">
@@ -216,6 +289,71 @@ font-size: 3em;
   <div id = "defaultContainer" class = "cont">
 
   </div>
+</div>
+
+<div class="form-popup" id="myForm">
+  <form class="form-container">
+    <h1>Login</h1>
+
+    <label for="email"><b>Email</b></label>
+    <input type="text" placeholder="Enter Email" name="email" required>
+
+    <label for="psw"><b>Password</b></label>
+    <input type="password" placeholder="Enter Password" name="psw" required>
+
+    <button type="submit" class="btn">Login</button>
+    <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
+  </form>
+</div>
+
+<div id="prescription-dialog" class="dialog" style="display:none;">
+    <div class="dialog-header">
+        <i class="icon-folder-open"></i>
+
+        <h3>Prescription</h3>
+    </div>
+
+    <div class="dialog-content">
+        <form id="drugForm">
+            <ul>
+                <li>
+                    <label>Drug</label>
+                    <input class="drug-name" id="drugName" type="text">
+                </li>
+                <li>
+                    <label>Dosage<span class="important">*<span></label>
+                    <input type="text" id="drugDosage" style="width: 60px !important;">
+                    <select id="drugUnitsSelect" style="width: 174px !important;">
+                        <option value="0">Select Unit</option>
+                    </select>
+                </li>
+
+                <li>
+                    <label>Formulation</label>
+                    <select id="formulationsSelect">
+                        <option value="0">Select Formulation</option>
+                    </select>
+                </li>
+                <li>
+                    <label>Frequency</label>
+                    <select id="frequencysSelect">
+                        <option value="0">Select Frequency</option>
+                    </select>
+                </li>
+
+                <li>
+                    <label>Number of Days<span class="important">*<span></label>
+                    <input id="numberOfDays" type="text">
+                </li>
+                <li>
+                    <label>Comment</label>
+                    <textarea id="comment"></textarea>
+                </li>
+            </ul>
+            <label class="button confirm" style="float: right; width: auto!important;">Confirm</label>
+            <label class="button cancel" style="width: auto!important;">Cancel</label>
+        </form>
+    </div>
 </div>
 
 
@@ -281,7 +419,7 @@ font-size: 3em;
             <div>Vitals: Previously recorded vitals link</div>
         </div>
     </div>
-    <div><button id = "bt_start_regimen" class = "bt"><i class="icon-plus"></i>Start patient's regimen</button></div>
+    <div><button id = "bt_start_regimen" class = "bt" onclick = "openForm()"><i class="icon-plus"></i>Start patient's regimen</button></div>
 </script>
 
 <script id="landing-chemo-template" type="text/template">
@@ -289,70 +427,74 @@ font-size: 3em;
 </script>
 
 <script id="chemo-template" type="text/template">
-    <div class="info-header">
-      <i class="icon-medicine"></i>
-      <h3>DRUGS PRESCRIPTION SUMMARY INFORMATION</h3>
+    <div class="chemoItem">
+      <span class = "sidebar-title">
+          <span id="test"><i class="icon-medicine"></i>  Pre-Medication </span>
+          <i class="icon-plus add-drug" title="Add a pre-medication" onclick = "processClick()"></i>
+      </span>
+        <table id="preMedList">
+          <thead>
+            <tr style="border-bottom: 1px solid #eee;">
+              <th>#</th>
+              <th>Medication</th>
+              <th>Dosage</th>
+              <th>Route</th>
+              <th>Dosing Unit</th>
+              <th>Comment</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{ _.each(cycleDrugs, function(drug, index) { }}
+              {{ if(drug?.tag === "pre-medication"){ }}
+                <tr style="border: 1px solid #eee;">
+                  <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{=index+1}}</td>
+                  <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.medication}}</td>
+                  <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.dose}}</td>
+                  <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.route}}</td>
+                  <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.dosingUnit}}</td>
+                  <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.comment}}</td>
+                  <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;"><a><i id="stockOutList" class="icon-edit link" title="Edit Drug"></i></a>&nbsp;&nbsp;&nbsp;<a><i class="icon-trash link" title="Delete Drug"></i></a></td>
+                </tr>
+              {{ } }}
+            {{ }); }}
+          </tbody>
+      </table>
     </div>
 
-    <table id="preMedList">
-      <thead>
-        <tr style="border-bottom: 1px solid #eee;">
-          <th>#</th>
-          <th>Medication</th>
-          <th>Dosage</th>
-          <th>Route</th>
-          <th>Dosing Unit</th>
-          <th>Comment</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        {{ _.each(drugs, function(drug, index) { }}
-        <tr style="border: 1px solid #eee;">
-          <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{=index+1}}</td>
-          <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.medication}}</td>
-          <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.dose}}</td>
-          <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.route}}</td>
-          <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.dosingUnit}}</td>
-          <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.comment}}</td>
-          <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;"><a><i id="stockOutList" class="icon-edit link" title="Edit Drug"></i></a>&nbsp;&nbsp;&nbsp;<a><i class="icon-trash link" title="Delete Drug"></i></a></td>
-        </tr>
-        {{ }); }}
-      </tbody>
-  </table>
-
-
-    <div class="info-header">
-      <i class="icon-medicine"></i>
-      <h3>DRUGS PRESCRIPTION SUMMARY INFORMATION</h3>
+    <div class="chemoItem">
+      <span class = "sidebar-title">
+          <span><i class="icon-stethoscope"></i>  Chemotherapy</span>
+          <i class="icon-plus add-drug" title="Add a chemotherapy drug"></i>
+      </span>
+        <table id="chemoList">
+          <thead>
+            <tr style="border-bottom: 1px solid #eee;">
+              <th>#</th>
+              <th>Medication</th>
+              <th>Dosage</th>
+              <th>Route</th>
+              <th>Dosing Unit</th>
+              <th>Comment</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{ _.each(cycleDrugs, function(drug, index) { }}
+              {{ if(drug?.tag === "chemotherapy"){ }}
+                <tr style="border: 1px solid #eee;">
+                  <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{=index+1}}</td>
+                  <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.medication}}</td>
+                  <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.dose}}</td>
+                  <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.route}}</td>
+                  <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.dosingUnit}}</td>
+                  <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.comment}}</td>
+                  <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;"><a><i id="stockOutList" class="icon-edit link" title="Edit Drug"></i></a>&nbsp;&nbsp;&nbsp;<a><i class="icon-trash link" title="Delete Drug"></i></a></td>
+                </tr>
+              {{ } }}
+            {{ }); }}
+          </tbody>
+      </table>
     </div>
-
-    <table id="chemoList">
-      <thead>
-        <tr style="border-bottom: 1px solid #eee;">
-          <th>#</th>
-          <th>Medication</th>
-          <th>Dosage</th>
-          <th>Route</th>
-          <th>Dosing Unit</th>
-          <th>Comment</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        {{ _.each(drugs, function(drug, index) { }}
-        <tr style="border: 1px solid #eee;">
-          <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{=index+1}}</td>
-          <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.medication}}</td>
-          <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.dose}}</td>
-          <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.route}}</td>
-          <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.dosingUnit}}</td>
-          <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.comment}}</td>
-          <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;"><a><i id="stockOutList" class="icon-edit link" title="Edit Drug"></i></a>&nbsp;&nbsp;&nbsp;<a><i class="icon-trash link" title="Delete Drug"></i></a></td>
-        </tr>
-        {{ }); }}
-      </tbody>
-  </table>
-
 </script>
 

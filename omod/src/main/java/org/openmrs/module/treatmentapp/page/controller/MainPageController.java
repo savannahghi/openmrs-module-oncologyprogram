@@ -35,7 +35,7 @@ public class MainPageController {
 		
 		InventoryCommonService inventoryCommonService = Context.getService(InventoryCommonService.class);
 		List<Regimen> regimens = inventoryCommonService.getRegimens(patient, null, false);
-
+		
 		List<SimpleObject> chemoProfile = new ArrayList<SimpleObject>();
 		for (Regimen regimen : regimens) {
 			SimpleObject profileInfo = new SimpleObject();

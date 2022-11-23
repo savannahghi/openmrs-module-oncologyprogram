@@ -89,9 +89,9 @@ public class ChemoTherapyFragmentController {
 		
 		Cycle cycle = patientRegimenService.getCycleById(cycleId);
 		chemoDetails = patientRegimenService.getPatientRegimen(null, cycle, false);
-		List<SimpleObject> drugs = SimpleObject.fromCollection(chemoDetails, ui, "id", "drugId.name", "dose", "route",
-		    "unit.name", "comment", "tag");
-		return SimpleObject.create("drugs", drugs);
+		List<SimpleObject> drugs = SimpleObject.fromCollection(chemoDetails, ui, "id", "medication", "dose", "dosingUnit",
+		    "route", "comment", "tag");
+		return SimpleObject.create("cycleDrugs", drugs);
 	}
 	
 	public SimpleObject updatePatientRegimen(@RequestParam("regimenId") Integer regimenId, UiUtils ui) {
