@@ -109,6 +109,11 @@
 			<groupId>org.openmrs.module</groupId>
 			<artifactId>legacyui-omod</artifactId>
 		</dependency>
+
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>patientdashboardapp-omod</artifactId>
+        </dependency>
 	</dependencies>
 
 

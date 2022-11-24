@@ -6,6 +6,7 @@ import org.openmrs.PatientProgram;
 import org.openmrs.Program;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.hospitalcore.HospitalCoreService;
+import org.openmrs.module.hospitalcore.PatientDashboardService;
 import org.openmrs.module.hospitalcore.PatientQueueService;
 import org.openmrs.module.hospitalcore.model.OpdPatientQueue;
 import org.openmrs.module.hospitalcore.model.PatientSearch;
@@ -13,6 +14,7 @@ import org.openmrs.module.treatmentapp.EhrMchMetadata;
 import org.openmrs.module.treatmentapp.api.ListItem;
 import org.openmrs.module.treatmentapp.api.MchService;
 import org.openmrs.ui.framework.UiUtils;
+import org.openmrs.ui.framework.fragment.FragmentConfiguration;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -29,7 +31,7 @@ public class MainPageController {
 	private static final int MAX_ANC_PNC_DURATION = 9;
 	
 	public String get(@RequestParam("patientId") Patient patient, @RequestParam(value = "queueId") Integer queueId,
-	        PageModel model, UiUtils uiUtils) {
+	        PageModel model, FragmentConfiguration config, UiUtils uiUtils) {
 		
 		MchService mchService = Context.getService(MchService.class);
 		model.addAttribute("patient", patient);
