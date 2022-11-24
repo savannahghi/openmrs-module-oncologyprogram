@@ -20,8 +20,8 @@ public class SurgeryFragmentController {
 	        @RequestParam(value = "physicalExamination", required = false) String physicalExamination) {
 		
 		HospitalCoreService hcs = (HospitalCoreService) Context.getService(HospitalCoreService.class);
-		PatientQueueService ipdService = Context.getService(PatientQueueService.class);
-		OpdPatientQueueLog admitted = ipdService.getOpdPatientQueueLogById(patientId);
+		PatientQueueService surgeryService = Context.getService(PatientQueueService.class);
+		OpdPatientQueueLog admitted = surgeryService.getOpdPatientQueueLogById(patientId);
 		Patient patient = Context.getPatientService().getPatient(patientId);
 		User user = Context.getAuthenticatedUser();
 		Date date = new Date();
