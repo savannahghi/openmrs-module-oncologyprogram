@@ -38,6 +38,7 @@ function toggleCssClass(e){
       }
 
 
+
         jq(".cycle").on("click",  function(){
           jq("#defaultContainer").html('<i class=\"icon-spinner icon-spin icon-2x pull-left\"></i> <span style="float: left; margin-top: 12px;">Loading...</span>');
           var chemoDetail = jq(this);
@@ -92,15 +93,36 @@ function toggleCssClass(e){
             console.log()
         });
 
+        console.log("=======================");
+        console.log(${patient.patientId});
+
     });
 
     function openForm() {
-  document.getElementById("myForm").style.display = "block";
-}
+      document.getElementById("myForm").style.display = "block";
+    }
 
-function closeForm() {
-  document.getElementById("myForm").style.display = "none";
-}
+    function closeForm() {
+      document.getElementById("myForm").style.display = "none";
+    }
+
+    function submitForm(){
+        const regimen = document.getElementById("regimen").value;
+        const cycle = document.getElementById("cycle").value;
+        const days = document.getElementById("days").value;
+        document.getElementById("myForm").style.display = "none";
+        jq("#defaultContainer").html('<i class=\"icon-spinner icon-spin icon-2x pull-left\"></i> <span style="float: left; margin-top: 12px;">Loading...</span>');
+        jq.getJSON('${ ui.actionLink("treatmentapp", "chemoTherapy" ,"createPatientRegimen") }',
+              { 'patientId':${patient.patientId},'regimenId' : regimen,'cycle':cycle,'days':days }
+          ).success(function (data) {
+              console.log(data);
+              location.reload();
+              //var chemoTemplate =  _.template(jq("#chemo-template").html());
+              //jq("#defaultContainer").html(chemoTemplate(data));
+          })
+          .fail(function() { console.log("error occurred registering patient regimen"); })
+          .always(function() { console.log("Completed fetching request"); });
+    }
 
 
 
@@ -280,6 +302,13 @@ font-size: 3em;
   transform: translate(-50%, -50%);
 }
 
+.form-container {
+  max-width: 300px;
+  padding: 10px;
+  background-color: white;
+}
+
+
 </style>
 
 <div class = "man">
@@ -291,18 +320,37 @@ font-size: 3em;
   </div>
 </div>
 
-<div class="form-popup" id="myForm">
+<div class="form-popup" id="myForm" style = "display:none">
+
   <form class="form-container">
-    <h1>Login</h1>
+    <h3 align = "center">Regimen</h3>
+    <label for="regimen"><b>Regimen</b></label>
+    <select name="regimen" id="regimen" required>
+        <option value=""></option>
+        <option value="1">ACT Protocol</option>
+        <option value="2">CHOP Protocol</option>
+    </select>
 
-    <label for="email"><b>Email</b></label>
-    <input type="text" placeholder="Enter Email" name="email" required>
+    <label for="cycle"><b>Cycle</b></label>
+    <select name="cycle" id="cycle" required>
+        <option value=""></option>
+        <option value="1">Cycle 1 of 6</option>
+        <option value="2">Cycle 2 of 6</option>
+    </select>
 
-    <label for="psw"><b>Password</b></label>
-    <input type="password" placeholder="Enter Password" name="psw" required>
+    <label for="days"><b>Days</b></label>
+    <select name="days" id="days" required>
+        <option value=""></option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+    </select>
 
-    <button type="submit" class="btn">Login</button>
-    <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
+    <button type="submit" class="button confirm" style="float: right; width: auto!important;" onclick="submitForm()">Confirm</button>
+    <button type="button" class="button cancel" onclick="closeForm()" style="width: auto!important;">Cancel</button>
   </form>
 </div>
 

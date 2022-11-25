@@ -7,6 +7,7 @@ import org.openmrs.module.hospitalcore.PatientDashboardService;
 import org.openmrs.module.hospitalcore.model.Cycle;
 import org.openmrs.module.hospitalcore.model.PatientRegimen;
 import org.openmrs.module.hospitalcore.model.Regimen;
+import org.openmrs.module.hospitalcore.model.RegimenType;
 import org.openmrs.module.treatmentapp.EhrMchMetadata;
 import org.openmrs.module.treatmentapp.api.MchService;
 import org.openmrs.module.treatmentapp.model.VisitSummary;
@@ -19,7 +20,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Chemotherapy Workflow
@@ -111,6 +114,32 @@ public class ChemoTherapyFragmentController {
 		    "dosingUnit", "comment", "tag", "program");
 		// return SimpleObject.create("chemoDetails", chemoDetails);
 		return SimpleObject.create("drugs", drugs);
+	}
+	
+	public SimpleObject createPatientRegimen(@RequestParam("patientId") Patient patient,
+	        @RequestParam("regimenId") Integer regimenId, @RequestParam("cycle") Integer cycle,
+	        @RequestParam("days") Integer days, UiUtils ui) {
+		
+		InventoryCommonService patientRegimenService = Context.getService(InventoryCommonService.class);
+		Regimen regimen = new Regimen();
+		
+		RegimenType regimenType = patientRegimenService.getRegimenTypeById(regimenId);
+		regimen.setPatient(patient);
+		regimen.setRegimenType(regimenType);
+		
+		//		For an initiation, automatically create a default cycle
+		Cycle regimenCycle = new Cycle();
+		regimenCycle.setName("Cycle 1 of " + regimenType.getCycles());
+		regimenCycle.setActive(true);
+		regimenCycle.setVoided(false);
+		
+		Set<Cycle> cycles = new HashSet<Cycle>();
+		cycles.add(regimenCycle);
+		
+		regimen.setCycles(cycles);
+		
+		Regimen createdRegimen = patientRegimenService.createRegimen(regimen);
+		return SimpleObject.create("status", "success");
 	}
 	
 	public SimpleObject deletePatientRegimen(@RequestParam("regimenId") Integer regimenId, UiUtils ui) {
