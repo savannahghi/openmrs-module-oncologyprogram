@@ -19,146 +19,164 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Chemotherapy Workflow
  */
 public class ChemoTherapyFragmentController {
-	
-	protected Logger log = LoggerFactory.getLogger(ChemoTherapyFragmentController.class);
-	
-	public void controller(FragmentConfiguration config, FragmentModel model) {
-		config.require("patientId");
-		Integer patientId = Integer.parseInt(config.get("patientId").toString());
-		
-		PatientDashboardService dashboardService = Context.getService(PatientDashboardService.class);
-		Patient patient = Context.getPatientService().getPatient(patientId);
-		
-		MchService mchService = Context.getService(MchService.class);
-		EncounterType mchEncType = null;
-		
-		if (mchService.enrolledInANC(patient)) {
-			mchEncType = Context.getEncounterService().getEncounterTypeByUuid(
-			    EhrMchMetadata._MchEncounterType.ANC_ENCOUNTER_TYPE);
-		} else if (mchService.enrolledInPNC(patient)) {
-			mchEncType = Context.getEncounterService().getEncounterTypeByUuid(
-			    EhrMchMetadata._MchEncounterType.PNC_ENCOUNTER_TYPE);
-		} else {
-			mchEncType = Context.getEncounterService().getEncounterTypeByUuid(
-			    EhrMchMetadata._MchEncounterType.CWC_ENCOUNTER_TYPE);
-		}
-		
-		List<Encounter> encounters = dashboardService.getEncounter(patient, null, mchEncType, null);
-		
-		List<VisitSummary> visitSummaries = new ArrayList<VisitSummary>();
-		
-		int i = 0;
-		
-		for (Encounter enc : encounters) {
-			VisitSummary visitSummary = new VisitSummary();
-			visitSummary.setVisitDate(enc.getDateCreated());
-			visitSummary.setEncounterId(enc.getEncounterId());
-			Concept outcomeConcept = Context.getConceptService().getConcept("Visit outcome");
-			for (Obs obs : enc.getAllObs()) {
-				if (obs.getConcept().equals(outcomeConcept)) {
-					visitSummary.setOutcome(obs.getValueText());
-				}
-			}
-			visitSummaries.add(visitSummary);
-			
-			i++;
-			
-			if (i >= 20) {
-				break;
-			}
-		}
-		model.addAttribute("patient", patient);
-		
-		model.addAttribute("programSummaries", visitSummaries);
-		// model.addAttribute("programSummaries", patientRegimens);
-		// model.addAttribute("regimens", regimenTypes);
-	}
-	
-	public SimpleObject getChemotherapyCycleDetails(@RequestParam("id") Integer cycleId, UiUtils ui) {
-		
-		List<PatientRegimen> chemoDetails;
-		
-		InventoryCommonService patientRegimenService = Context.getService(InventoryCommonService.class);
-		//getRegimens takes a mandatory patient, and optional regimen type and tag
-		
-		Cycle cycle = patientRegimenService.getCycleById(cycleId);
-		chemoDetails = patientRegimenService.getPatientRegimen(null, cycle, false);
-		List<SimpleObject> drugs = SimpleObject.fromCollection(chemoDetails, ui, "id", "medication", "dose", "dosingUnit",
-		    "route", "comment", "tag");
-		return SimpleObject.create("cycleDrugs", drugs);
-	}
-	
-	public SimpleObject updatePatientRegimen(@RequestParam("regimenId") Integer regimenId, UiUtils ui) {
-		
-		List<PatientRegimen> chemoDetails = new ArrayList<PatientRegimen>();
-		// TODO - Create these
-		/*
-		 * PatientRegimenService patientRegimenService =
-		 * Context.getService(PatientRegimenService.class);
-		 * //getRegimens takes a mandatory patient, and optional regimen type and tag
-		 * List<PatientRegimen> patientRegimens =
-		 * patientRegimenService.getRegimens(patient,regimen,tag,cycle);
-		 *
-		 */
-		
-		List<SimpleObject> drugs = SimpleObject.fromCollection(chemoDetails, ui, "id", "medication", "dose", "route",
-		    "dosingUnit", "comment", "tag", "program");
-		// return SimpleObject.create("chemoDetails", chemoDetails);
-		return SimpleObject.create("drugs", drugs);
-	}
-	
-	public SimpleObject createPatientRegimen(@RequestParam("patientId") Patient patient,
-	        @RequestParam("regimenId") Integer regimenId, @RequestParam("cycle") Integer cycle,
-	        @RequestParam("days") Integer days, UiUtils ui) {
-		
-		InventoryCommonService patientRegimenService = Context.getService(InventoryCommonService.class);
-		Regimen regimen = new Regimen();
-		
-		RegimenType regimenType = patientRegimenService.getRegimenTypeById(regimenId);
-		regimen.setPatient(patient);
-		regimen.setRegimenType(regimenType);
-		
-		//		For an initiation, automatically create a default cycle
-		Cycle regimenCycle = new Cycle();
-		regimenCycle.setName("Cycle 1 of " + regimenType.getCycles());
-		regimenCycle.setActive(true);
-		regimenCycle.setVoided(false);
-		
-		Set<Cycle> cycles = new HashSet<Cycle>();
-		cycles.add(regimenCycle);
-		
-		regimen.setCycles(cycles);
-		
-		Regimen createdRegimen = patientRegimenService.createRegimen(regimen);
-		return SimpleObject.create("status", "success");
-	}
-	
-	public SimpleObject deletePatientRegimen(@RequestParam("regimenId") Integer regimenId, UiUtils ui) {
-		
-		List<PatientRegimen> chemoDetails = new ArrayList<PatientRegimen>();
-		// TODO - Create these
-		/*
-		 * PatientRegimenService patientRegimenService =
-		 * Context.getService(PatientRegimenService.class);
-		 * //getRegimens takes a mandatory patient, and optional regimen type and tag
-		 * List<PatientRegimen> patientRegimens =
-		 * patientRegimenService.getRegimens(patient,regimen,tag,cycle);
-		 *
-		 */
-		
-		List<SimpleObject> drugs = SimpleObject.fromCollection(chemoDetails, ui, "id", "medication", "dose", "route",
-		    "dosingUnit", "comment", "tag", "program");
-		// return SimpleObject.create("chemoDetails", chemoDetails);
-		return SimpleObject.create("drugs", drugs);
-	}
-	
+
+    protected Logger log = LoggerFactory.getLogger(ChemoTherapyFragmentController.class);
+
+    public void controller(FragmentConfiguration config, FragmentModel model) {
+        config.require("patientId");
+        Integer patientId = Integer.parseInt(config.get("patientId").toString());
+
+        PatientDashboardService dashboardService = Context.getService(PatientDashboardService.class);
+        Patient patient = Context.getPatientService().getPatient(patientId);
+
+        MchService mchService = Context.getService(MchService.class);
+        EncounterType mchEncType = null;
+
+        if (mchService.enrolledInANC(patient)) {
+            mchEncType = Context.getEncounterService().getEncounterTypeByUuid(
+                    EhrMchMetadata._MchEncounterType.ANC_ENCOUNTER_TYPE);
+        } else if (mchService.enrolledInPNC(patient)) {
+            mchEncType = Context.getEncounterService().getEncounterTypeByUuid(
+                    EhrMchMetadata._MchEncounterType.PNC_ENCOUNTER_TYPE);
+        } else {
+            mchEncType = Context.getEncounterService().getEncounterTypeByUuid(
+                    EhrMchMetadata._MchEncounterType.CWC_ENCOUNTER_TYPE);
+        }
+
+        List<Encounter> encounters = dashboardService.getEncounter(patient, null, mchEncType, null);
+
+        List<VisitSummary> visitSummaries = new ArrayList<VisitSummary>();
+
+        int i = 0;
+
+        for (Encounter enc : encounters) {
+            VisitSummary visitSummary = new VisitSummary();
+            visitSummary.setVisitDate(enc.getDateCreated());
+            visitSummary.setEncounterId(enc.getEncounterId());
+            Concept outcomeConcept = Context.getConceptService().getConcept("Visit outcome");
+            for (Obs obs : enc.getAllObs()) {
+                if (obs.getConcept().equals(outcomeConcept)) {
+                    visitSummary.setOutcome(obs.getValueText());
+                }
+            }
+            visitSummaries.add(visitSummary);
+
+            i++;
+
+            if (i >= 20) {
+                break;
+            }
+        }
+        model.addAttribute("patient", patient);
+
+        model.addAttribute("programSummaries", visitSummaries);
+        // model.addAttribute("programSummaries", patientRegimens);
+        // model.addAttribute("regimens", regimenTypes);
+    }
+
+    public SimpleObject getChemotherapyCycleDetails(@RequestParam("id") Integer cycleId, UiUtils ui) {
+
+        List<PatientRegimen> chemoDetails;
+
+        InventoryCommonService patientRegimenService = Context.getService(InventoryCommonService.class);
+        Cycle cycle = patientRegimenService.getCycleById(cycleId);
+
+        if (cycle != null) {
+            chemoDetails = patientRegimenService.getPatientRegimen(null, cycle, false);
+            log.error("Received something here ===> " + chemoDetails.size());
+            List<SimpleObject> drugs = SimpleObject.fromCollection(chemoDetails, ui, "id", "medication", "dose",
+                    "dosingUnit", "route", "comment", "tag");
+            return SimpleObject.create("cycleDrugs", drugs);
+        } else {
+            return SimpleObject.create("success", false, "msg", "No cycle with requested ID");
+        }
+
+    }
+
+    public SimpleObject updatePatientRegimen(@RequestParam("regimenId") Integer regimenId, UiUtils ui) {
+
+        List<PatientRegimen> chemoDetails = new ArrayList<PatientRegimen>();
+        // TODO - Create these
+        /*
+         * PatientRegimenService patientRegimenService =
+         * Context.getService(PatientRegimenService.class);
+         * //getRegimens takes a mandatory patient, and optional regimen type and tag
+         * List<PatientRegimen> patientRegimens =
+         * patientRegimenService.getRegimens(patient,regimen,tag,cycle);
+         *
+         */
+
+        List<SimpleObject> drugs = SimpleObject.fromCollection(chemoDetails, ui, "id", "medication", "dose", "route",
+                "dosingUnit", "comment", "tag", "program");
+        // return SimpleObject.create("chemoDetails", chemoDetails);
+        return SimpleObject.create("drugs", drugs);
+    }
+
+    public SimpleObject createPatientRegimen(@RequestParam("patientId") Patient patient,
+                                             @RequestParam("regimenId") Integer regimenId, @RequestParam("cycle") Integer cycle,
+                                             @RequestParam("days") Integer days, UiUtils ui) {
+
+        InventoryCommonService patientRegimenService = Context.getService(InventoryCommonService.class);
+        Regimen regimen = new Regimen();
+
+        RegimenType regimenType = patientRegimenService.getRegimenTypeById(regimenId);
+        regimen.setPatient(patient);
+        regimen.setRegimenType(regimenType);
+
+        //		For an initiation, automatically create a default cycle
+        Cycle regimenCycle = new Cycle();
+        regimenCycle.setName("Cycle 1 of " + regimenType.getCycles());
+        regimenCycle.setActive(true);
+        regimenCycle.setVoided(false);
+
+        Set<Cycle> cycles = new HashSet<Cycle>();
+        cycles.add(regimenCycle);
+
+        regimen.setCycles(cycles);
+
+        Regimen createdRegimen = patientRegimenService.createRegimen(regimen);
+        return SimpleObject.create("status", "success");
+    }
+
+    public SimpleObject addCycleMedication(@RequestParam("cycleId") Integer cycleId,
+                                           @RequestParam(value = "drugId", required = false) Integer drugId, @RequestParam("drugName") String drugName,
+                                           @RequestParam("dosage") String dosage, @RequestParam("dosageUnit") String dosageUnit,
+                                           @RequestParam("route") String route, @RequestParam("tag") String tag, @RequestParam("comment") String comment,
+                                           UiUtils uiUtils) {
+
+        InventoryCommonService patientRegimenService = Context.getService(InventoryCommonService.class);
+        PatientRegimen patientRegimen = new PatientRegimen();
+        Cycle cycle = patientRegimenService.getCycleById(cycleId);
+
+        patientRegimen.setCycleId(cycle);
+        patientRegimen.setComment(comment);
+        patientRegimen.setTag(tag);
+        patientRegimen.setRoute(route);
+        patientRegimen.setDose(dosage);
+        patientRegimen.setDosingUnit(dosageUnit);
+        patientRegimen.setMedication(drugName);
+
+        PatientRegimen createdPatientRegimen = patientRegimenService.createPatientRegimen(patientRegimen);
+        return SimpleObject.create("patientRegimen", SimpleObject.fromObject(createdPatientRegimen, uiUtils, "id",
+                "medication", "dosingUnit", "dose", "route", "comment", "tag"));
+    }
+
+    public SimpleObject deletePatientRegimen(@RequestParam("drugId") Integer drugId,
+                                             @RequestParam("comment") String comment, UiUtils ui) {
+
+        InventoryCommonService patientRegimenService = Context.getService(InventoryCommonService.class);
+        PatientRegimen patientRegimen = patientRegimenService.getPatientRegimenById(drugId);
+        patientRegimen.setVoidReason(comment);
+        patientRegimen.setDateVoided(new Date());
+
+        patientRegimenService.voidPatientRegimen(patientRegimen);
+        return SimpleObject.create("success", true, "id", drugId);
+    }
+
 }

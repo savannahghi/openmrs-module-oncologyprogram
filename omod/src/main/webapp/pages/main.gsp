@@ -90,7 +90,7 @@
 		else {
 			jq("#drugName").removeClass('red');
 		}
-		
+	/*
 		if (jq("#drugDosage").val().trim() == ''){
 			jq("#drugDosage").addClass('red');
 			error ++;
@@ -98,7 +98,7 @@
 		else {
 			jq("#drugDosage").removeClass('red');
 		}
-		
+	*/
 		if (jq('#drugUnitsSelect :selected').text() == "Select Unit"){
 			jq("#drugUnitsSelect").addClass('red');
 			error ++;
@@ -106,6 +106,31 @@
 		else {
 			jq("#drugUnitsSelect").removeClass('red');
 		}
+
+        if (jq('#drugDosageSelect :selected').text() == "Select Dosage"){
+            jq("#drugDosageSelect").addClass('red');
+            error ++;
+        }
+        else {
+            jq("#drugDosageSelect").removeClass('red');
+        }
+
+
+        if (jq('#routesSelect :selected').text() == "Select Route"){
+            jq("#routesSelect").addClass('red');
+            error ++;
+        }
+        else {
+            jq("#routesSelect").removeClass('red');
+        }
+
+        if (jq('#tagSelect :selected').text() == "Select Category"){
+            jq("#tagSelect").addClass('red');
+            error ++;
+        }
+        else {
+            jq("#tagSelect").removeClass('red');
+        }
 		
 		if (jq('#formulationsSelect :selected').text() == "Select Formulation"){
 			jq("#formulationsSelect").addClass('red');
@@ -122,7 +147,7 @@
 		else {
 			jq("#frequencysSelect").removeClass('red');
 		}
-		
+/*
 		if (jq("#numberOfDays").val().trim() == '0' || jq("#numberOfDays").val().trim() == ''){
 			jq("#numberOfDays").addClass('red');
 			error ++;
@@ -130,7 +155,7 @@
 		else {
 			jq("#numberOfDays").removeClass('red');
 		}
-
+*/
 		if (error == 0){
 			return true;
 		} else{

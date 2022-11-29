@@ -7,12 +7,20 @@
 
 <script>
 
+let cycleId;
 function toggleCssClass(e){
   e.parentNode.parentNode.classList.toggle("open");
 }
 
-    function processClick(e){
-      handleClicks();
+    function processClick(){
+        document.getElementById("prescription-dialog").style.display = "block";
+    }
+
+    function deleteCycleDrug(e){
+        const {drugid,drugname} = e.dataset;
+        document.getElementById("drug-void-dialog").style.display = "block";
+        document.getElementById("medication").value = drugname;
+        document.getElementById("void-drug-id").value = drugid;
     }
 
      jq(function () {
@@ -42,7 +50,7 @@ function toggleCssClass(e){
         jq(".cycle").on("click",  function(){
           jq("#defaultContainer").html('<i class=\"icon-spinner icon-spin icon-2x pull-left\"></i> <span style="float: left; margin-top: 12px;">Loading...</span>');
           var chemoDetail = jq(this);
-          const cycleId = chemoDetail.context.dataset.cycleid;
+          cycleId = chemoDetail.context.dataset.cycleid;
           jq(".cycle").removeClass("selected");
           jq(chemoDetail).addClass("selected");
 
@@ -58,10 +66,6 @@ function toggleCssClass(e){
           .always(function() { console.log("Completed fetching cycle details"); });
         });
 
-
-        function handleClicks(){
-          console.log("Another Approach to it");
-        }
 
         var adddrugdialog = emr.setupConfirmationDialog({
             dialogOpts: {
@@ -79,15 +83,18 @@ function toggleCssClass(e){
                     addDrug();
                     jq("#drugForm")[0].reset();
                     jq('select option[value!="0"]', '#drugForm').remove();
-                    adddrugdialog.close();
+                    closePrescriptionDialog();
+                    location.reload();
                 },
                 cancel: function () {
                     jq("#drugForm")[0].reset();
                     jq('select option[value!="0"]', '#drugForm').remove();
-                    adddrugdialog.close();
+                    //jq("#prescription-dialog").style.display = "none";
+                   // adddrugdialog.close();
                 }
             }
         });
+
 
         jq("#test").on("click", function (e) {
             console.log()
@@ -97,6 +104,67 @@ function toggleCssClass(e){
         console.log(${patient.patientId});
 
     });
+
+        function voidCycleDrug(){
+           let drugId = jq("#void-drug-id").val();
+           let comment = jq("#void-comment").val();
+
+           if(!drugId || !comment){
+                jq().toastmessage('showErrorToast', 'Please provide reason for deleting!');
+                return false;
+           }
+           jq.getJSON('${ ui.actionLink("treatmentapp", "chemoTherapy" ,"deletePatientRegimen") }',
+                 { drugId, comment}
+           ).success(function (data) {
+             console.log(data);
+             location.reload();
+           })
+             .fail(function() { console.log("error occurred while fetching cycle details"); })
+             .always(function() { console.log("Completed fetching cycle details"); });
+           }
+
+        function addDrug(){
+
+            console.log(cycleId);
+            var drugName = jq("#drugName").val();
+
+            var drugDosage = {};
+            drugDosage.id = jq("#drugDosageSelect option:selected").val();
+            drugDosage.text = jq("#drugDosageSelect option:selected").text();
+
+            var dosageUnit = {};
+            dosageUnit.id = jq("#drugUnitsSelect option:selected").val();
+            dosageUnit.text = jq("#drugUnitsSelect option:selected").text();
+
+            var routesSelect = {};
+            routesSelect.id = jq("#routesSelect option:selected").val();
+            routesSelect.text = jq("#routesSelect option:selected").text();
+
+            var tagSelect = {};
+            tagSelect.id = jq("#tagSelect option:selected").val();
+            tagSelect.text = jq("#tagSelect option:selected").text();
+
+            var comment = jq("#comment").val();
+            var drugId = jq("#drugName").data("drugId");
+
+          jq.getJSON('${ ui.actionLink("treatmentapp", "chemoTherapy" ,"addCycleMedication") }',
+              { cycleId,
+              drugId,
+              drugName,
+              "dosage":drugDosage.text,
+              "dosageUnit":dosageUnit.text,
+              "route":routesSelect.text,
+              "tag":tagSelect.text,
+              comment
+               }
+          ).success(function (data) {
+              console.log(data);
+              var chemoTemplate =  _.template(jq("#chemo-template").html());
+              jq("#defaultContainer").html(chemoTemplate(data));
+          })
+          .fail(function() { console.log("error occurred while fetching cycle details"); })
+          .always(function() { console.log("Completed fetching cycle details"); });
+        }
 
     function openForm() {
       document.getElementById("myForm").style.display = "block";
@@ -123,6 +191,21 @@ function toggleCssClass(e){
           .fail(function() { console.log("error occurred registering patient regimen"); })
           .always(function() { console.log("Completed fetching request"); });
     }
+
+    function closePrescriptionDialog(){
+        jq("#drugForm")[0].reset();
+        jq('select option[value!="0"]', '#drugForm').remove();
+        document.getElementById("prescription-dialog").style.display = "none";
+    }
+
+    function closeDeleteDialog(){
+        jq("#drugDeleteForm")[0].reset();
+        document.getElementById("drug-void-dialog").style.display = "none";
+    }
+
+
+
+
 
 
 
@@ -250,6 +333,11 @@ font-size: 3em;
   cursor: pointer;
 }
 
+.row-actions:hover{
+  background-color: rgba(255, 255, 255, .1);
+  cursor: pointer;
+}
+
 
 .sidebar-item.selected{
   background-color: rgba(255, 255, 255, .1);
@@ -354,7 +442,31 @@ font-size: 3em;
   </form>
 </div>
 
-<div id="prescription-dialog" class="dialog" style="display:none;">
+<div id="drug-void-dialog" class="dialog form-popup" style="display:none;">
+    <div class="dialog-header">
+        <i class="icon-trash"></i>
+        <h3>Delete Medication</h3>
+    </div>
+
+    <div class="dialog-content">
+        <form id="drugDeleteForm">
+            <ul>
+                <li>
+                    <label>Medication<span class="important">*</span></label>
+                    <input class="drug-name" id="medication" type="text" disabled />
+                    <input id="void-drug-id" type="hidden"  />
+                </li>
+                <li>
+                    <label>Reason<span class="important">*</span></label>
+                    <textarea id="void-comment" style="width: 100% !important;" required></textarea>
+                </li>
+            </ul>
+            <label id = "confirm-button" class="button cancel" style="float: right; width: auto!important;" onclick="voidCycleDrug()">Delete</label>
+            <label id = "cancel-button" class="button confirm" style="margin-left: 10px; width: auto!important;" onclick="closeDeleteDialog()">Cancel</label>
+        </form>
+    </div>
+</div>
+<div id="prescription-dialog" class="dialog form-popup" style="display:none;">
     <div class="dialog-header">
         <i class="icon-folder-open"></i>
 
@@ -365,41 +477,43 @@ font-size: 3em;
         <form id="drugForm">
             <ul>
                 <li>
-                    <label>Drug</label>
+                    <label>Drug<span class="important">*<span></label>
                     <input class="drug-name" id="drugName" type="text">
                 </li>
                 <li>
                     <label>Dosage<span class="important">*<span></label>
-                    <input type="text" id="drugDosage" style="width: 60px !important;">
-                    <select id="drugUnitsSelect" style="width: 174px !important;">
+                    <select id="drugDosageSelect" style="width: 125px !important;">
+                        <option value="0">Select Dosage</option>
+                        <option value="1">My Dosage</option>
+                    </select>
+                    <select id="drugUnitsSelect" style="width: 125px !important;">
                         <option value="0">Select Unit</option>
+                        <option value="0">My Unit</option>
                     </select>
                 </li>
 
                 <li>
-                    <label>Formulation</label>
-                    <select id="formulationsSelect">
-                        <option value="0">Select Formulation</option>
+                    <label>Route<span class="important">*<span></label>
+                    <select id="routesSelect">
+                        <option value="0">Select Route</option>
+                        <option value="0">My Route</option>
                     </select>
                 </li>
                 <li>
-                    <label>Frequency</label>
-                    <select id="frequencysSelect">
-                        <option value="0">Select Frequency</option>
+                    <label>Category<span class="important">*<span></label>
+                    <select id="tagSelect">
+                        <option value="0">Select Category</option>
+                        <option value="1">Pre-Medication</option>
+                        <option value="2">Chemotherapy</option>
                     </select>
-                </li>
-
-                <li>
-                    <label>Number of Days<span class="important">*<span></label>
-                    <input id="numberOfDays" type="text">
                 </li>
                 <li>
                     <label>Comment</label>
-                    <textarea id="comment"></textarea>
+                    <textarea id="comment" style="width: 100% !important;"></textarea>
                 </li>
             </ul>
-            <label class="button confirm" style="float: right; width: auto!important;">Confirm</label>
-            <label class="button cancel" style="width: auto!important;">Cancel</label>
+            <label id = "confirm-button" class="button confirm" style="float: right; width: auto!important;">Confirm</label>
+            <label id = "cancel-button" class="button cancel" style="width: auto!important;" onclick="closePrescriptionDialog()">Cancel</label>
         </form>
     </div>
 </div>
@@ -478,7 +592,7 @@ font-size: 3em;
     <div class="chemoItem">
       <span class = "sidebar-title">
           <span id="test"><i class="icon-medicine"></i>  Pre-Medication </span>
-          <i class="icon-plus add-drug" title="Add a pre-medication" onclick = "processClick()"></i>
+          <i class="icon-plus add-drug" title="Add a pre-medication" onclick = "processClick()" data-tag = "pre-medication"></i>
       </span>
         <table id="preMedList">
           <thead>
@@ -502,7 +616,10 @@ font-size: 3em;
                   <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.route}}</td>
                   <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.dosingUnit}}</td>
                   <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.comment}}</td>
-                  <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;"><a><i id="stockOutList" class="icon-edit link" title="Edit Drug"></i></a>&nbsp;&nbsp;&nbsp;<a><i class="icon-trash link" title="Delete Drug"></i></a></td>
+                  <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">
+                    <a><i id="stockOutList" class="icon-edit link row-actions" title="Edit Drug" onclick = "processClick()" data-drug = {{-drug.id}}></i></a>&nbsp;&nbsp;&nbsp;
+                    <a><i class="icon-trash link row-actions" title="Delete Drug" onclick = "deleteCycleDrug(this)" data-drugId = {{-drug.id}} data-drugName = {{-drug.medication}}></i></a>
+                  </td>
                 </tr>
               {{ } }}
             {{ }); }}
@@ -513,7 +630,7 @@ font-size: 3em;
     <div class="chemoItem">
       <span class = "sidebar-title">
           <span><i class="icon-stethoscope"></i>  Chemotherapy</span>
-          <i class="icon-plus add-drug" title="Add a chemotherapy drug"></i>
+          <i class="icon-plus add-drug" title="Add a chemotherapy drug" onclick = "processClick()" data-tag = "chemotherapy"></i>
       </span>
         <table id="chemoList">
           <thead>
@@ -537,12 +654,20 @@ font-size: 3em;
                   <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.route}}</td>
                   <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.dosingUnit}}</td>
                   <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.comment}}</td>
-                  <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;"><a><i id="stockOutList" class="icon-edit link" title="Edit Drug"></i></a>&nbsp;&nbsp;&nbsp;<a><i class="icon-trash link" title="Delete Drug"></i></a></td>
+                  <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;"><a><i id="stockOutList" class="icon-edit link row-actions" title="Edit Drug" onclick = "processClick()"></i></a>&nbsp;&nbsp;&nbsp;<a><i class="icon-trash link row-actions" title="Delete Drug"></i></a></td>
                 </tr>
               {{ } }}
             {{ }); }}
           </tbody>
       </table>
     </div>
+
+    <div class="chemoItem">
+          <span class = "sidebar-title">
+              <span><i class="icon-edit "></i>  Cycle Summary Notes</span>
+          </span>
+          <textarea id="w3review" name="w3review" rows="4" style="width: 100%;" />
+
+        </div>
 </script>
 
