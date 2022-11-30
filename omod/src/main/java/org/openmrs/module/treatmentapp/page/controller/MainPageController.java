@@ -5,15 +5,18 @@ import org.openmrs.PatientProgram;
 import org.openmrs.Program;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.hospitalcore.HospitalCoreService;
+import org.openmrs.module.hospitalcore.InventoryCommonService;
 import org.openmrs.module.hospitalcore.PatientQueueService;
-import org.openmrs.module.hospitalcore.model.OpdPatientQueue;
-import org.openmrs.module.hospitalcore.model.PatientSearch;
+import org.openmrs.module.hospitalcore.model.*;
 import org.openmrs.module.treatmentapp.EhrMchMetadata;
 import org.openmrs.module.treatmentapp.api.ListItem;
+import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.module.treatmentapp.api.TreatmentService;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
 import org.openmrs.ui.framework.page.PageModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
@@ -28,9 +31,27 @@ public class MainPageController {
 	
 	private static final int MAX_ANC_PNC_DURATION = 9;
 	
+	protected Logger logger = LoggerFactory.getLogger(getClass());
+	
 	public String get(@RequestParam("patientId") Patient patient, @RequestParam(value = "queueId") Integer queueId,
 	        PageModel model, FragmentConfiguration config, UiUtils uiUtils) {
 		
+		InventoryCommonService inventoryCommonService = Context.getService(InventoryCommonService.class);
+		List<Regimen> regimens = inventoryCommonService.getRegimens(patient, null, false);
+		
+		List<SimpleObject> chemoProfile = new ArrayList<SimpleObject>();
+		for (Regimen regimen : regimens) {
+			SimpleObject profileInfo = new SimpleObject();
+			profileInfo.put("name", regimen.getRegimenType().getName());
+			profileInfo.put("icon", "icon-hospital");
+			profileInfo.put("cycles", SimpleObject.fromCollection(regimen.getCycles(), uiUtils, "id", "name", "icon"));
+			chemoProfile.add(profileInfo);
+		}
+		
+		String details = SimpleObject.create("drugs", chemoProfile).toJson();
+		
+		model.addAttribute("regimens", regimens);
+		model.addAttribute("patientCycles", details);
 		TreatmentService mchService = Context.getService(TreatmentService.class);
 		model.addAttribute("patient", patient);
 		model.addAttribute("queueId", queueId);
@@ -54,8 +75,8 @@ public class MainPageController {
 		List<ListItem> possibleProgramOutcomes = new ArrayList<ListItem>();
 		PatientQueueService queueService = Context.getService(PatientQueueService.class);
 		OpdPatientQueue patientQueue = queueService.getOpdPatientQueueById(queueId);
-		String opdConcept = patientQueue.getOpdConceptName();
 		
+		String opdConcept = null;
 		if (patientQueue != null) {
 			model.addAttribute("opdConcept", opdConcept);
 		}
@@ -76,8 +97,7 @@ public class MainPageController {
 			program = Context.getProgramWorkflowService().getProgramByUuid(EhrMchMetadata._MchProgram.PNC_PROGRAM);
 			possibleProgramOutcomes = mchService.getPossibleOutcomes(program.getProgramId());
 		} else {
-			return "redirect:" + uiUtils.pageLink("treatmentapp", "enroll") + "?patientId=" + patient.getPatientId()
-			        + "&queueId=" + queueId;
+			logger.error("No patient queue with stated ID");
 		}
 		
 		//        TODO modify code to ensure that the last program enrolled is pulled
@@ -96,7 +116,6 @@ public class MainPageController {
 		}
 		
 		model.addAttribute("patientProgram", patientProgram);
-		model.addAttribute("possibleProgramOutcomes", possibleProgramOutcomes);
 		
 		HospitalCoreService hospitalCoreService = Context.getService(HospitalCoreService.class);
 		PatientSearch patientSearch = hospitalCoreService.getPatientByPatientId(patient.getPatientId());
@@ -112,5 +131,38 @@ public class MainPageController {
 		model.addAttribute("date", new Date());
 		//  TODO add other patients attributes
 		return null;
+	}
+	
+	class ChemoWrapper {
+		
+		String name;
+		
+		String icon;
+		
+		List<PatientRegimen> cycles;
+		
+		public String getName() {
+			return name;
+		}
+		
+		public void setName(String name) {
+			this.name = name;
+		}
+		
+		public String getIcon() {
+			return icon;
+		}
+		
+		public void setIcon(String icon) {
+			this.icon = icon;
+		}
+		
+		public List<PatientRegimen> getCycles() {
+			return cycles;
+		}
+		
+		public void setCycles(List<PatientRegimen> cycles) {
+			this.cycles = cycles;
+		}
 	}
 }

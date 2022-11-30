@@ -90,7 +90,7 @@
 		else {
 			jq("#drugName").removeClass('red');
 		}
-		
+	/*
 		if (jq("#drugDosage").val().trim() == ''){
 			jq("#drugDosage").addClass('red');
 			error ++;
@@ -98,7 +98,7 @@
 		else {
 			jq("#drugDosage").removeClass('red');
 		}
-		
+	*/
 		if (jq('#drugUnitsSelect :selected').text() == "Select Unit"){
 			jq("#drugUnitsSelect").addClass('red');
 			error ++;
@@ -106,6 +106,31 @@
 		else {
 			jq("#drugUnitsSelect").removeClass('red');
 		}
+
+        if (jq('#drugDosageSelect :selected').text() == "Select Dosage"){
+            jq("#drugDosageSelect").addClass('red');
+            error ++;
+        }
+        else {
+            jq("#drugDosageSelect").removeClass('red');
+        }
+
+
+        if (jq('#routesSelect :selected').text() == "Select Route"){
+            jq("#routesSelect").addClass('red');
+            error ++;
+        }
+        else {
+            jq("#routesSelect").removeClass('red');
+        }
+
+        if (jq('#tagSelect :selected').text() == "Select Category"){
+            jq("#tagSelect").addClass('red');
+            error ++;
+        }
+        else {
+            jq("#tagSelect").removeClass('red');
+        }
 		
 		if (jq('#formulationsSelect :selected').text() == "Select Formulation"){
 			jq("#formulationsSelect").addClass('red');
@@ -122,7 +147,7 @@
 		else {
 			jq("#frequencysSelect").removeClass('red');
 		}
-		
+/*
 		if (jq("#numberOfDays").val().trim() == '0' || jq("#numberOfDays").val().trim() == ''){
 			jq("#numberOfDays").addClass('red');
 			error ++;
@@ -130,7 +155,7 @@
 		else {
 			jq("#numberOfDays").removeClass('red');
 		}
-
+*/
 		if (error == 0){
 			return true;
 		} else{
@@ -605,7 +630,7 @@
 		
 		<div id="stacont" class="status-container">
 				<span class="status active"></span>
-				Visit Status
+				Cycle Status
 			</div>
 		<div class="tag">Outpatient</div>
 		<div class="tad">Last Visit: ${ui.formatDatePretty(previousVisit)}</div>
@@ -614,6 +639,9 @@
 
         
     </div>
+
+
+
 
     <div class="identifiers">
         <em>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Patient ID</em>
@@ -624,6 +652,31 @@
             <i class="icon-tags small" style="font-size: 16px"></i><small>Category:</small> ${patientCategory}
         </div>
     </div>
+   <div class="identifiers">
+       <p>Regimen Details</p>
+       <em>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Current:</em>
+       <span>CHOP</span>
+       <br>
+       <em>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Cycle:</em>
+       <span>3 of 6</span>
+       <br>
+       <em>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Status:</em>
+       <span>Active</span>
+       <br>
+   </div>
+    <div class="identifiers">
+        <p>Diagnosis</p>
+        <em>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Diagnosis:</em>
+        <span>Breast Cancer</span>
+        <br>
+        <em>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Grading:</em>
+        <span>Grade 3</span>
+        <br>
+        <em>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Staging:</em>
+        <span>Grade 3</span>
+        <br>
+    </div>
+
 </div>
 
 ${ui.includeFragment("treatmentapp","mchProfile")}
