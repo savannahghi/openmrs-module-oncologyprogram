@@ -12,8 +12,11 @@ function toggleCssClass(e){
   e.parentNode.parentNode.classList.toggle("open");
 }
 
-    function processClick(){
+    function processClick(e){
+        const {medication, dose,dosingunit,route,tag, comment} = e.dataset;
         document.getElementById("prescription-dialog").style.display = "block";
+        document.getElementById("drugName").value = medication;
+        document.getElementById("comment").value = comment;
     }
 
     function deleteCycleDrug(e){
@@ -106,11 +109,16 @@ function toggleCssClass(e){
     });
 
         function voidCycleDrug(){
-           let drugId = jq("#void-drug-id").val();
-           let comment = jq("#void-comment").val();
+           let drugId = jq("#void-drug-id").val().trim();
+           let comment = jq("#void-comment").val().trim();
 
            if(!drugId || !comment){
                 jq().toastmessage('showErrorToast', 'Please provide reason for deleting!');
+                if(!comment){
+                    jq("#void-comment").addClass('error');
+                }else{
+                    jq("#void-comment").removeClass('error');
+                }
                 return false;
            }
            jq.getJSON('${ ui.actionLink("treatmentapp", "chemoTherapy" ,"deletePatientRegimen") }',
@@ -122,12 +130,26 @@ function toggleCssClass(e){
              .fail(function() { console.log("error occurred while fetching cycle details"); })
              .always(function() { console.log("Completed fetching cycle details"); });
            }
+        function updateCycleDrug(){
+           let drugId = jq("#drug-id").val();
+           let comment = jq("#void-comment").val();
+
+           if(!drugId || !comment){
+                jq().toastmessage('showErrorToast', 'Please provide reason for deleting!');
+                return false;
+           }
+           jq.getJSON('${ ui.actionLink("treatmentapp", "chemoTherapy" ,"updatePatientRegimen") }',
+                 { drugId, comment}
+           ).success(function (data) {
+             console.log(data);
+             location.reload();
+           })
+             .fail(function() { console.log("error occurred while fetching cycle details"); })
+             .always(function() { console.log("Completed fetching cycle details"); });
+           }
 
         function addDrug(){
-
-            console.log(cycleId);
             var drugName = jq("#drugName").val();
-
             var drugDosage = {};
             drugDosage.id = jq("#drugDosageSelect option:selected").val();
             drugDosage.text = jq("#drugDosageSelect option:selected").text();
@@ -214,7 +236,9 @@ function toggleCssClass(e){
 </script>
 
 <style>
-
+	.error{
+		border: 1px solid #f00 !important;
+	}
 .man{
     margin: 0;
     padding: 0;
@@ -592,7 +616,7 @@ font-size: 3em;
     <div class="chemoItem">
       <span class = "sidebar-title">
           <span id="test"><i class="icon-medicine"></i>  Pre-Medication </span>
-          <i class="icon-plus add-drug" title="Add a pre-medication" onclick = "processClick()" data-tag = "pre-medication"></i>
+          <i class="icon-plus add-drug" title="Add a pre-medication" onclick = "processClick(this)" data-tag = "pre-medication"></i>
       </span>
         <table id="preMedList">
           <thead>
@@ -617,7 +641,15 @@ font-size: 3em;
                   <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.dosingUnit}}</td>
                   <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.comment}}</td>
                   <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">
-                    <a><i id="stockOutList" class="icon-edit link row-actions" title="Edit Drug" onclick = "processClick()" data-drug = {{-drug.id}}></i></a>&nbsp;&nbsp;&nbsp;
+                    <a><i id="stockOutList" class="icon-edit link row-actions"
+                            title="Edit Drug"
+                            onclick = "processClick(this)"
+                            data-medication = '{{-drug.medication}}'
+                            data-dose = '{{-drug.dose}}'
+                            data-dosingUnit = '{{-drug.dosingUnit}}'
+                            data-route = '{{-drug.route}}'
+                            data-tag = '{{-drug.tag}}'
+                            data-comment = '{{-drug.comment}}'></i></a>&nbsp;&nbsp;&nbsp;
                     <a><i class="icon-trash link row-actions" title="Delete Drug" onclick = "deleteCycleDrug(this)" data-drugId = {{-drug.id}} data-drugName = {{-drug.medication}}></i></a>
                   </td>
                 </tr>
@@ -630,7 +662,7 @@ font-size: 3em;
     <div class="chemoItem">
       <span class = "sidebar-title">
           <span><i class="icon-stethoscope"></i>  Chemotherapy</span>
-          <i class="icon-plus add-drug" title="Add a chemotherapy drug" onclick = "processClick()" data-tag = "chemotherapy"></i>
+          <i class="icon-plus add-drug" title="Add a chemotherapy drug" onclick = "processClick(this)" data-tag = "chemotherapy"></i>
       </span>
         <table id="chemoList">
           <thead>
@@ -654,7 +686,7 @@ font-size: 3em;
                   <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.route}}</td>
                   <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.dosingUnit}}</td>
                   <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.comment}}</td>
-                  <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;"><a><i id="stockOutList" class="icon-edit link row-actions" title="Edit Drug" onclick = "processClick()"></i></a>&nbsp;&nbsp;&nbsp;<a><i class="icon-trash link row-actions" title="Delete Drug"></i></a></td>
+                  <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;"><a><i id="stockOutList" class="icon-edit link row-actions" title="Edit Drug" onclick = "processClick(this)"></i></a>&nbsp;&nbsp;&nbsp;<a><i class="icon-trash link row-actions" title="Delete Drug"></i></a></td>
                 </tr>
               {{ } }}
             {{ }); }}
@@ -666,8 +698,73 @@ font-size: 3em;
           <span class = "sidebar-title">
               <span><i class="icon-edit "></i>  Cycle Summary Notes</span>
           </span>
-          <textarea id="w3review" name="w3review" rows="4" style="width: 100%;" />
+          <textarea id="w3review" name="w3review" rows="4" style="width: 100%;" placeholder = "Enter cycle summary notes here ..." />
 
-        </div>
+    </div>
+
+    <div class="chemoItem">
+            <label  class="button confirm" style="float: right; width: auto!important;">Save</label>
+            <label id= "btn-administer-cycle" class="button confirm" style="float: right; width: auto!important; display: none!important;">Administer</label>
+            <label id= "btn-save-cycle" class="button cancel" style="width: auto!important;">Cancel Cycle</label>
+    </div>
 </script>
 
+
+<script id="outcome-template" type="text/template">
+    <div class="chemoItem">
+      <span class = "sidebar-title">
+          <span id="test"><i class="icon-medicine"></i>  Visit Outcome </span>
+      </span>
+
+      <form id = "outcome-form">
+        <input type="radio" id="stable" name="chemo-outcome" value="Stable Disease">
+        <label for="stable">Stable Disease</label><br>
+        <input type="radio" id="progressed" name="chemo-outcome" value="Progressed">
+        <label for="progressed">Progressed:</label><br>
+        <input type="radio" id="partial-remission" name="chemo-outcome" value="Partial Remission">
+        <label for="partial-remission">Partial Remission</label><br><br>
+        <input type="radio" id="complete-remission" name="chemo-outcome" value="Complete Remission">
+        <label for="complete-remission">Complete Remission</label><br><br>
+      </form>
+
+    </div>
+    <div class="chemoItem">
+            <label  class="button confirm" style="float: right; width: auto!important;">Save</label>
+            <label id= "btn-administer-cycle" class="button confirm" style="float: right; width: auto!important; display: none!important;">Administer</label>
+            <label id= "btn-save-cycle" class="button cancel" style="width: auto!important;">Cancel Cycle</label>
+    </div>
+</script>
+
+
+<script id="summary-template" type="text/template">
+    <div class="chemoItem">
+      <span class = "sidebar-title">
+          <span id="test"><i class="icon-medicine"></i>  Visit Summary </span>
+      </span>
+
+      <div class = "contItem">
+        <div class = "inf">
+            <div>Regimen:</div>
+            <div>Cycle: </div>
+            <div>Premedication: </div>
+            <div>Chemo Medication:</div>
+            <div>Visit Outcome:</div>
+            <div>Cycle Notes: </div>
+        </div>
+        <div class = "inf">
+            <div>Breast Cancer</div>
+            <div>Stage 2</div>
+            <div>Grade 3</div>
+            <div>The patient presents with stage 2 breast cancer and should begin a round of chemotherapy on the CHOP regimen </div>
+            <div>Stable disease </div>
+            <div>Vitals: Previously recorded vitals link</div>
+        </div>
+      </div>
+
+    </div>
+    <div class="chemoItem">
+            <label  class="button confirm" style="float: right; width: auto!important;">Save</label>
+            <label id= "btn-administer-cycle" class="button confirm" style="float: right; width: auto!important; display: none!important;">Administer</label>
+            <label id= "btn-save-cycle" class="button cancel" style="width: auto!important;">Cancel Cycle</label>
+    </div>
+</script>
