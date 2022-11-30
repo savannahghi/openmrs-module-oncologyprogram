@@ -1,7 +1,5 @@
 package org.openmrs.module.treatmentapp.page.controller;
 
-import com.sun.xml.internal.bind.v2.TODO;
-import org.openmrs.ConceptAnswer;
 import org.openmrs.Patient;
 import org.openmrs.PatientProgram;
 import org.openmrs.Program;
@@ -46,12 +44,11 @@ public class MainPageController {
 		boolean enrolledInChemo = mchService.enrolledInChemo(patient);
 		boolean enrolledInSurgery = mchService.enrolledInSurgery(patient);
 		boolean enrolledInRadio = mchService.enrolledInRadio(patient);
-
 		
 		model.addAttribute("enrolledInChemo", enrolledInChemo);
 		model.addAttribute("enrolledInSurgery", enrolledInSurgery);
 		model.addAttribute("enrolledInRadio", enrolledInRadio);
-
+		
 		Program program = null;
 		Calendar minEnrollmentDate = Calendar.getInstance();
 		List<ListItem> possibleProgramOutcomes = new ArrayList<ListItem>();
@@ -69,11 +66,11 @@ public class MainPageController {
 			program = Context.getProgramWorkflowService().getProgramByUuid(EhrMchMetadata._MchProgram.ANC_PROGRAM);
 			possibleProgramOutcomes = mchService.getPossibleOutcomes(program.getProgramId());
 		} else if (enrolledInSurgery) {
-            model.addAttribute("title", "Surgery");
-            minEnrollmentDate.add(Calendar.MONTH, -MAX_ANC_PNC_DURATION);
-            program = Context.getProgramWorkflowService().getProgramByUuid(EhrMchMetadata._MchProgram.PNC_PROGRAM);
-            possibleProgramOutcomes = mchService.getPossibleOutcomes(program.getProgramId());
-        } else if (enrolledInRadio) {
+			model.addAttribute("title", "Surgery");
+			minEnrollmentDate.add(Calendar.MONTH, -MAX_ANC_PNC_DURATION);
+			program = Context.getProgramWorkflowService().getProgramByUuid(EhrMchMetadata._MchProgram.PNC_PROGRAM);
+			possibleProgramOutcomes = mchService.getPossibleOutcomes(program.getProgramId());
+		} else if (enrolledInRadio) {
 			model.addAttribute("title", "Radiotherapy");
 			minEnrollmentDate.add(Calendar.MONTH, -MAX_ANC_PNC_DURATION);
 			program = Context.getProgramWorkflowService().getProgramByUuid(EhrMchMetadata._MchProgram.PNC_PROGRAM);
@@ -113,7 +110,7 @@ public class MainPageController {
 		//model.addAttribute("serviceOrderSize", serviceOrderList.size());
 		model.addAttribute("patientId", patient.getPatientId());
 		model.addAttribute("date", new Date());
-        //  TODO add other patients attributes
+		//  TODO add other patients attributes
 		return null;
 	}
 }
