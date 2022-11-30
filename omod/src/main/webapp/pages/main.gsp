@@ -638,8 +638,11 @@ ${ui.includeFragment("treatmentapp","mchProfile")}
 	</ul>
 	
 	<div id="clinical-notes">
-            ${ui.includeFragment("treatmentapp","surgery", [patientId: patient.patientId, queueId: queueId])}
-
+        <% if (enrolledInANC){ %>
+        ${ui.includeFragment("treatmentapp","chemoTherapy", [patientId: patient.patientId, queueId: queueId])}
+        <% } else if (enrolledInPNC) { %>
+        ${ui.includeFragment("treatmentapp","surgery", [patientId: patient.patientId, queueId: queueId])}
+        <% }%>
     </div>
 
 	<div id="triage-info">
