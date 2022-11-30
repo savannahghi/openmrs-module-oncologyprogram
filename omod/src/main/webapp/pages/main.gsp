@@ -634,11 +634,16 @@ ${ui.includeFragment("treatmentapp","mchProfile")}
 		<li id="ti"><a href="#triage-info">Triage Information</a></li>
 		<li id="cs"><a href="#clinical-summary">Clinical History</a></li>
 		<li id="lr"><a href="#investigations">Lab Reports</a></li>
+		<li id="rr"><a href="#radio">Radiology Reports</a></li>
 	</ul>
 	
 	<div id="clinical-notes">
-			${ui.includeFragment("treatmentapp","chemoTherapy", [patientId: patient.patientId, queueId: queueId])}
-	</div>
+        <% if (enrolledInANC){ %>
+        ${ui.includeFragment("treatmentapp","chemoTherapy", [patientId: patient.patientId, queueId: queueId])}
+        <% } else if (enrolledInPNC) { %>
+        ${ui.includeFragment("treatmentapp","surgery", [patientId: patient.patientId, queueId: queueId])}
+        <% }%>
+    </div>
 
 	<div id="triage-info">
 		${ ui.includeFragment("treatmentapp", "triageSummary", [patientId: patientId]) }
@@ -651,4 +656,8 @@ ${ui.includeFragment("treatmentapp","mchProfile")}
 	<div id="investigations">
 		${ ui.includeFragment("patientdashboardapp", "investigations", [patientId: patientId]) }
 	</div>
+
+    <div id="radio">
+        ${ ui.includeFragment("patientdashboardapp", "radiology", [patientId: patientId]) }
+    </div>
 </div>
