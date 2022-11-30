@@ -78,7 +78,7 @@ public class ProgramSelectionFragmentController {
 		try {
 			ClinicalForm form = ClinicalForm.generateForm(request, patient, null);
 			dateEnrolled = dateFormatter.parse(dateEnrolledAsString);
-			mchService.enrollInSurgery(patient, dateEnrolled);
+			mchService.enrollInRadio(patient, dateEnrolled);
 			Encounter encounter = Context.getService(MchService.class).saveMchEncounter(form,
 			    EhrMchMetadata._MchEncounterType.PNC_TRIAGE_ENCOUNTER_TYPE,
 			    Context.getService(KenyaEmrService.class).getDefaultLocation(),
@@ -101,7 +101,7 @@ public class ProgramSelectionFragmentController {
 		try {
 			dateEnrolled = dateFormatter.parse(dateEnrolledAsString);
 			//TODO add method to enroll in CWC and call from here
-			return mchService.enrollInRadio(patient, dateEnrolled);
+			return mchService.enrollInSurgery(patient, dateEnrolled);
 		}
 		catch (ParseException e) {
 			logger.error(e.getMessage());

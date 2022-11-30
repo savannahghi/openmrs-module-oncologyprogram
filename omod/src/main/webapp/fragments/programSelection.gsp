@@ -1,7 +1,8 @@
 <script>
 	jq(document).ready(function () {
+        var successUrl = "${ui.pageLink('treatmentapp','main',[patientId: patient, queueId: queueId])}";
 
-	var age 	= ${patient.age};
+        var age 	= ${patient.age};
 	var gender 	= '${patient.gender}';
 	var select  = 'enrollInAnc';
 
@@ -46,6 +47,8 @@
 
 
 		var handleEnrollInProgram = function (postUrl, successUrl) {
+		    console.log(postUrl)
+            console.log(successUrl)
 			jq.post(
 				postUrl,
 				{
@@ -55,11 +58,10 @@
 				null,
 				'json'
 			).done(function(data){
-			    console.log(data)
 				if (data.status === "success") {
 					jq().toastmessage('showSuccessToast', data.message);
 					//redirect to triage page
-				//	window.location = successUrl;
+					window.location = successUrl;
 				} else if (data.status === "error") {
 					//display error message
 					jq().toastmessage({sticky : true});
