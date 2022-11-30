@@ -23,7 +23,7 @@ public class MchEncounterServiceImpl implements MchEncounterService {
 	
 	private static final int MAX_PNC_DURATION = 9;
 	
-	private static final int MAX_CWC_DURATION = 5;
+	private static final int MAX_CWC_DURATION = 9;
 	
 	@Override
 	public List<String> getConditions(Patient patient) {

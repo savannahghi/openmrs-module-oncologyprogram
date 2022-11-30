@@ -7,15 +7,11 @@ import org.openmrs.*;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
-import org.openmrs.module.hospitalcore.PatientDashboardService;
-import org.openmrs.module.hospitalcore.model.OpdDrugOrder;
-import org.openmrs.module.hospitalcore.model.OpdTestOrder;
-import org.openmrs.module.treatmentapp.FreeInvestigationProcessor;
 import org.openmrs.module.treatmentapp.EhrMchMetadata;
 import org.openmrs.module.treatmentapp.MchProfileConcepts;
 import org.openmrs.module.treatmentapp.VisitListItem;
 import org.openmrs.module.treatmentapp.api.ListItem;
-import org.openmrs.module.treatmentapp.api.MchService;
+import org.openmrs.module.treatmentapp.api.TreatmentService;
 import org.openmrs.module.treatmentapp.api.model.ClinicalForm;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.util.OpenmrsUtil;
@@ -27,7 +23,7 @@ import java.util.*;
 
 import static java.lang.Math.max;
 
-public class MchServiceImpl implements MchService {
+public class TreatmentServiceImpl implements TreatmentService {
 	
 	protected final Log log = LogFactory.getLog(getClass());
 	
@@ -66,15 +62,15 @@ public class MchServiceImpl implements MchService {
 	}
 	
 	@Override
-	public boolean enrolledInANC(Patient patient) {
+	public boolean enrolledInChemo(Patient patient) {
 		return enrolledInProgram(patient,
 		    Context.getProgramWorkflowService().getProgramByUuid(EhrMchMetadata._MchProgram.ANC_PROGRAM));
 	}
 	
 	@Override
-	public SimpleObject enrollInANC(Patient patient, Date dateEnrolled) {
+	public SimpleObject enrollInChemo(Patient patient, Date dateEnrolled) {
 		Program ancProgram = Context.getProgramWorkflowService().getProgramByUuid(EhrMchMetadata._MchProgram.ANC_PROGRAM);
-		if (!enrolledInANC(patient)) {
+		if (!enrolledInChemo(patient)) {
 			PatientProgram patientProgram = new PatientProgram();
 			patientProgram.setPatient(patient);
 			patientProgram.setProgram(ancProgram);
@@ -91,15 +87,15 @@ public class MchServiceImpl implements MchService {
 	 * PNC Operations
 	 *****/
 	@Override
-	public boolean enrolledInPNC(Patient patient) {
+	public boolean enrolledInRadio(Patient patient) {
 		return enrolledInProgram(patient,
 		    Context.getProgramWorkflowService().getProgramByUuid(EhrMchMetadata._MchProgram.PNC_PROGRAM));
 	}
 	
 	@Override
-	public SimpleObject enrollInPNC(Patient patient, Date dateEnrolled) {
+	public SimpleObject enrollInRadio(Patient patient, Date dateEnrolled) {
 		Program pncProgram = Context.getProgramWorkflowService().getProgramByUuid(EhrMchMetadata._MchProgram.PNC_PROGRAM);
-		if (!enrolledInPNC(patient)) {
+		if (!enrolledInRadio(patient)) {
 			PatientProgram patientProgram = new PatientProgram();
 			patientProgram.setPatient(patient);
 			patientProgram.setProgram(pncProgram);
@@ -116,17 +112,17 @@ public class MchServiceImpl implements MchService {
 	 *****/
 	
 	@Override
-	public boolean enrolledInCWC(Patient patient) {
+	public boolean enrolledInSurgery(Patient patient) {
 		return enrolledInProgram(patient,
 		    Context.getProgramWorkflowService().getProgramByUuid(EhrMchMetadata._MchProgram.CWC_PROGRAM));
 	}
 	
 	@Override
-	public SimpleObject enrollInCWC(Patient patient, Date dateEnrolled, Map<String, String> cwcInitialStates) {
+	public SimpleObject enrollInSurgery(Patient patient, Date dateEnrolled) {
 		if (patient.getAge() != null) {}
 		
 		Program cwcProgram = Context.getProgramWorkflowService().getProgramByUuid(EhrMchMetadata._MchProgram.CWC_PROGRAM);
-		if (!enrolledInCWC(patient)) {
+		if (!enrolledInSurgery(patient)) {
 			PatientProgram patientProgram = new PatientProgram();
 			patientProgram.setPatient(patient);
 			patientProgram.setProgram(cwcProgram);
@@ -134,11 +130,6 @@ public class MchServiceImpl implements MchService {
 			//TODO Add creator
 			for (ProgramWorkflow programWorkflow : cwcProgram.getAllWorkflows()) {
 				String workflowUuid = programWorkflow.getUuid();
-				if (cwcInitialStates.containsKey(workflowUuid)) {
-					ProgramWorkflowState state = programWorkflow.getState(cwcInitialStates.get(workflowUuid));
-					log.debug("Transitioning to state: " + state);
-					patientProgram.transitionToState(state, dateEnrolled);
-				}
 			}
 			Context.getProgramWorkflowService().savePatientProgram(patientProgram);
 			return SimpleObject.create("status", "success", "message", "Patient enrolled in  successfully");
@@ -148,8 +139,8 @@ public class MchServiceImpl implements MchService {
 	}
 	
 	@Override
-	public Encounter saveMchEncounter(ClinicalForm form, String encounterType, Location location, Integer visitTypeId) {
-		Encounter mchEncounter = saveMchEncounter(form, encounterType, location);
+	public Encounter saveTreatmentEncounter(ClinicalForm form, String encounterType, Location location, Integer visitTypeId) {
+		Encounter mchEncounter = saveTreatmentEncounter(form, encounterType, location);
 		Visit visit = new Visit();
 		visit.setLocation(location);
 		visit.setPatient(form.getPatient());
@@ -162,34 +153,26 @@ public class MchServiceImpl implements MchService {
 	}
 	
 	@Override
-	public Encounter saveMchEncounter(ClinicalForm form, String encounterType, Location location) {
+	public Encounter saveTreatmentEncounter(ClinicalForm form, String encounterType, Location location) {
 		if (form == null) {
 			throw new IllegalArgumentException("form argument cannot be null");
 		}
-		Encounter mchEncounter = new Encounter();
-		mchEncounter.setPatient(form.getPatient());
-		mchEncounter.setLocation(location);
+		Encounter treatmentEncounter = new Encounter();
+		treatmentEncounter.setPatient(form.getPatient());
+		treatmentEncounter.setLocation(location);
 		Date encounterDateTime = new Date();
 		if (form.getObservations().size() > 0) {
 			encounterDateTime = form.getObservations().get(0).getObsDatetime();
 		}
-		mchEncounter.setEncounterDatetime(encounterDateTime);
+		treatmentEncounter.setEncounterDatetime(encounterDateTime);
 		EncounterType mchEncounterType = Context.getEncounterService().getEncounterTypeByUuid(encounterType);
-		mchEncounter.setEncounterType(mchEncounterType);
+		treatmentEncounter.setEncounterType(mchEncounterType);
 		for (Obs obs : form.getObservations()) {
-			mchEncounter.addObs(obs);
+			treatmentEncounter.addObs(obs);
 		}
-		mchEncounter = Context.getEncounterService().saveEncounter(mchEncounter);
-		/*for (OpdDrugOrder drugOrder : form.getDrugOrders()) {
-			drugOrder.setEncounter(mchEncounter);
-			Context.getService(PatientDashboardService.class).saveOrUpdateOpdDrugOrder(drugOrder);
-		}*/
-		/*for (OpdTestOrder testOrder : form.getTestOrders()) {
-			testOrder.setEncounter(mchEncounter);
-			testOrder = Context.getService(PatientDashboardService.class).saveOrUpdateOpdOrder(testOrder);
-			FreeInvestigationProcessor.process(testOrder, location);
-		}*/
-		return mchEncounter;
+		treatmentEncounter = Context.getEncounterService().saveEncounter(treatmentEncounter);
+		
+		return treatmentEncounter;
 	}
 	
 	@Override
@@ -384,5 +367,4 @@ public class MchServiceImpl implements MchService {
 		}
 		return objectList;
 	}
-	
 }
