@@ -8,6 +8,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.treatmentapp.EhrMchMetadata;
 import org.openmrs.module.treatmentapp.api.MchService;
+import org.openmrs.module.treatmentapp.api.TreatmentService;
 import org.openmrs.module.treatmentapp.api.model.ClinicalForm;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
@@ -46,13 +47,13 @@ public class ProgramSelectionFragmentController {
 	
 	public SimpleObject enrollInAnc(@RequestParam("patientId") Patient patient,
 	        @RequestParam("dateEnrolled") String dateEnrolledAsString, UiSessionContext session, HttpServletRequest request) {
-		MchService mchService = Context.getService(MchService.class);
+		TreatmentService mchService = Context.getService(TreatmentService.class);
 		SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 		Date dateEnrolled;
 		try {
 			ClinicalForm form = ClinicalForm.generateForm(request, patient, null);
 			dateEnrolled = dateFormatter.parse(dateEnrolledAsString);
-			mchService.enrollInANC(patient, dateEnrolled);
+			mchService.enrollInChemo(patient, dateEnrolled);
 			Encounter encounter = Context.getService(MchService.class).saveMchEncounter(
 			    form,
 			    EhrMchMetadata._MchEncounterType.ANC_TRIAGE_ENCOUNTER_TYPE,
@@ -71,13 +72,13 @@ public class ProgramSelectionFragmentController {
 	
 	public SimpleObject enrollInPnc(@RequestParam("patientId") Patient patient,
 	        @RequestParam("dateEnrolled") String dateEnrolledAsString, UiSessionContext session, HttpServletRequest request) {
-		MchService mchService = Context.getService(MchService.class);
+		TreatmentService mchService = Context.getService(TreatmentService.class);
 		SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 		Date dateEnrolled;
 		try {
 			ClinicalForm form = ClinicalForm.generateForm(request, patient, null);
 			dateEnrolled = dateFormatter.parse(dateEnrolledAsString);
-			mchService.enrollInPNC(patient, dateEnrolled);
+			mchService.enrollInRadio(patient, dateEnrolled);
 			Encounter encounter = Context.getService(MchService.class).saveMchEncounter(form,
 			    EhrMchMetadata._MchEncounterType.PNC_TRIAGE_ENCOUNTER_TYPE,
 			    Context.getService(KenyaEmrService.class).getDefaultLocation(),
@@ -94,13 +95,13 @@ public class ProgramSelectionFragmentController {
 	
 	public SimpleObject enrollInCwc(@RequestParam("patientId") Patient patient,
 	        @RequestParam("dateEnrolled") String dateEnrolledAsString) {
-		MchService mchService = Context.getService(MchService.class);
+		TreatmentService mchService = Context.getService(TreatmentService.class);
 		SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 		Date dateEnrolled;
 		try {
 			dateEnrolled = dateFormatter.parse(dateEnrolledAsString);
 			//TODO add method to enroll in CWC and call from here
-			return mchService.enrollInCWC(patient, dateEnrolled, new HashMap<String, String>());
+			return mchService.enrollInSurgery(patient, dateEnrolled);
 		}
 		catch (ParseException e) {
 			logger.error(e.getMessage());

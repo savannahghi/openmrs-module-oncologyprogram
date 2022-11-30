@@ -23,17 +23,13 @@ import org.openmrs.module.treatmentapp.api.parsers.ObsDatetimeUpdater;
 import org.openmrs.module.treatmentapp.api.parsers.ObsParser;
 
 /**
- * Contains observations, drug orders and test orders made by user
+ * Contains observations made by user
  */
 public class ClinicalForm {
 	
 	private Patient patient;
 	
 	private List<Obs> observations = new ArrayList<Obs>();
-	
-	private List<OpdDrugOrder> drugOrders = new ArrayList<OpdDrugOrder>();
-	
-	private List<OpdTestOrder> testOrders = new ArrayList<OpdTestOrder>();
 	
 	private ClinicalForm() {
 	}
@@ -46,14 +42,6 @@ public class ClinicalForm {
 		return observations;
 	}
 	
-	public List<OpdDrugOrder> getDrugOrders() {
-		return drugOrders;
-	}
-	
-	public List<OpdTestOrder> getTestOrders() {
-		return testOrders;
-	}
-	
 	@SuppressWarnings("unchecked")
 	public static ClinicalForm generateForm(HttpServletRequest request, Patient patient, String location)
 	        throws ParseException {
@@ -62,10 +50,6 @@ public class ClinicalForm {
 		ObsParser obsParser = new ObsParser();
 		for (Map.Entry<String, String[]> postedParams : ((Map<String, String[]>) request.getParameterMap()).entrySet()) {
 			form.observations = obsParser.parse(form.observations, patient, postedParams.getKey(), postedParams.getValue());
-			form.drugOrders = DrugOrdersParser.parseDrugOrders(patient, form.drugOrders, postedParams.getKey(),
-			    postedParams.getValue(), location);
-			InvestigationParser.parse(patient, postedParams.getKey(), postedParams.getValue(), location,
-			    Context.getAuthenticatedUser(), new Date(), form.testOrders);
 		}
 		if (request.getParameter("obsDatetime") != null) {
 			SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");

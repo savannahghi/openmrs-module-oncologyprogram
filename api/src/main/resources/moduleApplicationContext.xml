@@ -7,8 +7,8 @@
     <context:component-scan base-package="org.openmrs.module.treatmentapp" />
 
 
-	<bean id="mchServiceIm"
-			class="org.openmrs.module.treatmentapp.api.impl.MchServiceImpl">
+	<bean id="ServiceIm"
+			class="org.openmrs.module.treatmentapp.api.impl.TreatmentServiceImpl">
 	</bean>
 	<bean id="mchEncounterServiceIm"
 			class="org.openmrs.module.treatmentapp.api.impl.MchEncounterServiceImpl">
@@ -42,8 +42,8 @@
 	<bean parent="serviceContext">
 		<property name="moduleService">
 			<list>
-				<value>org.openmrs.module.treatmentapp.api.MchService</value>
-				<ref local="mchServiceIm" />
+				<value>org.openmrs.module.treatmentapp.api.TreatmentService</value>
+				<ref local="ServiceIm" />
 			</list>
 		</property>
 	</bean>

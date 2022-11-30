@@ -2,6 +2,7 @@ package org.openmrs.module.treatmentapp.fragment.controller;
 
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.*;
+import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.hospitalcore.*;
 import org.openmrs.module.hospitalcore.model.*;
@@ -43,6 +44,7 @@ public class SurgeryFragmentController {
 			obs.setEncounter(encounter);
 			obs.setPerson(patient);
 			encounter.addObs(obs);
+			Context.getEncounterService().saveEncounter(encounter);
 		}
 	}
 }

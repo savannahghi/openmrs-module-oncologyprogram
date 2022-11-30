@@ -579,7 +579,7 @@
 
             <li>
                 <i class="icon-chevron-right link"></i>
-                Chemotherapy
+                Treatment
             </li>
         </ul>
     </div>
@@ -610,7 +610,7 @@
 		<div class="tag">Outpatient</div>
 		<div class="tad">Last Visit: ${ui.formatDatePretty(previousVisit)}</div>
 
-        <div class="tad" id="enrollmentDate">Enrolled: ${patientProgram?ui.formatDatePretty(patientProgram.dateEnrolled):"--"}</div>
+        <div class="tad" id="enrollmentDate">Enrolled:</div>
 
         
     </div>
@@ -630,7 +630,13 @@ ${ui.includeFragment("treatmentapp","mchProfile")}
 
 <div class="mch-tabs" style="margin-top:5px!important;">
 	<ul>
-		<li id="cn"><a href="#clinical-notes">Chemotherapy</a></li>
+        <% if (enrolledInChemo){ %>
+        <li id="cn"><a href="#clinical-notes">Chemotherapy</a></li>
+        <% } else if (enrolledInSurgery) { %>
+        <li id="cn"><a href="#clinical-notes">Surgery</a></li>
+        <% } else if (enrolledInRadio) { %>
+        <li id="cn"><a href="#clinical-notes">Radiotherapy</a></li>
+        <% }%>
 		<li id="ti"><a href="#triage-info">Triage Information</a></li>
 		<li id="cs"><a href="#clinical-summary">Clinical History</a></li>
 		<li id="lr"><a href="#investigations">Lab Reports</a></li>
@@ -638,19 +644,19 @@ ${ui.includeFragment("treatmentapp","mchProfile")}
 	</ul>
 	
 	<div id="clinical-notes">
-        <% if (enrolledInANC){ %>
-        ${ui.includeFragment("treatmentapp","chemoTherapy", [patientId: patient.patientId, queueId: queueId])}
-        <% } else if (enrolledInPNC) { %>
-        ${ui.includeFragment("treatmentapp","surgery", [patientId: patient.patientId, queueId: queueId])}
+        <% if (enrolledInChemo){ %>
+             ${ui.includeFragment("treatmentapp","chemoTherapy", [patientId: patient.patientId, queueId: queueId])}
+        <% } else if (enrolledInSurgery) { %>
+             ${ui.includeFragment("treatmentapp","surgery", [patientId: patient.patientId, queueId: queueId])}
+        <% } else if (enrolledInRadio) { %>
+            ${ui.includeFragment("treatmentapp","radioTherapy", [patientId: patient.patientId, queueId: queueId])}
         <% }%>
     </div>
 
 	<div id="triage-info">
-		${ ui.includeFragment("treatmentapp", "triageSummary", [patientId: patientId]) }
 	</div>
 	
 	<div id="clinical-summary">
-		${ ui.includeFragment("treatmentapp", "visitSummary", [patientId: patientId]) }
 	</div>
 	
 	<div id="investigations">
