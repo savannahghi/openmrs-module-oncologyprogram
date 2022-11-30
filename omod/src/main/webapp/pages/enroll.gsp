@@ -315,7 +315,7 @@
 
             <li>
                 <i class="icon-chevron-right link"></i>
-                <a href="${ui.pageLink('patientqueueapp', 'mchClinicQueue')}">Treatment Program</a>
+                <a href="${ui.pageLink('patientqueueapp', 'treatmentProgram')}">Treatment Program</a>
             </li>
 
             <li>

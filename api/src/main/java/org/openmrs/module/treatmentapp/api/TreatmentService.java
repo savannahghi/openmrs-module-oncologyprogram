@@ -11,7 +11,6 @@ import org.openmrs.ui.framework.SimpleObject;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 public interface TreatmentService {
 	
@@ -19,13 +18,13 @@ public interface TreatmentService {
 	
 	SimpleObject enrollInChemo(Patient patient, Date dateEnrolled);
 	
-	boolean enrolledInRadioTherapy(Patient patient);
+	boolean enrolledInRadio(Patient patient);
 	
-	SimpleObject enrollInRadioTherapy(Patient patient, Date dateEnrolled);
+	SimpleObject enrollInRadio(Patient patient, Date dateEnrolled);
 	
 	boolean enrolledInSurgery(Patient patient);
 	
-	SimpleObject enrollInSurgery(Patient patient, Date dateEnrolled, Map<String, String> cwcInitialStates);
+	SimpleObject enrollInSurgery(Patient patient, Date dateEnrolled);
 	
 	Encounter saveTreatmentEncounter(ClinicalForm form, String encounterType, Location location, Integer visitTypeId);
 	

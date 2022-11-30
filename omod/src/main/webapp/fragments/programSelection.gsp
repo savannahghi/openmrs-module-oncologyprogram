@@ -1,7 +1,8 @@
 <script>
 	jq(document).ready(function () {
+        var successUrl = "${ui.pageLink('treatmentapp','main',[patientId: patient, queueId: queueId])}";
 
-	var age 	= ${patient.age};
+        var age 	= ${patient.age};
 	var gender 	= '${patient.gender}';
 	var select  = 'enrollInAnc';
 
@@ -46,6 +47,8 @@
 
 
 		var handleEnrollInProgram = function (postUrl, successUrl) {
+		    console.log(postUrl)
+            console.log(successUrl)
 			jq.post(
 				postUrl,
 				{
@@ -150,11 +153,6 @@
 					}).fail(function(){
 						//display error message
 					});
-
-
-
-
-
                     enrollAncDialog.close();
                 },
                 cancel: function () {
