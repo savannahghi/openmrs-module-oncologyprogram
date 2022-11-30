@@ -55,10 +55,11 @@
 				null,
 				'json'
 			).done(function(data){
+			    console.log(data)
 				if (data.status === "success") {
 					jq().toastmessage('showSuccessToast', data.message);
 					//redirect to triage page
-					window.location = successUrl;
+				//	window.location = successUrl;
 				} else if (data.status === "error") {
 					//display error message
 					jq().toastmessage({sticky : true});
@@ -150,11 +151,6 @@
 					}).fail(function(){
 						//display error message
 					});
-
-
-
-
-
                     enrollAncDialog.close();
                 },
                 cancel: function () {
