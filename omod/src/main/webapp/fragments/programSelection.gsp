@@ -3,14 +3,18 @@
         var successUrl = "${ui.pageLink('treatmentapp','main',[patientId: patient, queueId: queueId])}";
 
         var age 	= ${patient.age};
-	var gender 	= '${patient.gender}';
-	var select  = 'enrollInAnc';
+		var gender 	= '${patient.gender}';
+		var select  = 'enrollInAnc';
 
 	jQuery(function(){
-		if (age <= 5){
-			jq("input[name='enrollIn'][value='enrollInCwc']").attr('checked', 'checked');
-			select = 'enrollInCwc';
-		}
+
+	    // TODO - convert this check to an auto select based on doctor's clinical suggestion
+		//if (age <= 5){
+		//	jq("input[name='enrollIn'][value='enrollInCwc']").attr('checked', 'checked');
+		//	select = 'enrollInCwc';
+		//}
+
+
 
 		jQuery("input[name='enrollIn']").change(function(){
 			var programme = jq(this).val();
@@ -18,37 +22,17 @@
 			select = programme;
 		});
 
-			jQuery('.confirm').click(function () {
-				if (!jq("input[name='enrollIn']:checked").val()) {
-					jq().toastmessage('showErrorToast', 'No Programme has been selected');
-				}
+		jQuery('.confirm').click(function () {
+			if (!jq("input[name='enrollIn']:checked").val()) {
+				jq().toastmessage('showErrorToast', 'No Programme has been selected');
+			}
 
-				var programme = jq("input[name='enrollIn']:checked").val();
-
-				if ('${source?source:""}' == 'clinic' && programme != 'enrollInCwc') {
-					if (programme == 'enrollInAnc') {
-						jq('#ancDateEnrolled').val(jq('#date-enrolled-field').val());
-						//This will show the Dialog
-						jq("#enrollAncDialog").show();
-						//enrollAncDialog.show();
-
-					} else {
-						jq('#pncDateEnrolled').val(jq('#date-enrolled-field').val());
-						// This will show the Dialog
-						jq("#enrollPncDialog").show();
-						//enrollPncDialog.show();
-					}
-				} else {
-					handleEnrollInProgram("${ui.actionLink('treatmentapp', 'programSelection', '" + programme + "')}",
-							successUrl
-					);
-				}
-			});
+			var programme = jq("input[name='enrollIn']:checked").val();
+			handleEnrollInProgram("${ui.actionLink('treatmentapp', 'programSelection', '" + programme + "')}", successUrl );
+		});
 
 
 		var handleEnrollInProgram = function (postUrl, successUrl) {
-		    console.log(postUrl)
-            console.log(successUrl)
 			jq.post(
 				postUrl,
 				{
@@ -60,17 +44,25 @@
 			).done(function(data){
 				if (data.status === "success") {
 					jq().toastmessage('showSuccessToast', data.message);
-					//redirect to triage page
+					//redirect to program page
 					window.location = successUrl;
 				} else if (data.status === "error") {
-					//display error message
-					jq().toastmessage({sticky : true});
+					//TODO - this only happens when the patient is already enrolled, so the need to redirect to patient page
+					jq().toastmessage({sticky : false});
 					jq().toastmessage('showErrorToast', data.message);
+					jq().toastmessage('showSuccessToast', "Redirecting to the patient profile...");
+					setTimeout(redirectToUrl,3000);
 				}
 			}).fail(function(){
 				//display error message
+					jq().toastmessage({sticky : true});
+					jq().toastmessage('showErrorToast', "Unknown error occured while processing the request!");
 			});
 		};
+
+		function redirectToUrl(){
+			window.location = successUrl;
+		}
 
 		var enrollAncDialog = emr.setupConfirmationDialog({
             dialogOpts: {
