@@ -599,7 +599,7 @@
 
             <li>
                 <i class="icon-chevron-right link"></i>
-                <a href="${ui.pageLink('patientqueueapp', 'mchClinicQueue')}">Treatment Program</a>
+                <a href="${ui.pageLink('patientqueueapp', 'treatmentProgram')}">Treatment Program</a>
             </li>
 
             <li>
@@ -679,16 +679,14 @@
 
 </div>
 
-${ui.includeFragment("treatmentapp","mchProfile")}
-
 <div class="mch-tabs" style="margin-top:5px!important;">
 	<ul>
         <% if (enrolledInChemo){ %>
-        <li id="cn"><a href="#clinical-notes">Chemotherapy</a></li>
+        <li id="ct"><a href="#clinical-notes">Chemotherapy</a></li>
         <% } else if (enrolledInSurgery) { %>
-        <li id="cn"><a href="#clinical-notes">Surgery</a></li>
+        <li id="st"><a href="#clinical-notes">Surgery</a></li>
         <% } else if (enrolledInRadio) { %>
-        <li id="cn"><a href="#clinical-notes">Radiotherapy</a></li>
+        <li id="rt"><a href="#clinical-notes">Radiotherapy</a></li>
         <% }%>
 		<li id="ti"><a href="#triage-info">Triage Information</a></li>
 		<li id="cs"><a href="#clinical-summary">Clinical History</a></li>
