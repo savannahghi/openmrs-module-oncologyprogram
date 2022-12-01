@@ -97,7 +97,8 @@ public class MainPageController {
 			program = Context.getProgramWorkflowService().getProgramByUuid(EhrMchMetadata._MchProgram.PNC_PROGRAM);
 			possibleProgramOutcomes = mchService.getPossibleOutcomes(program.getProgramId());
 		} else {
-			logger.error("No patient queue with stated ID");
+			return "redirect:" + uiUtils.pageLink("treatmentapp", "enroll") + "?patientId=" + patient.getPatientId()
+			        + "&queueId=" + queueId;
 		}
 		
 		//        TODO modify code to ensure that the last program enrolled is pulled

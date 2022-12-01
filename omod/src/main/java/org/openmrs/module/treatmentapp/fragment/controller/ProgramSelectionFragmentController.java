@@ -54,14 +54,14 @@ public class ProgramSelectionFragmentController {
 			ClinicalForm form = ClinicalForm.generateForm(request, patient, null);
 			dateEnrolled = dateFormatter.parse(dateEnrolledAsString);
 			mchService.enrollInChemo(patient, dateEnrolled);
-			Encounter encounter = Context.getService(MchService.class).saveMchEncounter(
+			Encounter encounter = Context.getService(TreatmentService.class).saveTreatmentEncounter(
 			    form,
 			    EhrMchMetadata._MchEncounterType.ANC_TRIAGE_ENCOUNTER_TYPE,
 			    Context.getService(KenyaEmrService.class).getDefaultLocation(),
 			    Context.getVisitService().getVisitTypeByUuid(EhrMchMetadata._VistTypes.INITIAL_MCH_CLINIC_VISIT)
 			            .getVisitTypeId());
 			
-			return SimpleObject.create("status", "success", "message", patient + " has been enrolled into ANC");
+			return SimpleObject.create("status", "success", "message", patient + " has been enrolled into Chemo");
 		}
 		catch (ParseException e) {
 			logger.error(e.getMessage());
@@ -79,12 +79,12 @@ public class ProgramSelectionFragmentController {
 			ClinicalForm form = ClinicalForm.generateForm(request, patient, null);
 			dateEnrolled = dateFormatter.parse(dateEnrolledAsString);
 			mchService.enrollInRadio(patient, dateEnrolled);
-			Encounter encounter = Context.getService(MchService.class).saveMchEncounter(form,
+			Encounter encounter = Context.getService(TreatmentService.class).saveTreatmentEncounter(form,
 			    EhrMchMetadata._MchEncounterType.PNC_TRIAGE_ENCOUNTER_TYPE,
 			    Context.getService(KenyaEmrService.class).getDefaultLocation(),
 			    EhrMchMetadata.getInitialMCHClinicVisitTypeId());
 			
-			return SimpleObject.create("status", "success", "message", patient + " has been enrolled into PNC");
+			return SimpleObject.create("status", "success", "message", patient + " has been enrolled into Radio");
 		}
 		catch (ParseException e) {
 			logger.error(e.getMessage());

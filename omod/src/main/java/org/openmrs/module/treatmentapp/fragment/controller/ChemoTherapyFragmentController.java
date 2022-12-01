@@ -10,6 +10,7 @@ import org.openmrs.module.hospitalcore.model.Regimen;
 import org.openmrs.module.hospitalcore.model.RegimenType;
 import org.openmrs.module.treatmentapp.EhrMchMetadata;
 import org.openmrs.module.treatmentapp.api.MchService;
+import org.openmrs.module.treatmentapp.api.TreatmentService;
 import org.openmrs.module.treatmentapp.model.VisitSummary;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
@@ -35,16 +36,16 @@ public class ChemoTherapyFragmentController {
 		PatientDashboardService dashboardService = Context.getService(PatientDashboardService.class);
 		Patient patient = Context.getPatientService().getPatient(patientId);
 		
-		MchService mchService = Context.getService(MchService.class);
+		TreatmentService mchService = Context.getService(TreatmentService.class);
 		EncounterType mchEncType = null;
 		
-		if (mchService.enrolledInANC(patient)) {
+		if (mchService.enrolledInChemo(patient)) {
 			mchEncType = Context.getEncounterService().getEncounterTypeByUuid(
 			    EhrMchMetadata._MchEncounterType.ANC_ENCOUNTER_TYPE);
-		} else if (mchService.enrolledInPNC(patient)) {
+		} else if (mchService.enrolledInRadio(patient)) {
 			mchEncType = Context.getEncounterService().getEncounterTypeByUuid(
 			    EhrMchMetadata._MchEncounterType.PNC_ENCOUNTER_TYPE);
-		} else {
+		} else if (mchService.enrolledInSurgery(patient)) {
 			mchEncType = Context.getEncounterService().getEncounterTypeByUuid(
 			    EhrMchMetadata._MchEncounterType.CWC_ENCOUNTER_TYPE);
 		}

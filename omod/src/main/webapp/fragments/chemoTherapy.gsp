@@ -632,7 +632,7 @@ font-size: 3em;
           </thead>
           <tbody>
             {{ _.each(cycleDrugs, function(drug, index) { }}
-              {{ if(drug?.tag === "pre-medication"){ }}
+              {{ if(drug?.tag === "Pre-Medication"){ }}
                 <tr style="border: 1px solid #eee;">
                   <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{=index+1}}</td>
                   <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.medication}}</td>
@@ -678,7 +678,7 @@ font-size: 3em;
           </thead>
           <tbody>
             {{ _.each(cycleDrugs, function(drug, index) { }}
-              {{ if(drug?.tag === "chemotherapy"){ }}
+              {{ if(drug?.tag === "Chemotherapy"){ }}
                 <tr style="border: 1px solid #eee;">
                   <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{=index+1}}</td>
                   <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.medication}}</td>
