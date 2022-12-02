@@ -48,8 +48,6 @@ function toggleCssClass(e){
         jq("#defaultContainer").html(chemoTemplate(data));
       }
 
-
-
         jq(".cycle").on("click",  function(){
           jq("#defaultContainer").html('<i class=\"icon-spinner icon-spin icon-2x pull-left\"></i> <span style="float: left; margin-top: 12px;">Loading...</span>');
           var chemoDetail = jq(this);
@@ -225,6 +223,28 @@ function toggleCssClass(e){
         document.getElementById("drug-void-dialog").style.display = "none";
     }
 
+    function loadTemplate(template,data){
+      var chemoTemplate =  _.template(template.html());
+      jq("#defaultContainer").html(chemoTemplate(data));
+    }
+
+    function loadNext(templateName){
+        let temp;
+        if(templateName === 'outcome'){
+            temp = jq("#outcome-template");
+        }else if(templateName === 'summary'){
+            temp = jq("#summary-template");
+        }
+        loadTemplate(temp);
+    }
+
+    function processPrescription(){
+        //Hide or unhide appropriate buttons
+        jq().toastmessage('showSuccessToast', 'Sending request to pharmacy')
+        jq("#btn-request-dispense").hide();
+        jq("#btn-administer-cycle").show();
+    }
+
 
 
 
@@ -243,7 +263,7 @@ function toggleCssClass(e){
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    height: 70vh;
+    height: 65vh;
     display: flex;
     color: #agf;
 }
@@ -494,7 +514,7 @@ font-size: 3em;
     <div class="dialog-header">
         <i class="icon-folder-open"></i>
 
-        <h3>Prescription</h3>
+        <h3>Add/Edit Prescription</h3>
     </div>
 
     <div class="dialog-content">
@@ -703,8 +723,9 @@ font-size: 3em;
     </div>
 
     <div class="chemoItem">
-            <label  class="button confirm" style="float: right; width: auto!important;">Save</label>
-            <label id= "btn-administer-cycle" class="button confirm" style="float: right; width: auto!important; display: none!important;">Administer</label>
+            <label id= "btn-request-dispense"class="button confirm next" style="float: right; width: auto!important;" onclick = "processPrescription()">Save</label>
+            <label id= "btn-administer-cycle" class="button confirm"
+            style="float: right; width: auto!important; display: none!important;" onclick = "loadNext('outcome')">Administer</label>
             <label id= "btn-save-cycle" class="button cancel" style="width: auto!important;">Cancel Cycle</label>
     </div>
 </script>
@@ -716,22 +737,20 @@ font-size: 3em;
           <span id="test"><i class="icon-medicine"></i>  Visit Outcome </span>
       </span>
 
-      <form id = "outcome-form">
-        <input type="radio" id="stable" name="chemo-outcome" value="Stable Disease">
-        <label for="stable">Stable Disease</label><br>
-        <input type="radio" id="progressed" name="chemo-outcome" value="Progressed">
-        <label for="progressed">Progressed:</label><br>
-        <input type="radio" id="partial-remission" name="chemo-outcome" value="Partial Remission">
-        <label for="partial-remission">Partial Remission</label><br><br>
-        <input type="radio" id="complete-remission" name="chemo-outcome" value="Complete Remission">
-        <label for="complete-remission">Complete Remission</label><br><br>
-      </form>
+        <input type="radio" id="stable_disease" name="cycle_outcome" value="Stable Disease">
+        <label for="stable_disease">Stable Disease</label><br>
+        <input type="radio" id="progressed" name="cycle_outcome" value="Progressed">
+        <label for="progressed">Progressed</label><br>
+        <input type="radio" id="partial_remission" name="cycle_outcome" value="Partial Remission">
+        <label for="partial_remission">Partial Remission</label><br>
+        <input type="radio" id="complete_remission" name="cycle_outcome" value="Complete Remission">
+        <label for="complete_remission">Complete Remission</label>
 
     </div>
     <div class="chemoItem">
-            <label  class="button confirm" style="float: right; width: auto!important;">Save</label>
+            <label  class="button confirm" style="float: right; width: auto!important;" onclick = "loadNext('summary')">Next</label>
             <label id= "btn-administer-cycle" class="button confirm" style="float: right; width: auto!important; display: none!important;">Administer</label>
-            <label id= "btn-save-cycle" class="button cancel" style="width: auto!important;">Cancel Cycle</label>
+            <label id= "btn-save-cycle" class="button cancel" style="width: auto!important;">Back</label>
     </div>
 </script>
 
