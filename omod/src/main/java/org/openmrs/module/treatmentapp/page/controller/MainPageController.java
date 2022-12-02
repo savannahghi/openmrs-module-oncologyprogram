@@ -42,9 +42,11 @@ public class MainPageController {
 		List<SimpleObject> chemoProfile = new ArrayList<SimpleObject>();
 		for (Regimen regimen : regimens) {
 			SimpleObject profileInfo = new SimpleObject();
+			profileInfo.put("regimenId", regimen.getId());
 			profileInfo.put("name", regimen.getRegimenType().getName());
 			profileInfo.put("icon", "icon-hospital");
-			profileInfo.put("cycles", SimpleObject.fromCollection(regimen.getCycles(), uiUtils, "id", "name", "icon"));
+			profileInfo.put("cycles",
+			    SimpleObject.fromCollection(regimen.getCycles(), uiUtils, "id", "name", "icon", "active"));
 			chemoProfile.add(profileInfo);
 		}
 		

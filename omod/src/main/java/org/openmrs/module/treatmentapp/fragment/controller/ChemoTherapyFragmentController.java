@@ -145,6 +145,24 @@ public class ChemoTherapyFragmentController {
 		return SimpleObject.create("status", "success");
 	}
 	
+	public SimpleObject createRegimenCycle(@RequestParam("patientId") Patient patient,
+	        @RequestParam("regimenId") Integer regimenId, UiUtils ui) {
+		
+		InventoryCommonService patientRegimenService = Context.getService(InventoryCommonService.class);
+		Regimen regimen = patientRegimenService.getRegimenById(regimenId);
+		
+		//		For an initiation, automatically create a default cycle
+		Cycle regimenCycle = new Cycle();
+		regimenCycle.setName("Cycle " + (regimen.getCycles().size() + 1) + " of " + regimen.getRegimenType().getCycles());
+		regimenCycle.setActive(true);
+		regimenCycle.setVoided(false);
+		//        regimenCycle.setRegimenId(regimen);
+		regimen.getCycles().add(regimenCycle);
+		
+		Regimen createdRegimen = patientRegimenService.updateRegimen(regimen);
+		return SimpleObject.create("status", "success");
+	}
+	
 	public SimpleObject addCycleMedication(@RequestParam("cycleId") Integer cycleId,
 	        @RequestParam(value = "drugId", required = false) Integer drugId, @RequestParam("drugName") String drugName,
 	        @RequestParam("dosage") String dosage, @RequestParam("dosageUnit") String dosageUnit,
