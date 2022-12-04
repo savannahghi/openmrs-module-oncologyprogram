@@ -82,18 +82,16 @@ public class ChemoTherapyFragmentController {
 	}
 	
 	public SimpleObject getChemotherapyCycleDetails(@RequestParam("id") Integer cycleId, UiUtils ui) {
-		
 		List<PatientRegimen> chemoDetails;
-		
 		InventoryCommonService patientRegimenService = Context.getService(InventoryCommonService.class);
 		Cycle cycle = patientRegimenService.getCycleById(cycleId);
 		
 		if (cycle != null) {
 			chemoDetails = patientRegimenService.getPatientRegimen(null, cycle, false);
-			log.error("Received something here ===> " + chemoDetails.size());
 			List<SimpleObject> drugs = SimpleObject.fromCollection(chemoDetails, ui, "id", "medication", "dose",
 			    "dosingUnit", "route", "comment", "tag");
-			return SimpleObject.create("cycleDrugs", drugs);
+			return SimpleObject.create("cycleDrugs", drugs, "summaryNotes", cycle.getSummaryNotes(), "dispenseStatus",
+			    cycle.getDispenseStatus() != null ? cycle.getDispenseStatus().getName().getName() : "New");
 		} else {
 			return SimpleObject.create("success", false, "msg", "No cycle with requested ID");
 		}

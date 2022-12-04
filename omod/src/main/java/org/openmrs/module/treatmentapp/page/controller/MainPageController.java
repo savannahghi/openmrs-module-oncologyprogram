@@ -46,7 +46,7 @@ public class MainPageController {
 			profileInfo.put("name", regimen.getRegimenType().getName());
 			profileInfo.put("icon", "icon-hospital");
 			profileInfo.put("cycles",
-			    SimpleObject.fromCollection(regimen.getCycles(), uiUtils, "id", "name", "icon", "active"));
+			    SimpleObject.fromCollection(regimen.getCycles(), uiUtils, "id", "name", "icon", "active", "summaryNotes"));
 			chemoProfile.add(profileInfo);
 		}
 		

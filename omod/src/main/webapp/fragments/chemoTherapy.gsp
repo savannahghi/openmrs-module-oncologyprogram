@@ -254,6 +254,8 @@ function toggleCssClass(e){
     function processPrescription(){
         //Hide or unhide appropriate buttons
         jq().toastmessage('showSuccessToast', 'Sending request to pharmacy')
+        // TODO - Raise the external request to post the dispense order to the pharmacy and wait for updates on dispense in collaboration with CHAI folks
+        // Add dispense status - New, Failed, Pending, Fulfilled, Partially Fulfilled
         jq("#btn-request-dispense").hide();
         jq("#btn-administer-cycle").show();
     }
@@ -295,7 +297,7 @@ function toggleCssClass(e){
 }
 
 .sidebar{
-    width: 260px;
+    width: 283px;
     flex-shrink: 0;
     background-color: rgba(22,22,22,0.4);
     height: 100%;
@@ -713,7 +715,12 @@ font-size: 3em;
             {{ _.each(cycleDrugs, function(drug, index) { }}
               {{ if(drug?.tag === "Pre-Medication"){ }}
                 <tr style="border: 1px solid #eee;">
-                  <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{=index+1}}</td>
+                  <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">
+                    {{=index+1}}
+                    {{if(dispenseStatus === 'New') { }}
+                           <input type="checkbox" id={{-drug.id}} name={{-drug.id}} value={{-drug.id}}>
+                    {{ } }}
+                  </td>
                   <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.medication}}</td>
                   <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.dose}}</td>
                   <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.route}}</td>
@@ -777,7 +784,7 @@ font-size: 3em;
           <span class = "sidebar-title">
               <span><i class="icon-edit "></i>  Cycle Summary Notes</span>
           </span>
-          <textarea id="w3review" name="w3review" rows="4" style="width: 100%;" placeholder = "Enter cycle summary notes here ..." />
+          <textarea id="summary_notes" name="summary_notes" rows="4" style="width: 100%;" placeholder = "Enter cycle summary notes here ...">{{-summaryNotes}}</textarea>
 
     </div>
 
