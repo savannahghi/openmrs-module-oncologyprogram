@@ -1,5 +1,5 @@
 <%
-    ui.decorateWith("appui", "standardEmrPage", [title: "Mother Child Health"])
+    ui.decorateWith("appui", "standardEmrPage", [title: "Treatment"])
 	ui.includeJavascript("ehrcashier", "moment.js")
 	ui.includeCss("uicommons", "datatables/dataTables_jui.css")
 	ui.includeCss("coreapps", "patientsearch/patientSearchWidget.css")

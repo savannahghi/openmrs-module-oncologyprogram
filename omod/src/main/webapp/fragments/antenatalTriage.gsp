@@ -166,26 +166,26 @@
 					<input type="hidden" name="patientEnrollmentDate" value='${patientProgram?patientProgram.dateEnrolled:"--"}'>
 					<div>
 						<label for="concept.5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA">Weight</label>
-						<input type="text" id="concept.5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" name="concept.5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" class="number numeric-range" value="${weight}"/>
+						<input type="text" id="concept.5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" name="concept.5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" class="number numeric-range" value="78"/>
 						<span class="append-to-value">Kgs</span>
 						<span id="12482" class="field-error" style="display: none"></span>
 					</div>
 					<div>
 						<label for="concept.5090AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA">Height</label>
-						<input type="text" id="concept.5090AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" name="concept.5090AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" class="number numeric-range" value="${height}"/>
+						<input type="text" id="concept.5090AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" name="concept.5090AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" class="number numeric-range" value="45"/>
 						<span class="append-to-value">Mtrs</span>
 						 <span id="12483" class="field-error" style="display: none"></span>
 					</div>
 					<div>
 						<label for="systolic">Blood Pressure</label>
-						<input type="text" id="systolic" name="concept.5085AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" class="number numeric-range" value="${systolic}"  />
+						<input type="text" id="systolic" name="concept.5085AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" class="number numeric-range" value="67"  />
 						<span class="append-to-value">Systolic</span>
 						<span id="12485" class="field-error" style="display: none"></span>
 					</div>
 					
 					<div>
 						<label for="diastolic"></label>
-						<input type="text" id="diastolic" name="concept.5086AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" class="number numeric-range" value="${daistolic}"/>
+						<input type="text" id="diastolic" name="concept.5086AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" class="number numeric-range" value="89"/>
 						<span class="append-to-value">Diastolic</span>
 						<span id="12484" class="field-error" style="display: none"></span>
 					</div>					
@@ -229,10 +229,5 @@
 	<br style="clear: both">
 </div>
 
-<div class="template-holder" style="display:none;">
-	<div class="patient-profile-editor">
-		${ui.includeFragment("treatmentapp", "antenatalDetails")}
-	</div>
-</div>
 <div class="">&nbsp;</div>
 

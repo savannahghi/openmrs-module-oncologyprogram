@@ -13,7 +13,7 @@ import org.openmrs.module.hospitalcore.PatientQueueService;
 import org.openmrs.module.hospitalcore.model.Referral;
 import org.openmrs.module.hospitalcore.model.TriagePatientQueue;
 import org.openmrs.module.treatmentapp.EhrMchMetadata;
-import org.openmrs.module.treatmentapp.api.MchService;
+import org.openmrs.module.treatmentapp.api.TreatmentService;
 import org.openmrs.module.treatmentapp.api.model.ClinicalForm;
 import org.openmrs.module.treatmentapp.api.parsers.QueueLogs;
 import org.openmrs.module.treatmentapp.api.parsers.SendForExaminationParser;
@@ -45,7 +45,7 @@ public class AntenatalTriageFragmentController {
 		config.require("patientId");
 		config.require("queueId");
 		
-		MchService service = Context.getService(MchService.class);
+		TreatmentService service = Context.getService(TreatmentService.class);
 		
 		if (StringUtils.isNotEmpty(encounterId)) {
 			Encounter current = Context.getEncounterService().getEncounter(Integer.parseInt(encounterId));
@@ -124,15 +124,15 @@ public class AntenatalTriageFragmentController {
 		TriagePatientQueue queue = queueService.getTriagePatientQueueById(queueId);
 		try {
 			ClinicalForm form = ClinicalForm.generateForm(request, patient, null);
-			List<Object> previousVisitsByPatient = Context.getService(MchService.class).findVisitsByPatient(patient, true,
-			    true, patientEnrollmentDate);
+			List<Object> previousVisitsByPatient = Context.getService(TreatmentService.class).findVisitsByPatient(patient,
+			    true, true, patientEnrollmentDate);
 			int visitTypeId;
 			if (previousVisitsByPatient.size() == 0) {
 				visitTypeId = EhrMchMetadata.getInitialMCHClinicVisitTypeId();
 			} else {
 				visitTypeId = EhrMchMetadata.getReturnAncClinicVisitTypeId();
 			}
-			Encounter encounter = Context.getService(MchService.class).saveMchEncounter(form,
+			Encounter encounter = Context.getService(TreatmentService.class).saveTreatmentEncounter(form,
 			    EhrMchMetadata._MchEncounterType.ANC_TRIAGE_ENCOUNTER_TYPE, session.getSessionLocation(), visitTypeId);
 			
 			if (request.getParameter("send_for_examination") != null) {

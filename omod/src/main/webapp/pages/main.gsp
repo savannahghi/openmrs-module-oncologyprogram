@@ -705,7 +705,8 @@
     </div>
 
 	<div id="triage-info">
-	</div>
+        ${ ui.includeFragment("treatmentapp", "triageSummary", [patientId: patientId]) }
+    </div>
 	
 	<div id="clinical-summary">
 	</div>
