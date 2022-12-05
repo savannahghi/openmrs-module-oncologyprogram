@@ -36,9 +36,9 @@ import java.util.Set;
 /**
  * Created by qqnarf on 4/27/16.
  */
-public class AntenatalTriageFragmentController {
+public class ChemoTriageFragmentController {
 	
-	protected Logger log = LoggerFactory.getLogger(AntenatalTriageFragmentController.class);
+	protected Logger log = LoggerFactory.getLogger(ChemoTriageFragmentController.class);
 	
 	public void controller(FragmentModel model, FragmentConfiguration config, UiUtils ui,
 	        @RequestParam(value = "encounterId", required = false) String encounterId) {
@@ -115,7 +115,7 @@ public class AntenatalTriageFragmentController {
 		}
 	}
 	
-	public SimpleObject saveAntenatalTriageInformation(@RequestParam("patientId") Patient patient,
+	public SimpleObject saveChemoTriageInformation(@RequestParam("patientId") Patient patient,
 	        @RequestParam("queueId") Integer queueId, @RequestParam("patientEnrollmentDate") Date patientEnrollmentDate,
 	        @RequestParam(value = "isEdit", required = false) Boolean isEdit, UiSessionContext session,
 	        HttpServletRequest request) {

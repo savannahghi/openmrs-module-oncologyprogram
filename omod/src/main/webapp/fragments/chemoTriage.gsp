@@ -91,7 +91,7 @@
             var data = jq("form#antenatal-triage-form").serialize();
 
             jq.post(
-                '${ui.actionLink("treatmentapp", "antenatalTriage", "saveAntenatalTriageInformation")}',
+                '${ui.actionLink("treatmentapp", "chemoTriage", "saveChemoTriageInformation")}',
                 data,
                 function (data) {
                     if (data.status === "success") {

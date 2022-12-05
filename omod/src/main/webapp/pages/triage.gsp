@@ -317,7 +317,7 @@
 </div>
 
 <% if (enrolledInAnc) { %>
-${ui.includeFragment("treatmentapp", "antenatalTriage", [patientId: patientId, queueId: queueId])}
+${ui.includeFragment("treatmentapp", "chemoTriage", [patientId: patientId, queueId: queueId])}
 <% } else if (enrolledInPnc) { %>
 ${ui.includeFragment("treatmentapp", "postnatalTriage", [patientId: patientId, queueId: queueId])}
 <% } else if (enrolledInCwc) { %>
