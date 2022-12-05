@@ -166,26 +166,26 @@
 					<input type="hidden" name="patientEnrollmentDate" value='${patientProgram?patientProgram.dateEnrolled:"--"}'>
 					<div>
 						<label for="concept.5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA">Weight</label>
-						<input type="text" id="concept.5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" name="concept.5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" class="number numeric-range" value="78"/>
+						<input type="text" id="concept.5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" name="concept.5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" class="number numeric-range" value="${weight}"/>
 						<span class="append-to-value">Kgs</span>
 						<span id="12482" class="field-error" style="display: none"></span>
 					</div>
 					<div>
 						<label for="concept.5090AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA">Height</label>
-						<input type="text" id="concept.5090AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" name="concept.5090AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" class="number numeric-range" value="45"/>
+						<input type="text" id="concept.5090AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" name="concept.5090AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" class="number numeric-range" value="${height}"/>
 						<span class="append-to-value">Mtrs</span>
 						 <span id="12483" class="field-error" style="display: none"></span>
 					</div>
 					<div>
 						<label for="systolic">Blood Pressure</label>
-						<input type="text" id="systolic" name="concept.5085AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" class="number numeric-range" value="67"  />
+						<input type="text" id="systolic" name="concept.5085AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" class="number numeric-range" value="${systolic}"  />
 						<span class="append-to-value">Systolic</span>
 						<span id="12485" class="field-error" style="display: none"></span>
 					</div>
 					
 					<div>
 						<label for="diastolic"></label>
-						<input type="text" id="diastolic" name="concept.5086AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" class="number numeric-range" value="89"/>
+						<input type="text" id="diastolic" name="concept.5086AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" class="number numeric-range" value="${daistolic}"/>
 						<span class="append-to-value">Diastolic</span>
 						<span id="12484" class="field-error" style="display: none"></span>
 					</div>					
