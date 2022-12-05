@@ -48,8 +48,6 @@ function toggleCssClass(e){
         jq("#defaultContainer").html(chemoTemplate(data));
       }
 
-
-
         jq(".cycle").on("click",  function(){
           jq("#defaultContainer").html('<i class=\"icon-spinner icon-spin icon-2x pull-left\"></i> <span style="float: left; margin-top: 12px;">Loading...</span>');
           var chemoDetail = jq(this);
@@ -67,6 +65,19 @@ function toggleCssClass(e){
           })
           .fail(function() { console.log("error occurred while fetching cycle details"); })
           .always(function() { console.log("Completed fetching cycle details"); });
+        });
+        jq(".addCycle").on("click",  function(){
+            let addCycleBtn = jq(this);
+            let regimenId = addCycleBtn.context.dataset.regimenid;
+            jq.getJSON('${ ui.actionLink("treatmentapp", "chemoTherapy" ,"createRegimenCycle") }',
+              { 'patientId':${patient.patientId},regimenId }
+            ).success(function (data) {
+              console.log(data);
+              location.reload();
+            })
+            .fail(function() { console.log("error occurred while fetching cycle details"); })
+            .always(function() { console.log("Completed fetching cycle details"); });
+
         });
 
 
@@ -225,6 +236,43 @@ function toggleCssClass(e){
         document.getElementById("drug-void-dialog").style.display = "none";
     }
 
+    function loadTemplate(template,data){
+      var chemoTemplate =  _.template(template.html());
+      jq("#defaultContainer").html(chemoTemplate(data));
+    }
+
+    function loadNext(templateName){
+        let temp;
+        if(templateName === 'outcome'){
+            temp = jq("#outcome-template");
+        }else if(templateName === 'summary'){
+            temp = jq("#summary-template");
+        }
+        loadTemplate(temp);
+    }
+
+    function processPrescription(){
+        //Hide or unhide appropriate buttons
+        jq().toastmessage('showSuccessToast', 'Sending request to pharmacy')
+        // TODO - Raise the external request to post the dispense order to the pharmacy and wait for updates on dispense in collaboration with CHAI folks
+        // Add dispense status - New, Failed, Pending, Fulfilled, Partially Fulfilled
+        jq("#btn-request-dispense").hide();
+        jq("#btn-administer-cycle").show();
+    }
+
+    function addPatientCycle(){
+        jq.getJSON('${ ui.actionLink("treatmentapp", "chemoTherapy" ,"addPatientCycle") }',
+              { 'patientId':${patient.patientId},'regimenId' : regimen,'cycle':cycle,'days':days }
+          ).success(function (data) {
+              console.log(data);
+              location.reload();
+              //var chemoTemplate =  _.template(jq("#chemo-template").html());
+              //jq("#defaultContainer").html(chemoTemplate(data));
+          })
+          .fail(function() { console.log("error occurred registering patient regimen"); })
+          .always(function() { console.log("Completed fetching request"); });
+    }
+
 
 
 
@@ -243,13 +291,13 @@ function toggleCssClass(e){
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    height: 70vh;
+    height: 65vh;
     display: flex;
     color: #agf;
 }
 
 .sidebar{
-    width: 260px;
+    width: 283px;
     flex-shrink: 0;
     background-color: rgba(22,22,22,0.4);
     height: 100%;
@@ -420,6 +468,34 @@ font-size: 3em;
   background-color: white;
 }
 
+.cycle-active {
+    background: #161;
+    color: white;
+    letter-spacing: 1px;
+    margin: 5px;
+    display: inline;
+    padding: 3px 8px;
+    font-size: 0.8em;
+    -webkit-border-radius: 50px;
+    -moz-border-radius: 50px;
+    border-radius: 50px;
+}
+
+.cycle-complete {
+    background: #116;
+    color: white;
+    letter-spacing: 1px;
+    margin: 5px;
+    display: inline;
+    padding: 3px 8px;
+    font-size: 0.8em;
+    -webkit-border-radius: 50px;
+    -moz-border-radius: 50px;
+    border-radius: 50px;
+}
+
+
+
 
 </style>
 
@@ -494,7 +570,7 @@ font-size: 3em;
     <div class="dialog-header">
         <i class="icon-folder-open"></i>
 
-        <h3>Prescription</h3>
+        <h3>Add/Edit Prescription</h3>
     </div>
 
     <div class="dialog-content">
@@ -571,15 +647,20 @@ font-size: 3em;
                         <div class = "sidebar-title"> 
                             <span> 
                               <i class= {{-cycle.icon}} ></i>  {{-cycle.name}}
+                              {{ if (cycle.active) { }}
+                                {{ hasActiveCycle = true; }}
+                                <span class = "cycle-active">active</span>
+                              {{ } else { }}
+                                <span class = "cycle-complete">complete</span>
+                              {{ } }}
                             </span>
                         </div>
                       </div>
                   {{ }); }}
-                  <div class = "sidebar-item"><button><i class="icon-plus"></i>Add a Cycle</button></div>
-
+                  <div class = "sidebar-item"><button class = "addCycle" data-regimenId= {{-drug.regimenId}}><i class="icon-plus"></i>Add a Cycle</button></div>
                  {{ } else{  }}
                       <p>No Cycles in this patient regimen</p>
-                      <button><i class="icon-plus"></i>Add a Cycle</button>
+                      <button class = "addCycle" data-regimenId= {{-drug.regimenId}}><i class="icon-plus"></i>Add a Cycle</button>
                  {{ } }}
               </div>
           </div>
@@ -634,7 +715,12 @@ font-size: 3em;
             {{ _.each(cycleDrugs, function(drug, index) { }}
               {{ if(drug?.tag === "Pre-Medication"){ }}
                 <tr style="border: 1px solid #eee;">
-                  <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{=index+1}}</td>
+                  <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">
+                    {{=index+1}}
+                    {{if(dispenseStatus === 'New') { }}
+                           <input type="checkbox" id={{-drug.id}} name={{-drug.id}} value={{-drug.id}}>
+                    {{ } }}
+                  </td>
                   <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.medication}}</td>
                   <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.dose}}</td>
                   <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.route}}</td>
@@ -698,13 +784,14 @@ font-size: 3em;
           <span class = "sidebar-title">
               <span><i class="icon-edit "></i>  Cycle Summary Notes</span>
           </span>
-          <textarea id="w3review" name="w3review" rows="4" style="width: 100%;" placeholder = "Enter cycle summary notes here ..." />
+          <textarea id="summary_notes" name="summary_notes" rows="4" style="width: 100%;" placeholder = "Enter cycle summary notes here ...">{{-summaryNotes}}</textarea>
 
     </div>
 
     <div class="chemoItem">
-            <label  class="button confirm" style="float: right; width: auto!important;">Save</label>
-            <label id= "btn-administer-cycle" class="button confirm" style="float: right; width: auto!important; display: none!important;">Administer</label>
+            <label id= "btn-request-dispense"class="button confirm next" style="float: right; width: auto!important;" onclick = "processPrescription()">Save</label>
+            <label id= "btn-administer-cycle" class="button confirm"
+            style="float: right; width: auto!important; display: none!important;" onclick = "loadNext('outcome')">Administer</label>
             <label id= "btn-save-cycle" class="button cancel" style="width: auto!important;">Cancel Cycle</label>
     </div>
 </script>
@@ -716,22 +803,20 @@ font-size: 3em;
           <span id="test"><i class="icon-medicine"></i>  Visit Outcome </span>
       </span>
 
-      <form id = "outcome-form">
-        <input type="radio" id="stable" name="chemo-outcome" value="Stable Disease">
-        <label for="stable">Stable Disease</label><br>
-        <input type="radio" id="progressed" name="chemo-outcome" value="Progressed">
-        <label for="progressed">Progressed:</label><br>
-        <input type="radio" id="partial-remission" name="chemo-outcome" value="Partial Remission">
-        <label for="partial-remission">Partial Remission</label><br><br>
-        <input type="radio" id="complete-remission" name="chemo-outcome" value="Complete Remission">
-        <label for="complete-remission">Complete Remission</label><br><br>
-      </form>
+        <input type="radio" id="stable_disease" name="cycle_outcome" value="Stable Disease">
+        <label for="stable_disease">Stable Disease</label><br>
+        <input type="radio" id="progressed" name="cycle_outcome" value="Progressed">
+        <label for="progressed">Progressed</label><br>
+        <input type="radio" id="partial_remission" name="cycle_outcome" value="Partial Remission">
+        <label for="partial_remission">Partial Remission</label><br>
+        <input type="radio" id="complete_remission" name="cycle_outcome" value="Complete Remission">
+        <label for="complete_remission">Complete Remission</label>
 
     </div>
     <div class="chemoItem">
-            <label  class="button confirm" style="float: right; width: auto!important;">Save</label>
+            <label  class="button confirm" style="float: right; width: auto!important;" onclick = "loadNext('summary')">Next</label>
             <label id= "btn-administer-cycle" class="button confirm" style="float: right; width: auto!important; display: none!important;">Administer</label>
-            <label id= "btn-save-cycle" class="button cancel" style="width: auto!important;">Cancel Cycle</label>
+            <label id= "btn-save-cycle" class="button cancel" style="width: auto!important;">Back</label>
     </div>
 </script>
 
