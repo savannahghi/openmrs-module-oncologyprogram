@@ -767,7 +767,6 @@ font-size: 3em;
                             <span> 
                               <i class= {{-cycle.icon}} ></i>  {{-cycle.name}}
                               {{ if (cycle.active) { }}
-                                {{ hasActiveCycle = true; }}
                                 <span class = "cycle-active">active</span>
                               {{ } else { }}
                                 <span class = "cycle-complete">complete</span>
