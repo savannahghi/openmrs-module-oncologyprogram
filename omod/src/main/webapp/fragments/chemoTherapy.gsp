@@ -11,6 +11,40 @@ let cycleId;
 function toggleCssClass(e){
   e.parentNode.parentNode.classList.toggle("open");
 }
+function Formulation(formulationObj) {
+	this.id = formulationObj.id;
+	this.label = formulationObj.label;
+}
+
+function DrugUnit(unitObj) {
+	this.id = unitObj.id;
+	this.label = unitObj.label;
+}
+
+function DrugRoute(routeObj) {
+	this.id = routeObj.id;
+	this.label = routeObj.label;
+}
+
+function CycleDrug() {
+	var self = this;
+
+	self.medication = ko.observable();
+
+    self.dosage = ko.observable();
+    self.dosageOpts = ko.observableArray([]);
+
+	self.drugUnit = ko.observable();
+	self.drugUnitsOptions = ko.observableArray([]);
+
+	self.drugRoute = ko.observable();
+	self.drugRouteOpts = ko.observableArray([]);
+
+	self.category = ko.observable();
+	self.categoryOpts = ko.observableArray([]);
+
+	self.comment = ko.observable();
+}
 
     function processClick(e){
         const {medication, dose,dosingunit,route,tag, comment} = e.dataset;
@@ -47,6 +81,90 @@ function toggleCssClass(e){
         var chemoTemplate =  _.template(jq("#default-template").html());
         jq("#defaultContainer").html(chemoTemplate(data));
       }
+
+      jq(".drug-name").on("focus.autocomplete", function() {
+            var selectedInput = this;
+            jq(this).autocomplete({
+                source: function(request, response) {
+                    jq.getJSON('${ ui.actionLink("patientdashboardapp", "ClinicalNotes", "getDrugs") }', {
+                        q: request.term
+                    }).success(function(data) {
+                    console.log("Drugs ===>");
+                    console.log(data);
+                        var results = [];
+                        for (var i in data) {
+                            var result = {
+                                label: data[i].name,
+                                name: data[i].name,
+                                value: data[i].id.toString(),
+                                id: data[i].id.toString()
+                            };
+                            results.push(result);
+                        }
+                        response(results);
+                    });
+                },
+                minLength: 3,
+                select: function(event, ui) {
+                    event.preventDefault();
+                    var lval = ui.item.label || ""
+                    jq(selectedInput).val(lval);
+                    drugIdnt = ui.item.value;
+                },
+                change: function(event, ui) {
+                    event.preventDefault();
+                    var lval = ui.item.label || ""
+                    jq(selectedInput).val(lval);
+                    jq.getJSON('${ ui.actionLink("patientdashboardapp", "ClinicalNotes", "getFormulationByDrugName") }', {
+                        "drugName": lval
+                    }).success(function(data) {
+                    console.log("Formulations By Drug Name");
+                    console.log(data);
+                        var formulations = jq.map(data, function(formulation) {
+                            return new Formulation({
+                                id: formulation.id,
+                                label: formulation.name + ":" + formulation.dozage
+                            });
+                        });
+                        cycleDrug.drug().dosageOpts(formulations);
+                    });
+
+                    jq.getJSON('${ui.actionLink("patientdashboardapp","clinicalNotes","getDrugUnit")}')
+                        .success(function(data) {
+                        console.log("Drug Units <<<<<<<<<<<<<<< >>>>>>>>>>");
+                        console.log(data);
+                        var drugUnit = jq.map(data, function(drugUnit) {
+                            return new DrugUnit({
+                                id: drugUnit.id,
+                                label: drugUnit.label
+                            });
+                        });
+                        cycleDrug.drug().drugUnitsOptions(drugUnit);
+                    });
+/*
+                    jq.getJSON('${ui.actionLink("patientdashboardapp","clinicalNotes","getDrugRoutes")}')
+                    .success(function(data) {
+                        console.log(data);
+                        var drugRoutes = jq.map(data, function(drugRoute) {
+                            return new DrugRoute({
+                                id: drugRoute.id,
+                                label: drugRoute.label
+                            });
+                        });
+                        cycleDrug.drug().drugRouteOpts(drugUnit);
+                    });
+*/
+
+
+                },
+                open: function() {
+                    jq(this).removeClass("ui-corner-all").addClass("ui-corner-top");
+                },
+                close: function() {
+                    jq(this).removeClass("ui-corner-top").addClass("ui-corner-all");
+                }
+            });
+      });
 
         jq(".cycle").on("click",  function(){
           jq("#defaultContainer").html('<i class=\"icon-spinner icon-spin icon-2x pull-left\"></i> <span style="float: left; margin-top: 12px;">Loading...</span>');
@@ -578,18 +696,19 @@ font-size: 3em;
             <ul>
                 <li>
                     <label>Drug<span class="important">*<span></label>
-                    <input class="drug-name" id="drugName" type="text">
+                    <input class="drug-name" id="drugName" type="text" data-bind="value: cycleDrug.drug().medication, valueUpdate: 'blur'">
                 </li>
                 <li>
                     <label>Dosage<span class="important">*<span></label>
-                    <select id="drugDosageSelect" style="width: 125px !important;">
-                        <option value="0">Select Dosage</option>
-                        <option value="1">My Dosage</option>
+                    <select id="drugDosageSelect"
+                        style="width: 125px !important;"
+                        data-bind="options: cycleDrug.drug().dosageOpts, value: cycleDrug.drug().dosage, optionsText: 'label',  optionsCaption: 'Select Dosage'">
                     </select>
-                    <select id="drugUnitsSelect" style="width: 125px !important;">
-                        <option value="0">Select Unit</option>
-                        <option value="0">My Unit</option>
+                    <select id="drugUnitsSelect"
+                        data-bind="options: cycleDrug.drug().drugUnitsOptions, value: cycleDrug.drug().drugUnit, optionsText: 'label',  optionsCaption: 'Select Unit'"
+                        style="width: 125px !important;">
                     </select>
+
                 </li>
 
                 <li>
@@ -852,4 +971,10 @@ font-size: 3em;
             <label id= "btn-administer-cycle" class="button confirm" style="float: right; width: auto!important; display: none!important;">Administer</label>
             <label id= "btn-save-cycle" class="button cancel" style="width: auto!important;">Cancel Cycle</label>
     </div>
+</script>
+
+
+<script>
+	var cycleDrug = {drug: ko.observable(new CycleDrug())};
+	ko.applyBindings(cycleDrug, jq("#prescription-dialog")[0]);
 </script>

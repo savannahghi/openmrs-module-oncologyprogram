@@ -23,6 +23,9 @@
 	ui.includeCss("ehrconfigs", "referenceapplication.css")
 	ui.includeCss("uicommons", "datetimepicker.css")
 
+    ui.includeJavascript("patientdashboardapp", "note.js")
+    ui.includeJavascript("patientdashboardapp", "knockout-3.4.0.js")
+
 %>
 <script type="text/javascript">
     var successUrl = "${ui.pageLink('treatmentapp','main',[patientId: patient, queueId: queueId])}";
