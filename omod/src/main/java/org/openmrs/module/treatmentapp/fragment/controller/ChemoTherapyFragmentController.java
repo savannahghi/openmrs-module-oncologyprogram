@@ -91,7 +91,7 @@ public class ChemoTherapyFragmentController {
 			List<SimpleObject> drugs = SimpleObject.fromCollection(chemoDetails, ui, "id", "medication", "dose",
 			    "dosingUnit", "route", "comment", "tag");
 			return SimpleObject.create("cycleDrugs", drugs, "summaryNotes", cycle.getSummaryNotes(), "dispenseStatus",
-			    cycle.getDispenseStatus() != null ? cycle.getDispenseStatus().getName().getName() : "New");
+			    cycle.getDispenseStatus() != null ? cycle.getDispenseStatus().getName().getName() : "");
 		} else {
 			return SimpleObject.create("success", false, "msg", "No cycle with requested ID");
 		}
@@ -153,7 +153,7 @@ public class ChemoTherapyFragmentController {
 		for (Cycle c : regimen.getCycles()) {
 			if (c.getActive()) {
 				return SimpleObject.create("status", "fail", "message",
-				    "Patient has an existing active cycle, administer drugs in the cycle and marked as closed!");
+				    "Patient has an existing active cycle, administer drugs in the cycle and mark as closed!");
 			}
 		}
 		

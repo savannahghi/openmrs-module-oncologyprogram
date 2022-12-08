@@ -26,6 +26,11 @@ function DrugRoute(routeObj) {
 	this.label = routeObj.label;
 }
 
+function DrugCategory(catObj){
+	this.id = catObj.id;
+	this.label = catObj.label;
+}
+
 function CycleDrug() {
 	var self = this;
 
@@ -49,8 +54,12 @@ function CycleDrug() {
     function processClick(e){
         const {medication, dose,dosingunit,route,tag, comment} = e.dataset;
         document.getElementById("prescription-dialog").style.display = "block";
-        document.getElementById("drugName").value = medication;
-        document.getElementById("comment").value = comment;
+        if(medication){
+            document.getElementById("drugName").value = medication;
+        }
+        if(comment){
+            document.getElementById("comment").value = comment;
+        }
     }
 
     function deleteCycleDrug(e){
@@ -141,21 +150,30 @@ function CycleDrug() {
                         });
                         cycleDrug.drug().drugUnitsOptions(drugUnit);
                     });
-/*
-                    jq.getJSON('${ui.actionLink("patientdashboardapp","clinicalNotes","getDrugRoutes")}')
+                    const categories = [
+                        {"id":"1", "label": "Pre-Medication"},
+                        {"id":"2", "label": "Chemotherapy"},
+                    ]
+
+                    var drugCategories = jq.map(categories, function(drugCat) {
+                        return new DrugCategory({
+                            id: drugCat.id,
+                            label: drugCat.label
+                        });
+                    });
+                    cycleDrug.drug().categoryOpts(drugCategories);
+
+                    jq.getJSON('${ui.actionLink("patientdashboardapp","clinicalNotes","getRoutesByDrugName")}')
                     .success(function(data) {
                         console.log(data);
                         var drugRoutes = jq.map(data, function(drugRoute) {
                             return new DrugRoute({
                                 id: drugRoute.id,
-                                label: drugRoute.label
+                                label: drugRoute.name
                             });
                         });
                         cycleDrug.drug().drugRouteOpts(drugUnit);
                     });
-*/
-
-
                 },
                 open: function() {
                     jq(this).removeClass("ui-corner-all").addClass("ui-corner-top");
@@ -191,7 +209,14 @@ function CycleDrug() {
               { 'patientId':${patient.patientId},regimenId }
             ).success(function (data) {
               console.log(data);
-              location.reload();
+              const {status, message} = data;
+              if(status === 'fail'){
+                jq().toastmessage('showErrorToast', message)
+              }else{
+                jq().toastmessage({sticky : true});
+                jq().toastmessage('showSuccessToast', "Success....reloading the page....!");
+                location.reload();
+              }
             })
             .fail(function() { console.log("error occurred while fetching cycle details"); })
             .always(function() { console.log("Completed fetching cycle details"); });
@@ -373,7 +398,7 @@ function CycleDrug() {
         //Hide or unhide appropriate buttons
         jq().toastmessage('showSuccessToast', 'Sending request to pharmacy')
         // TODO - Raise the external request to post the dispense order to the pharmacy and wait for updates on dispense in collaboration with CHAI folks
-        // Add dispense status - New, Failed, Pending, Fulfilled, Partially Fulfilled
+        // Add dispense status - Draft, Sent, Pending, Partially Fulfilled, Fulfilled, Failed
         jq("#btn-request-dispense").hide();
         jq("#btn-administer-cycle").show();
     }
@@ -518,9 +543,15 @@ font-size: 3em;
 .sidebar-item:hover{
   background-color: rgba(255, 255, 255, .1);
 }
+
 .add-drug:hover{
   background-color: rgba(255, 255, 255, .1);
   cursor: pointer;
+}
+.add-regimen{
+  background-color: rgba(255, 255, 255, .1);
+  cursor: pointer;
+  float: right !important;
 }
 
 .row-actions:hover{
@@ -713,17 +744,14 @@ font-size: 3em;
 
                 <li>
                     <label>Route<span class="important">*<span></label>
-                    <select id="routesSelect">
-                        <option value="0">Select Route</option>
-                        <option value="0">My Route</option>
+                    <select id="routesSelect"
+                        data-bind="options: cycleDrug.drug().drugRouteOpts, value: cycleDrug.drug().drugRoute, optionsText: 'label',  optionsCaption: 'Select Route'">
                     </select>
                 </li>
                 <li>
                     <label>Category<span class="important">*<span></label>
-                    <select id="tagSelect">
-                        <option value="0">Select Category</option>
-                        <option value="1">Pre-Medication</option>
-                        <option value="2">Chemotherapy</option>
+                    <select id="tagSelect"
+                        data-bind="options: cycleDrug.drug().categoryOpts, value: cycleDrug.drug().category, optionsText: 'label',  optionsCaption: 'Select Category'">
                     </select>
                 </li>
                 <li>
@@ -750,6 +778,7 @@ font-size: 3em;
 <script id="side-bar" type="text/template">
       <span class = "sidebar-header">
           <i class="icon-stethoscope"></i>  Chemotherapy
+          <i class="icon-plus add-regimen" title="Add a regimen" onclick = "processClick(this)"></i>
       </span>
       {{ _.each(drugs, function(drug, index) { }}
           <div id = {{-drug.name}} class = "sidebar-item">
@@ -835,7 +864,7 @@ font-size: 3em;
                 <tr style="border: 1px solid #eee;">
                   <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">
                     {{=index+1}}
-                    {{if(dispenseStatus === 'New') { }}
+                    {{if(dispenseStatus === 'Pending Dispense') { }}
                            <input type="checkbox" id={{-drug.id}} name={{-drug.id}} value={{-drug.id}}>
                     {{ } }}
                   </td>
