@@ -140,8 +140,6 @@ function CycleDrug() {
 
                     jq.getJSON('${ui.actionLink("patientdashboardapp","clinicalNotes","getDrugUnit")}')
                         .success(function(data) {
-                        console.log("Drug Units <<<<<<<<<<<<<<< >>>>>>>>>>");
-                        console.log(data);
                         var drugUnit = jq.map(data, function(drugUnit) {
                             return new DrugUnit({
                                 id: drugUnit.id,
@@ -195,7 +193,6 @@ function CycleDrug() {
           jq.getJSON('${ ui.actionLink("treatmentapp", "chemoTherapy" ,"getChemotherapyCycleDetails") }',
               { 'id' : cycleId }
           ).success(function (data) {
-              console.log(data);
               var chemoTemplate =  _.template(jq("#chemo-template").html());
               jq("#defaultContainer").html(chemoTemplate(data));
           })
@@ -208,7 +205,6 @@ function CycleDrug() {
             jq.getJSON('${ ui.actionLink("treatmentapp", "chemoTherapy" ,"createRegimenCycle") }',
               { 'patientId':${patient.patientId},regimenId }
             ).success(function (data) {
-              console.log(data);
               const {status, message} = data;
               if(status === 'fail'){
                 jq().toastmessage('showErrorToast', message)
@@ -252,14 +248,6 @@ function CycleDrug() {
             }
         });
 
-
-        jq("#test").on("click", function (e) {
-            console.log()
-        });
-
-        console.log("=======================");
-        console.log(${patient.patientId});
-
     });
 
         function voidCycleDrug(){
@@ -278,7 +266,6 @@ function CycleDrug() {
            jq.getJSON('${ ui.actionLink("treatmentapp", "chemoTherapy" ,"deletePatientRegimen") }',
                  { drugId, comment}
            ).success(function (data) {
-             console.log(data);
              location.reload();
            })
              .fail(function() { console.log("error occurred while fetching cycle details"); })
@@ -295,7 +282,6 @@ function CycleDrug() {
            jq.getJSON('${ ui.actionLink("treatmentapp", "chemoTherapy" ,"updatePatientRegimen") }',
                  { drugId, comment}
            ).success(function (data) {
-             console.log(data);
              location.reload();
            })
              .fail(function() { console.log("error occurred while fetching cycle details"); })
@@ -334,7 +320,6 @@ function CycleDrug() {
               comment
                }
           ).success(function (data) {
-              console.log(data);
               var chemoTemplate =  _.template(jq("#chemo-template").html());
               jq("#defaultContainer").html(chemoTemplate(data));
           })
@@ -359,7 +344,6 @@ function CycleDrug() {
         jq.getJSON('${ ui.actionLink("treatmentapp", "chemoTherapy" ,"createPatientRegimen") }',
               { 'patientId':${patient.patientId},'regimenId' : regimen,'cycle':cycle,'days':days }
           ).success(function (data) {
-              console.log(data);
               location.reload();
               //var chemoTemplate =  _.template(jq("#chemo-template").html());
               //jq("#defaultContainer").html(chemoTemplate(data));
@@ -407,7 +391,6 @@ function CycleDrug() {
         jq.getJSON('${ ui.actionLink("treatmentapp", "chemoTherapy" ,"addPatientCycle") }',
               { 'patientId':${patient.patientId},'regimenId' : regimen,'cycle':cycle,'days':days }
           ).success(function (data) {
-              console.log(data);
               location.reload();
               //var chemoTemplate =  _.template(jq("#chemo-template").html());
               //jq("#defaultContainer").html(chemoTemplate(data));
