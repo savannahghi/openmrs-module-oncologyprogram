@@ -21,9 +21,9 @@ import java.util.List;
 @AppPage("patientqueueapp.triage")
 public class TriagePageController {
 	
-	private static final int MAX_CWC_DURATION = 5;
+	private static final int MAX_CWC_DURATION = 13;
 	
-	private static final int MAX_ANC_PNC_DURATION = 9;
+	private static final int MAX_ANC_PNC_DURATION = 13;
 	
 	public void get(@RequestParam("patientId") Patient patient, @RequestParam(value = "queueId") Integer queueId,
 	        @RequestParam(value = "isEdit", required = false) Boolean isEdit,
@@ -66,7 +66,7 @@ public class TriagePageController {
 			minEnrollmentDate.add(Calendar.MONTH, -MAX_ANC_PNC_DURATION);
 			program = Context.getProgramWorkflowService().getProgramByUuid(EhrMchMetadata._MchProgram.ANC_PROGRAM);
 		} else if (enrolledInPNC) {
-			model.addAttribute("title", "RAdio Triage");
+			model.addAttribute("title", "Radio Triage");
 			minEnrollmentDate.add(Calendar.MONTH, -MAX_ANC_PNC_DURATION);
 			program = Context.getProgramWorkflowService().getProgramByUuid(EhrMchMetadata._MchProgram.PNC_PROGRAM);
 		} else if (enrolledInCWC) {
