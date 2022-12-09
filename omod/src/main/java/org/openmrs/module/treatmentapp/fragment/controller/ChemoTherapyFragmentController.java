@@ -91,7 +91,7 @@ public class ChemoTherapyFragmentController {
 			List<SimpleObject> drugs = SimpleObject.fromCollection(chemoDetails, ui, "id", "medication", "dose",
 			    "dosingUnit", "route", "comment", "tag");
 			return SimpleObject.create("cycleDrugs", drugs, "summaryNotes", cycle.getSummaryNotes(), "dispenseStatus",
-			    cycle.getDispenseStatus() != null ? cycle.getDispenseStatus().getName().getName() : "New");
+			    cycle.getDispenseStatus() != null ? cycle.getDispenseStatus().getName().getName() : "");
 		} else {
 			return SimpleObject.create("success", false, "msg", "No cycle with requested ID");
 		}
@@ -149,6 +149,14 @@ public class ChemoTherapyFragmentController {
 		InventoryCommonService patientRegimenService = Context.getService(InventoryCommonService.class);
 		Regimen regimen = patientRegimenService.getRegimenById(regimenId);
 		
+		//		Check if there is an active cycle before adding a new one.
+		for (Cycle c : regimen.getCycles()) {
+			if (c.getActive()) {
+				return SimpleObject.create("status", "fail", "message",
+				    "Patient has an existing active cycle, administer drugs in the cycle and mark as closed!");
+			}
+		}
+		
 		//		For an initiation, automatically create a default cycle
 		Cycle regimenCycle = new Cycle();
 		regimenCycle.setName("Cycle " + (regimen.getCycles().size() + 1) + " of " + regimen.getRegimenType().getCycles());
@@ -158,7 +166,7 @@ public class ChemoTherapyFragmentController {
 		regimen.getCycles().add(regimenCycle);
 		
 		Regimen createdRegimen = patientRegimenService.updateRegimen(regimen);
-		return SimpleObject.create("status", "success");
+		return SimpleObject.create("status", "success", "message", "Patient cycle created successfully");
 	}
 	
 	public SimpleObject addCycleMedication(@RequestParam("cycleId") Integer cycleId,
