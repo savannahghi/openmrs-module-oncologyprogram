@@ -336,8 +336,6 @@ function CycleDrug() {
                 {
                      jq('#regimenType').append( '<option value="'+ regimenTypes[i].id +'">'+ regimenTypes[i].name +'</option>' );
                 }
-
-
             })
             .fail(function() { console.log("error occurred while fetching regimen types"); })
             .always(function() { console.log("Completed fetching request"); });
@@ -760,7 +758,7 @@ font-size: 3em;
 <script id="side-bar" type="text/template">
       <span class = "sidebar-header">
           <i class="icon-stethoscope"></i>  Chemotherapy
-          <i class="icon-plus add-regimen" title="Add a regimen" onclick = "processClick(this)"></i>
+          <i class="icon-plus add-regimen" title="Add a regimen" onclick = "openForm()"></i>
       </span>
       {{ _.each(drugs, function(drug, index) { }}
           <div id = {{-drug.name}} class = "sidebar-item">
