@@ -329,6 +329,18 @@ function CycleDrug() {
 
     function openForm() {
       document.getElementById("myForm").style.display = "block";
+      jq.getJSON('${ ui.actionLink("treatmentapp", "chemoTherapy" ,"fetchRegimenTypes") }')
+            .success(function (data) {
+                const {regimenTypes} = data;
+                for (i = 0; i < regimenTypes.length; i++)
+                {
+                     jq('#regimenType').append( '<option value="'+ regimenTypes[i].id +'">'+ regimenTypes[i].name +'</option>' );
+                }
+
+
+            })
+            .fail(function() { console.log("error occurred while fetching regimen types"); })
+            .always(function() { console.log("Completed fetching request"); });
     }
 
     function closeForm() {
@@ -336,13 +348,11 @@ function CycleDrug() {
     }
 
     function submitForm(){
-        const regimen = document.getElementById("regimen").value;
-        const cycle = document.getElementById("cycle").value;
-        const days = document.getElementById("days").value;
+        const regimenTypeId = document.getElementById("regimenType").value;
         document.getElementById("myForm").style.display = "none";
         jq("#defaultContainer").html('<i class=\"icon-spinner icon-spin icon-2x pull-left\"></i> <span style="float: left; margin-top: 12px;">Loading...</span>');
         jq.getJSON('${ ui.actionLink("treatmentapp", "chemoTherapy" ,"createPatientRegimen") }',
-              { 'patientId':${patient.patientId},'regimenId' : regimen,'cycle':cycle,'days':days }
+              { 'patientId':${patient.patientId},regimenTypeId}
           ).success(function (data) {
               location.reload();
               //var chemoTemplate =  _.template(jq("#chemo-template").html());
@@ -640,38 +650,27 @@ font-size: 3em;
   </div>
 </div>
 
-<div class="form-popup" id="myForm" style = "display:none">
+<div class="dialog form-popup" id="myForm" style = "display:none">
 
-  <form class="form-container">
-    <h3 align = "center">Regimen</h3>
-    <label for="regimen"><b>Regimen</b></label>
-    <select name="regimen" id="regimen" required>
-        <option value=""></option>
-        <option value="1">ACT Protocol</option>
-        <option value="2">CHOP Protocol</option>
-    </select>
+<div class="dialog-header">
+        <i class="icon-hospital"></i>
+        <h3>Regimen</h3>
+    </div>
 
-    <label for="cycle"><b>Cycle</b></label>
-    <select name="cycle" id="cycle" required>
-        <option value=""></option>
-        <option value="1">Cycle 1 of 6</option>
-        <option value="2">Cycle 2 of 6</option>
-    </select>
-
-    <label for="days"><b>Days</b></label>
-    <select name="days" id="days" required>
-        <option value=""></option>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-        <option value="6">6</option>
-    </select>
-
-    <button type="submit" class="button confirm" style="float: right; width: auto!important;" onclick="submitForm()">Confirm</button>
-    <button type="button" class="button cancel" onclick="closeForm()" style="width: auto!important;">Cancel</button>
-  </form>
+    <div class="dialog-content">
+        <form id="regimenForm">
+            <ul>
+                <li>
+                    <label>Regimen<span class="important">*</span></label>
+                    <select name="regimen" id="regimenType" style="width: 100% !important;" required>
+                        <option value="0"></option>
+                    </select>
+                </li>
+            </ul>
+            <label  class="button cancel" style="width: auto!important;" onclick="closeForm()">Cancel</label>
+            <label class="button confirm" style="float: right; margin-left: 10px; width: auto!important;" onclick="submitForm()">Confirm</label>
+        </form>
+    </div>
 </div>
 
 <div id="drug-void-dialog" class="dialog form-popup" style="display:none;">

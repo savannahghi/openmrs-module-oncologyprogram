@@ -98,6 +98,13 @@ public class ChemoTherapyFragmentController {
 		
 	}
 	
+	public SimpleObject fetchRegimenTypes(UiUtils ui) {
+		InventoryCommonService patientRegimenService = Context.getService(InventoryCommonService.class);
+		List<RegimenType> regimenTypes = patientRegimenService.getRegimenTypes(false);
+		List<SimpleObject> types = SimpleObject.fromCollection(regimenTypes, ui, "id", "name", "cycles");
+		return SimpleObject.create("regimenTypes", types);
+	}
+	
 	public SimpleObject updatePatientRegimen(@RequestParam("regimenId") Integer regimenId, UiUtils ui) {
 		
 		List<PatientRegimen> chemoDetails = new ArrayList<PatientRegimen>();
@@ -118,13 +125,11 @@ public class ChemoTherapyFragmentController {
 	}
 	
 	public SimpleObject createPatientRegimen(@RequestParam("patientId") Patient patient,
-	        @RequestParam("regimenId") Integer regimenId, @RequestParam("cycle") Integer cycle,
-	        @RequestParam("days") Integer days, UiUtils ui) {
-		
+	        @RequestParam("regimenTypeId") Integer regimenTypeId, UiUtils ui) {
 		InventoryCommonService patientRegimenService = Context.getService(InventoryCommonService.class);
 		Regimen regimen = new Regimen();
 		
-		RegimenType regimenType = patientRegimenService.getRegimenTypeById(regimenId);
+		RegimenType regimenType = patientRegimenService.getRegimenTypeById(regimenTypeId);
 		regimen.setPatient(patient);
 		regimen.setRegimenType(regimenType);
 		
