@@ -177,13 +177,16 @@ public class ChemoTherapyFragmentController {
 	public SimpleObject addCycleMedication(@RequestParam("cycleId") Integer cycleId,
 	        @RequestParam(value = "drugId", required = false) Integer drugId, @RequestParam("drugName") String drugName,
 	        @RequestParam("dosage") String dosage, @RequestParam("dosageUnit") String dosageUnit,
-	        @RequestParam("route") String route, @RequestParam("tag") String tag, @RequestParam("comment") String comment,
+	        @RequestParam("route") Concept route, @RequestParam("tag") String tag, @RequestParam("comment") String comment,
 	        UiUtils uiUtils) {
 		
 		InventoryCommonService patientRegimenService = Context.getService(InventoryCommonService.class);
 		PatientRegimen patientRegimen = new PatientRegimen();
 		Cycle cycle = patientRegimenService.getCycleById(cycleId);
 		
+		//TODO		Default dispense status
+		Concept dispenseConcept = Context.getConceptService().getConceptByUuid("167153AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+		patientRegimen.setDispenseStatus(dispenseConcept);
 		patientRegimen.setCycleId(cycle);
 		patientRegimen.setComment(comment);
 		patientRegimen.setTag(tag);

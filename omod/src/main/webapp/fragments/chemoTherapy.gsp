@@ -161,16 +161,15 @@ function CycleDrug() {
                     });
                     cycleDrug.drug().categoryOpts(drugCategories);
 
-                    jq.getJSON('${ui.actionLink("patientdashboardapp","clinicalNotes","getRoutesByDrugName")}')
+                    jq.getJSON('${ui.actionLink("patientdashboardapp","clinicalNotes","getDrugRoutes")}')
                     .success(function(data) {
-                        console.log(data);
                         var drugRoutes = jq.map(data, function(drugRoute) {
                             return new DrugRoute({
                                 id: drugRoute.id,
                                 label: drugRoute.name
                             });
                         });
-                        cycleDrug.drug().drugRouteOpts(drugUnit);
+                        cycleDrug.drug().drugRouteOpts(drugRoutes);
                     });
                 },
                 open: function() {
@@ -315,7 +314,7 @@ function CycleDrug() {
               drugName,
               "dosage":drugDosage.text,
               "dosageUnit":dosageUnit.text,
-              "route":routesSelect.text,
+              "route":routesSelect.id,
               "tag":tagSelect.text,
               comment
                }
@@ -713,10 +712,10 @@ font-size: 3em;
                     <label>Dosage<span class="important">*<span></label>
                     <select id="drugDosageSelect"
                         style="width: 125px !important;"
-                        data-bind="options: cycleDrug.drug().dosageOpts, value: cycleDrug.drug().dosage, optionsText: 'label',  optionsCaption: 'Select Dosage'">
+                        data-bind="options: cycleDrug.drug().dosageOpts, value: cycleDrug.drug().dosage, optionsValue: 'id', optionsText: 'label',  optionsCaption: 'Select Dosage'">
                     </select>
                     <select id="drugUnitsSelect"
-                        data-bind="options: cycleDrug.drug().drugUnitsOptions, value: cycleDrug.drug().drugUnit, optionsText: 'label',  optionsCaption: 'Select Unit'"
+                        data-bind="options: cycleDrug.drug().drugUnitsOptions, value: cycleDrug.drug().drugUnit, optionsValue: 'id', optionsText: 'label',  optionsCaption: 'Select Unit'"
                         style="width: 125px !important;">
                     </select>
 
@@ -725,13 +724,13 @@ font-size: 3em;
                 <li>
                     <label>Route<span class="important">*<span></label>
                     <select id="routesSelect"
-                        data-bind="options: cycleDrug.drug().drugRouteOpts, value: cycleDrug.drug().drugRoute, optionsText: 'label',  optionsCaption: 'Select Route'">
+                        data-bind="options: cycleDrug.drug().drugRouteOpts, value: cycleDrug.drug().drugRoute, optionsValue: 'id', optionsText: 'label',  optionsCaption: 'Select Route'">
                     </select>
                 </li>
                 <li>
                     <label>Category<span class="important">*<span></label>
                     <select id="tagSelect"
-                        data-bind="options: cycleDrug.drug().categoryOpts, value: cycleDrug.drug().category, optionsText: 'label',  optionsCaption: 'Select Category'">
+                        data-bind="options: cycleDrug.drug().categoryOpts, value: cycleDrug.drug().category, optionsValue: 'id', optionsText: 'label',  optionsCaption: 'Select Category'">
                     </select>
                 </li>
                 <li>
