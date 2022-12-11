@@ -34,6 +34,7 @@ function DrugCategory(catObj){
 function CycleDrug() {
 	var self = this;
 
+	self.id = ko.observable();
 	self.medication = ko.observable();
 
     self.dosage = ko.observable();
@@ -52,10 +53,17 @@ function CycleDrug() {
 }
 
     function processClick(e){
-        const {medication, dose,dosingunit,route,tag, comment} = e.dataset;
+        console.log(e.dataset);
+        const {drugid, medication, dose, dosingunit, route, tag, comment} = e.dataset;
         document.getElementById("prescription-dialog").style.display = "block";
+
+        if(drugid){
+            document.getElementById("drugId").value = drugid;
+        }
         if(medication){
             document.getElementById("drugName").value = medication;
+            var event = new Event('change');
+            document.getElementById("drugName").dispatchEvent(event);
         }
         if(comment){
             document.getElementById("comment").value = comment;
@@ -198,6 +206,9 @@ function CycleDrug() {
           .fail(function() { console.log("error occurred while fetching cycle details"); })
           .always(function() { console.log("Completed fetching cycle details"); });
         });
+
+
+
         jq(".addCycle").on("click",  function(){
             let addCycleBtn = jq(this);
             let regimenId = addCycleBtn.context.dataset.regimenid;
@@ -306,17 +317,18 @@ function CycleDrug() {
             tagSelect.text = jq("#tagSelect option:selected").text();
 
             var comment = jq("#comment").val();
-            var drugId = jq("#drugName").data("drugId");
+            var drugId = jq("#drugId").val();
 
           jq.getJSON('${ ui.actionLink("treatmentapp", "chemoTherapy" ,"addCycleMedication") }',
-              { cycleId,
-              drugId,
-              drugName,
-              "dosage":drugDosage.text,
-              "dosageUnit":dosageUnit.text,
-              "route":routesSelect.id,
-              "tag":tagSelect.text,
-              comment
+              {
+                  cycleId,
+                  drugId,
+                  drugName,
+                  "dosage":drugDosage.text,
+                  "dosageUnit":dosageUnit.text,
+                  "route":routesSelect.id,
+                  "tag":tagSelect.text,
+                  comment
                }
           ).success(function (data) {
               var chemoTemplate =  _.template(jq("#chemo-template").html());
@@ -703,6 +715,7 @@ font-size: 3em;
 
     <div class="dialog-content">
         <form id="drugForm">
+        <input class="drug-id" id="drugId" type="hidden" data-bind="value: cycleDrug.drug().drugId, valueUpdate: 'blur'">
             <ul>
                 <li>
                     <label>Drug<span class="important">*<span></label>
@@ -857,6 +870,7 @@ font-size: 3em;
                             title="Edit Drug"
                             onclick = "processClick(this)"
                             data-medication = '{{-drug.medication}}'
+                            data-drugId = '{{-drug.id}}'
                             data-dose = '{{-drug.dose}}'
                             data-dosingUnit = '{{-drug.dosingUnit}}'
                             data-route = '{{-drug.route}}'

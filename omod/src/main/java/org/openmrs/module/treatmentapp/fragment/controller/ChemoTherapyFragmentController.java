@@ -9,7 +9,6 @@ import org.openmrs.module.hospitalcore.model.PatientRegimen;
 import org.openmrs.module.hospitalcore.model.Regimen;
 import org.openmrs.module.hospitalcore.model.RegimenType;
 import org.openmrs.module.treatmentapp.EhrMchMetadata;
-import org.openmrs.module.treatmentapp.api.MchService;
 import org.openmrs.module.treatmentapp.api.TreatmentService;
 import org.openmrs.module.treatmentapp.model.VisitSummary;
 import org.openmrs.ui.framework.SimpleObject;
@@ -145,7 +144,7 @@ public class ChemoTherapyFragmentController {
 		regimen.setCycles(cycles);
 		
 		Regimen createdRegimen = patientRegimenService.createRegimen(regimen);
-		return SimpleObject.create("status", "success");
+		return SimpleObject.create("status", "success","regimenId", createdRegimen.getId());
 	}
 	
 	public SimpleObject createRegimenCycle(@RequestParam("patientId") Patient patient,
@@ -181,10 +180,17 @@ public class ChemoTherapyFragmentController {
 	        UiUtils uiUtils) {
 		
 		InventoryCommonService patientRegimenService = Context.getService(InventoryCommonService.class);
-		PatientRegimen patientRegimen = new PatientRegimen();
+		//		If drugId exists, then it is an update, otherwise, create a new entry
+		PatientRegimen patientRegimen;
+		if (drugId != null) {
+			patientRegimen = patientRegimenService.getPatientRegimenById(drugId);
+		} else {
+			patientRegimen = new PatientRegimen();
+		}
+		
 		Cycle cycle = patientRegimenService.getCycleById(cycleId);
 		
-		//TODO		Default dispense status
+		//TODO		Default dispense status of processed
 		Concept dispenseConcept = Context.getConceptService().getConceptByUuid("167153AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 		patientRegimen.setDispenseStatus(dispenseConcept);
 		patientRegimen.setCycleId(cycle);
