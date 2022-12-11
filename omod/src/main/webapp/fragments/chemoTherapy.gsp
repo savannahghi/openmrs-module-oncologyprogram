@@ -34,6 +34,7 @@ function DrugCategory(catObj){
 function CycleDrug() {
 	var self = this;
 
+	self.id = ko.observable();
 	self.medication = ko.observable();
 
     self.dosage = ko.observable();
@@ -52,10 +53,17 @@ function CycleDrug() {
 }
 
     function processClick(e){
-        const {medication, dose,dosingunit,route,tag, comment} = e.dataset;
+        console.log(e.dataset);
+        const {drugid, medication, dose, dosingunit, route, tag, comment} = e.dataset;
         document.getElementById("prescription-dialog").style.display = "block";
+
+        if(drugid){
+            document.getElementById("drugId").value = drugid;
+        }
         if(medication){
             document.getElementById("drugName").value = medication;
+            var event = new Event('change');
+            document.getElementById("drugName").dispatchEvent(event);
         }
         if(comment){
             document.getElementById("comment").value = comment;
@@ -161,16 +169,15 @@ function CycleDrug() {
                     });
                     cycleDrug.drug().categoryOpts(drugCategories);
 
-                    jq.getJSON('${ui.actionLink("patientdashboardapp","clinicalNotes","getRoutesByDrugName")}')
+                    jq.getJSON('${ui.actionLink("patientdashboardapp","clinicalNotes","getDrugRoutes")}')
                     .success(function(data) {
-                        console.log(data);
                         var drugRoutes = jq.map(data, function(drugRoute) {
                             return new DrugRoute({
                                 id: drugRoute.id,
                                 label: drugRoute.name
                             });
                         });
-                        cycleDrug.drug().drugRouteOpts(drugUnit);
+                        cycleDrug.drug().drugRouteOpts(drugRoutes);
                     });
                 },
                 open: function() {
@@ -199,6 +206,9 @@ function CycleDrug() {
           .fail(function() { console.log("error occurred while fetching cycle details"); })
           .always(function() { console.log("Completed fetching cycle details"); });
         });
+
+
+
         jq(".addCycle").on("click",  function(){
             let addCycleBtn = jq(this);
             let regimenId = addCycleBtn.context.dataset.regimenid;
@@ -307,17 +317,18 @@ function CycleDrug() {
             tagSelect.text = jq("#tagSelect option:selected").text();
 
             var comment = jq("#comment").val();
-            var drugId = jq("#drugName").data("drugId");
+            var drugId = jq("#drugId").val();
 
           jq.getJSON('${ ui.actionLink("treatmentapp", "chemoTherapy" ,"addCycleMedication") }',
-              { cycleId,
-              drugId,
-              drugName,
-              "dosage":drugDosage.text,
-              "dosageUnit":dosageUnit.text,
-              "route":routesSelect.text,
-              "tag":tagSelect.text,
-              comment
+              {
+                  cycleId,
+                  drugId,
+                  drugName,
+                  "dosage":drugDosage.text,
+                  "dosageUnit":dosageUnit.text,
+                  "route":routesSelect.id,
+                  "tag":tagSelect.text,
+                  comment
                }
           ).success(function (data) {
               var chemoTemplate =  _.template(jq("#chemo-template").html());
@@ -329,6 +340,16 @@ function CycleDrug() {
 
     function openForm() {
       document.getElementById("myForm").style.display = "block";
+      jq.getJSON('${ ui.actionLink("treatmentapp", "chemoTherapy" ,"fetchRegimenTypes") }')
+            .success(function (data) {
+                const {regimenTypes} = data;
+                for (i = 0; i < regimenTypes.length; i++)
+                {
+                     jq('#regimenType').append( '<option value="'+ regimenTypes[i].id +'">'+ regimenTypes[i].name +'</option>' );
+                }
+            })
+            .fail(function() { console.log("error occurred while fetching regimen types"); })
+            .always(function() { console.log("Completed fetching request"); });
     }
 
     function closeForm() {
@@ -336,13 +357,11 @@ function CycleDrug() {
     }
 
     function submitForm(){
-        const regimen = document.getElementById("regimen").value;
-        const cycle = document.getElementById("cycle").value;
-        const days = document.getElementById("days").value;
+        const regimenTypeId = document.getElementById("regimenType").value;
         document.getElementById("myForm").style.display = "none";
         jq("#defaultContainer").html('<i class=\"icon-spinner icon-spin icon-2x pull-left\"></i> <span style="float: left; margin-top: 12px;">Loading...</span>');
         jq.getJSON('${ ui.actionLink("treatmentapp", "chemoTherapy" ,"createPatientRegimen") }',
-              { 'patientId':${patient.patientId},'regimenId' : regimen,'cycle':cycle,'days':days }
+              { 'patientId':${patient.patientId},regimenTypeId}
           ).success(function (data) {
               location.reload();
               //var chemoTemplate =  _.template(jq("#chemo-template").html());
@@ -640,38 +659,27 @@ font-size: 3em;
   </div>
 </div>
 
-<div class="form-popup" id="myForm" style = "display:none">
+<div class="dialog form-popup" id="myForm" style = "display:none">
 
-  <form class="form-container">
-    <h3 align = "center">Regimen</h3>
-    <label for="regimen"><b>Regimen</b></label>
-    <select name="regimen" id="regimen" required>
-        <option value=""></option>
-        <option value="1">ACT Protocol</option>
-        <option value="2">CHOP Protocol</option>
-    </select>
+<div class="dialog-header">
+        <i class="icon-hospital"></i>
+        <h3>Regimen</h3>
+    </div>
 
-    <label for="cycle"><b>Cycle</b></label>
-    <select name="cycle" id="cycle" required>
-        <option value=""></option>
-        <option value="1">Cycle 1 of 6</option>
-        <option value="2">Cycle 2 of 6</option>
-    </select>
-
-    <label for="days"><b>Days</b></label>
-    <select name="days" id="days" required>
-        <option value=""></option>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-        <option value="6">6</option>
-    </select>
-
-    <button type="submit" class="button confirm" style="float: right; width: auto!important;" onclick="submitForm()">Confirm</button>
-    <button type="button" class="button cancel" onclick="closeForm()" style="width: auto!important;">Cancel</button>
-  </form>
+    <div class="dialog-content">
+        <form id="regimenForm">
+            <ul>
+                <li>
+                    <label>Regimen<span class="important">*</span></label>
+                    <select name="regimen" id="regimenType" style="width: 100% !important;" required>
+                        <option value="0"></option>
+                    </select>
+                </li>
+            </ul>
+            <label  class="button cancel" style="width: auto!important;" onclick="closeForm()">Cancel</label>
+            <label class="button confirm" style="float: right; margin-left: 10px; width: auto!important;" onclick="submitForm()">Confirm</label>
+        </form>
+    </div>
 </div>
 
 <div id="drug-void-dialog" class="dialog form-popup" style="display:none;">
@@ -707,6 +715,7 @@ font-size: 3em;
 
     <div class="dialog-content">
         <form id="drugForm">
+        <input class="drug-id" id="drugId" type="hidden" data-bind="value: cycleDrug.drug().drugId, valueUpdate: 'blur'">
             <ul>
                 <li>
                     <label>Drug<span class="important">*<span></label>
@@ -716,10 +725,10 @@ font-size: 3em;
                     <label>Dosage<span class="important">*<span></label>
                     <select id="drugDosageSelect"
                         style="width: 125px !important;"
-                        data-bind="options: cycleDrug.drug().dosageOpts, value: cycleDrug.drug().dosage, optionsText: 'label',  optionsCaption: 'Select Dosage'">
+                        data-bind="options: cycleDrug.drug().dosageOpts, value: cycleDrug.drug().dosage, optionsValue: 'id', optionsText: 'label',  optionsCaption: 'Select Dosage'">
                     </select>
                     <select id="drugUnitsSelect"
-                        data-bind="options: cycleDrug.drug().drugUnitsOptions, value: cycleDrug.drug().drugUnit, optionsText: 'label',  optionsCaption: 'Select Unit'"
+                        data-bind="options: cycleDrug.drug().drugUnitsOptions, value: cycleDrug.drug().drugUnit, optionsValue: 'id', optionsText: 'label',  optionsCaption: 'Select Unit'"
                         style="width: 125px !important;">
                     </select>
 
@@ -728,13 +737,13 @@ font-size: 3em;
                 <li>
                     <label>Route<span class="important">*<span></label>
                     <select id="routesSelect"
-                        data-bind="options: cycleDrug.drug().drugRouteOpts, value: cycleDrug.drug().drugRoute, optionsText: 'label',  optionsCaption: 'Select Route'">
+                        data-bind="options: cycleDrug.drug().drugRouteOpts, value: cycleDrug.drug().drugRoute, optionsValue: 'id', optionsText: 'label',  optionsCaption: 'Select Route'">
                     </select>
                 </li>
                 <li>
                     <label>Category<span class="important">*<span></label>
                     <select id="tagSelect"
-                        data-bind="options: cycleDrug.drug().categoryOpts, value: cycleDrug.drug().category, optionsText: 'label',  optionsCaption: 'Select Category'">
+                        data-bind="options: cycleDrug.drug().categoryOpts, value: cycleDrug.drug().category, optionsValue: 'id', optionsText: 'label',  optionsCaption: 'Select Category'">
                     </select>
                 </li>
                 <li>
@@ -761,7 +770,7 @@ font-size: 3em;
 <script id="side-bar" type="text/template">
       <span class = "sidebar-header">
           <i class="icon-stethoscope"></i>  Chemotherapy
-          <i class="icon-plus add-regimen" title="Add a regimen" onclick = "processClick(this)"></i>
+          <i class="icon-plus add-regimen" title="Add a regimen" onclick = "openForm()"></i>
       </span>
       {{ _.each(drugs, function(drug, index) { }}
           <div id = {{-drug.name}} class = "sidebar-item">
@@ -861,6 +870,7 @@ font-size: 3em;
                             title="Edit Drug"
                             onclick = "processClick(this)"
                             data-medication = '{{-drug.medication}}'
+                            data-drugId = '{{-drug.id}}'
                             data-dose = '{{-drug.dose}}'
                             data-dosingUnit = '{{-drug.dosingUnit}}'
                             data-route = '{{-drug.route}}'

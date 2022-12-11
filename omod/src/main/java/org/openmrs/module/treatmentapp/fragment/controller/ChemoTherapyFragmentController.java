@@ -9,7 +9,6 @@ import org.openmrs.module.hospitalcore.model.PatientRegimen;
 import org.openmrs.module.hospitalcore.model.Regimen;
 import org.openmrs.module.hospitalcore.model.RegimenType;
 import org.openmrs.module.treatmentapp.EhrMchMetadata;
-import org.openmrs.module.treatmentapp.api.MchService;
 import org.openmrs.module.treatmentapp.api.TreatmentService;
 import org.openmrs.module.treatmentapp.model.VisitSummary;
 import org.openmrs.ui.framework.SimpleObject;
@@ -98,6 +97,13 @@ public class ChemoTherapyFragmentController {
 		
 	}
 	
+	public SimpleObject fetchRegimenTypes(UiUtils ui) {
+		InventoryCommonService patientRegimenService = Context.getService(InventoryCommonService.class);
+		List<RegimenType> regimenTypes = patientRegimenService.getRegimenTypes(false);
+		List<SimpleObject> types = SimpleObject.fromCollection(regimenTypes, ui, "id", "name", "cycles");
+		return SimpleObject.create("regimenTypes", types);
+	}
+	
 	public SimpleObject updatePatientRegimen(@RequestParam("regimenId") Integer regimenId, UiUtils ui) {
 		
 		List<PatientRegimen> chemoDetails = new ArrayList<PatientRegimen>();
@@ -118,13 +124,11 @@ public class ChemoTherapyFragmentController {
 	}
 	
 	public SimpleObject createPatientRegimen(@RequestParam("patientId") Patient patient,
-	        @RequestParam("regimenId") Integer regimenId, @RequestParam("cycle") Integer cycle,
-	        @RequestParam("days") Integer days, UiUtils ui) {
-		
+	        @RequestParam("regimenTypeId") Integer regimenTypeId, UiUtils ui) {
 		InventoryCommonService patientRegimenService = Context.getService(InventoryCommonService.class);
 		Regimen regimen = new Regimen();
 		
-		RegimenType regimenType = patientRegimenService.getRegimenTypeById(regimenId);
+		RegimenType regimenType = patientRegimenService.getRegimenTypeById(regimenTypeId);
 		regimen.setPatient(patient);
 		regimen.setRegimenType(regimenType);
 		
@@ -140,7 +144,7 @@ public class ChemoTherapyFragmentController {
 		regimen.setCycles(cycles);
 		
 		Regimen createdRegimen = patientRegimenService.createRegimen(regimen);
-		return SimpleObject.create("status", "success");
+		return SimpleObject.create("status", "success","regimenId", createdRegimen.getId());
 	}
 	
 	public SimpleObject createRegimenCycle(@RequestParam("patientId") Patient patient,
@@ -172,13 +176,23 @@ public class ChemoTherapyFragmentController {
 	public SimpleObject addCycleMedication(@RequestParam("cycleId") Integer cycleId,
 	        @RequestParam(value = "drugId", required = false) Integer drugId, @RequestParam("drugName") String drugName,
 	        @RequestParam("dosage") String dosage, @RequestParam("dosageUnit") String dosageUnit,
-	        @RequestParam("route") String route, @RequestParam("tag") String tag, @RequestParam("comment") String comment,
+	        @RequestParam("route") Concept route, @RequestParam("tag") String tag, @RequestParam("comment") String comment,
 	        UiUtils uiUtils) {
 		
 		InventoryCommonService patientRegimenService = Context.getService(InventoryCommonService.class);
-		PatientRegimen patientRegimen = new PatientRegimen();
+		//		If drugId exists, then it is an update, otherwise, create a new entry
+		PatientRegimen patientRegimen;
+		if (drugId != null) {
+			patientRegimen = patientRegimenService.getPatientRegimenById(drugId);
+		} else {
+			patientRegimen = new PatientRegimen();
+		}
+		
 		Cycle cycle = patientRegimenService.getCycleById(cycleId);
 		
+		//TODO		Default dispense status of processed
+		Concept dispenseConcept = Context.getConceptService().getConceptByUuid("167153AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+		patientRegimen.setDispenseStatus(dispenseConcept);
 		patientRegimen.setCycleId(cycle);
 		patientRegimen.setComment(comment);
 		patientRegimen.setTag(tag);
