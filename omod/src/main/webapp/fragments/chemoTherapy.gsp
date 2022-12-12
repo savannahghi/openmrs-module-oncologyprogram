@@ -8,6 +8,7 @@
 <script>
 
 let cycleId;
+let cycleDetails;
 function toggleCssClass(e){
   e.parentNode.parentNode.classList.toggle("open");
 }
@@ -200,6 +201,7 @@ function CycleDrug() {
           jq.getJSON('${ ui.actionLink("treatmentapp", "chemoTherapy" ,"getChemotherapyCycleDetails") }',
               { 'id' : cycleId }
           ).success(function (data) {
+              cycleDetails = data;
               var chemoTemplate =  _.template(jq("#chemo-template").html());
               jq("#defaultContainer").html(chemoTemplate(data));
           })
@@ -417,6 +419,18 @@ function CycleDrug() {
           .fail(function() { console.log("error occurred registering patient regimen"); })
           .always(function() { console.log("Completed fetching request"); });
     }
+
+    function completeCycle(){
+    console.log(cycleDetails);
+        jq.getJSON('${ ui.actionLink("treatmentapp", "chemoTherapy" ,"updateRegimenCycle") }',
+              { cycleId,'active':false }
+          ).success(function (data) {
+              //location.reload();
+          })
+          .fail(function() { console.log("error occurred during completing cycle"); })
+          .always(function() { console.log("Completed updating the cycle"); });
+    }
+
 
 
 
@@ -955,7 +969,6 @@ font-size: 3em;
     </div>
     <div class="chemoItem">
             <label  class="button confirm" style="float: right; width: auto!important;" onclick = "loadNext('summary')">Next</label>
-            <label id= "btn-administer-cycle" class="button confirm" style="float: right; width: auto!important; display: none!important;">Administer</label>
             <label id= "btn-save-cycle" class="button cancel" style="width: auto!important;">Back</label>
     </div>
 </script>
@@ -988,8 +1001,7 @@ font-size: 3em;
 
     </div>
     <div class="chemoItem">
-            <label  class="button confirm" style="float: right; width: auto!important;">Save</label>
-            <label id= "btn-administer-cycle" class="button confirm" style="float: right; width: auto!important; display: none!important;">Administer</label>
+            <label id= "btn-complete-cycle"  class="button confirm" style="float: right; width: auto!important;" onclick = "completeCycle()">Complete Cycle</label>
             <label id= "btn-save-cycle" class="button cancel" style="width: auto!important;">Cancel Cycle</label>
     </div>
 </script>

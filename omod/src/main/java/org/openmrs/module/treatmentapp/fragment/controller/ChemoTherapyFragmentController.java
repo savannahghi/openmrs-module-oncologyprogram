@@ -1,5 +1,6 @@
 package org.openmrs.module.treatmentapp.fragment.controller;
 
+import org.apache.commons.lang.StringUtils;
 import org.openmrs.*;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.hospitalcore.InventoryCommonService;
@@ -88,9 +89,11 @@ public class ChemoTherapyFragmentController {
 		if (cycle != null) {
 			chemoDetails = patientRegimenService.getPatientRegimen(null, cycle, false);
 			List<SimpleObject> drugs = SimpleObject.fromCollection(chemoDetails, ui, "id", "medication", "dose",
-			    "dosingUnit", "route", "comment", "tag");
-			return SimpleObject.create("cycleDrugs", drugs, "summaryNotes", cycle.getSummaryNotes(), "dispenseStatus",
-			    cycle.getDispenseStatus() != null ? cycle.getDispenseStatus().getName().getName() : "");
+			    "dosingUnit", "route", "comment", "tag", "dispenseStatus");
+			return SimpleObject
+			        .create("cycleDrugs", drugs, "summaryNotes", cycle.getSummaryNotes(), "active", cycle.getActive(),
+			            "dispenseStatus", cycle.getDispenseStatus() != null ? cycle.getDispenseStatus().getName().getName()
+			                    : "", "outcome", cycle.getOutcome() != null ? cycle.getOutcome().getName().getName() : "");
 		} else {
 			return SimpleObject.create("success", false, "msg", "No cycle with requested ID");
 		}
@@ -144,11 +147,10 @@ public class ChemoTherapyFragmentController {
 		regimen.setCycles(cycles);
 		
 		Regimen createdRegimen = patientRegimenService.createRegimen(regimen);
-		return SimpleObject.create("status", "success","regimenId", createdRegimen.getId());
+		return SimpleObject.create("status", "success", "regimenId", createdRegimen.getId());
 	}
 	
-	public SimpleObject createRegimenCycle(@RequestParam("patientId") Patient patient,
-	        @RequestParam("regimenId") Integer regimenId, UiUtils ui) {
+	public SimpleObject createRegimenCycle(@RequestParam("regimenId") Integer regimenId, UiUtils ui) {
 		
 		InventoryCommonService patientRegimenService = Context.getService(InventoryCommonService.class);
 		Regimen regimen = patientRegimenService.getRegimenById(regimenId);
@@ -166,7 +168,6 @@ public class ChemoTherapyFragmentController {
 		regimenCycle.setName("Cycle " + (regimen.getCycles().size() + 1) + " of " + regimen.getRegimenType().getCycles());
 		regimenCycle.setActive(true);
 		regimenCycle.setVoided(false);
-		//        regimenCycle.setRegimenId(regimen);
 		regimen.getCycles().add(regimenCycle);
 		
 		Regimen createdRegimen = patientRegimenService.updateRegimen(regimen);
@@ -216,6 +217,33 @@ public class ChemoTherapyFragmentController {
 		
 		patientRegimenService.voidPatientRegimen(patientRegimen);
 		return SimpleObject.create("success", true, "id", drugId);
+	}
+	
+	public SimpleObject updateRegimenCycle(@RequestParam("cycleId") Integer cycleId,
+	        @RequestParam(value = "summaryNotes", required = false) String summaryNotes,
+	        @RequestParam(value = "active", required = false) Boolean active,
+	        @RequestParam(value = "outcome", required = false) Concept outcome,
+	        @RequestParam(value = "dispenseStatus", required = false) Concept dispenseStatus, UiUtils ui) {
+		
+		InventoryCommonService patientRegimenService = Context.getService(InventoryCommonService.class);
+		Cycle cycle = patientRegimenService.getCycleById(cycleId);
+		
+		if (!StringUtils.isEmpty(summaryNotes)) {
+			cycle.setSummaryNotes(summaryNotes);
+		}
+		
+		if (active != null) {
+			cycle.setActive(active);
+		}
+		if (outcome != null) {
+			cycle.setOutcome(outcome);
+		}
+		if (dispenseStatus != null) {
+			cycle.setDispenseStatus(dispenseStatus);
+		}
+		
+		patientRegimenService.updateCycle(cycle);
+		return SimpleObject.create("success", true);
 	}
 	
 }
