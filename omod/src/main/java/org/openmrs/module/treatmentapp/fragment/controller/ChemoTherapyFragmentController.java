@@ -90,10 +90,10 @@ public class ChemoTherapyFragmentController {
 			chemoDetails = patientRegimenService.getPatientRegimen(null, cycle, false);
 			List<SimpleObject> drugs = SimpleObject.fromCollection(chemoDetails, ui, "id", "medication", "dose",
 			    "dosingUnit", "route", "comment", "tag", "dispenseStatus");
-			return SimpleObject
-			        .create("cycleDrugs", drugs, "summaryNotes", cycle.getSummaryNotes(), "active", cycle.getActive(),
-			            "dispenseStatus", cycle.getDispenseStatus() != null ? cycle.getDispenseStatus().getName().getName()
-			                    : "", "outcome", cycle.getOutcome() != null ? cycle.getOutcome().getName().getName() : "");
+			return SimpleObject.create("regimenName", cycle.getRegimenId().getRegimenType().getName(), "cycleName",
+			    cycle.getName(), "cycleDrugs", drugs, "summaryNotes", cycle.getSummaryNotes(), "active", cycle.getActive(),
+			    "dispenseStatus", cycle.getDispenseStatus() != null ? cycle.getDispenseStatus().getName().getName() : "",
+			    "outcome", cycle.getOutcome() != null ? cycle.getOutcome().getName().getName() : "");
 		} else {
 			return SimpleObject.create("success", false, "msg", "No cycle with requested ID");
 		}
