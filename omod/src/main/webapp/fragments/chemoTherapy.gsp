@@ -8,6 +8,7 @@
 <script>
 
 let cycleId;
+let cycleDetails;
 function toggleCssClass(e){
   e.parentNode.parentNode.classList.toggle("open");
 }
@@ -200,6 +201,7 @@ function CycleDrug() {
           jq.getJSON('${ ui.actionLink("treatmentapp", "chemoTherapy" ,"getChemotherapyCycleDetails") }',
               { 'id' : cycleId }
           ).success(function (data) {
+              cycleDetails = data;
               var chemoTemplate =  _.template(jq("#chemo-template").html());
               jq("#defaultContainer").html(chemoTemplate(data));
           })
@@ -390,18 +392,31 @@ function CycleDrug() {
     function loadNext(templateName){
         let temp;
         if(templateName === 'outcome'){
+            //Fetch outcomes
             temp = jq("#outcome-template");
         }else if(templateName === 'summary'){
             temp = jq("#summary-template");
         }
-        loadTemplate(temp);
+        loadTemplate(temp,cycleDetails);
+
+        if(templateName === 'outcome'){
+            document.querySelectorAll("input[name='cycle_outcome']").forEach((input) => {
+                    input.addEventListener('change', myfunction);
+                });
+        }
     }
+
+        function myfunction(event) {
+            cycleDetails.outcome = event.target.id;
+        }
+
 
     function processPrescription(){
         //Hide or unhide appropriate buttons
         jq().toastmessage('showSuccessToast', 'Sending request to pharmacy')
         // TODO - Raise the external request to post the dispense order to the pharmacy and wait for updates on dispense in collaboration with CHAI folks
         // Add dispense status - Draft, Sent, Pending, Partially Fulfilled, Fulfilled, Failed
+        cycleDetails.summaryNotes = document.getElementById("summary_notes").value;
         jq("#btn-request-dispense").hide();
         jq("#btn-administer-cycle").show();
     }
@@ -417,6 +432,21 @@ function CycleDrug() {
           .fail(function() { console.log("error occurred registering patient regimen"); })
           .always(function() { console.log("Completed fetching request"); });
     }
+
+    function completeCycle(){
+        jq.getJSON('${ ui.actionLink("treatmentapp", "chemoTherapy" ,"updateRegimenCycle") }',
+              { cycleId,
+               'active':false,
+               'outcome':cycleDetails.outcome,
+               'summaryNotes':cycleDetails.summaryNotes
+               }
+          ).success(function (data) {
+              location.reload();
+          })
+          .fail(function() { console.log("error occurred during completing cycle"); })
+          .always(function() { console.log("Completed updating the cycle"); });
+    }
+
 
 
 
@@ -943,19 +973,18 @@ font-size: 3em;
           <span id="test"><i class="icon-medicine"></i>  Visit Outcome </span>
       </span>
 
-        <input type="radio" id="stable_disease" name="cycle_outcome" value="Stable Disease">
+        <input type="radio" id="1000543" name="cycle_outcome" value="Stable Disease">
         <label for="stable_disease">Stable Disease</label><br>
-        <input type="radio" id="progressed" name="cycle_outcome" value="Progressed">
+        <input type="radio" id="1000544" name="cycle_outcome" value="Progressed">
         <label for="progressed">Progressed</label><br>
-        <input type="radio" id="partial_remission" name="cycle_outcome" value="Partial Remission">
+        <input type="radio" id="1000545" name="cycle_outcome" value="Partial Remission">
         <label for="partial_remission">Partial Remission</label><br>
-        <input type="radio" id="complete_remission" name="cycle_outcome" value="Complete Remission">
+        <input type="radio" id="1000546" name="cycle_outcome" value="Complete Remission">
         <label for="complete_remission">Complete Remission</label>
 
     </div>
     <div class="chemoItem">
             <label  class="button confirm" style="float: right; width: auto!important;" onclick = "loadNext('summary')">Next</label>
-            <label id= "btn-administer-cycle" class="button confirm" style="float: right; width: auto!important; display: none!important;">Administer</label>
             <label id= "btn-save-cycle" class="button cancel" style="width: auto!important;">Back</label>
     </div>
 </script>
@@ -977,19 +1006,18 @@ font-size: 3em;
             <div>Cycle Notes: </div>
         </div>
         <div class = "inf">
-            <div>Breast Cancer</div>
-            <div>Stage 2</div>
+            <div>{{-regimenName }}</div>
+            <div>{{-cycleName }}</div>
             <div>Grade 3</div>
             <div>The patient presents with stage 2 breast cancer and should begin a round of chemotherapy on the CHOP regimen </div>
-            <div>Stable disease </div>
-            <div>Vitals: Previously recorded vitals link</div>
+            <div>{{-outcome }}</div>
+            <div>{{-summaryNotes }}</div>
         </div>
       </div>
 
     </div>
     <div class="chemoItem">
-            <label  class="button confirm" style="float: right; width: auto!important;">Save</label>
-            <label id= "btn-administer-cycle" class="button confirm" style="float: right; width: auto!important; display: none!important;">Administer</label>
+            <label id= "btn-complete-cycle"  class="button confirm" style="float: right; width: auto!important;" onclick = "completeCycle()">Complete Cycle</label>
             <label id= "btn-save-cycle" class="button cancel" style="width: auto!important;">Cancel Cycle</label>
     </div>
 </script>
