@@ -7,6 +7,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.hospitalcore.PatientDashboardService;
 import org.openmrs.module.treatmentapp.EhrMchMetadata;
 import org.openmrs.module.treatmentapp.api.MchService;
+import org.openmrs.module.treatmentapp.api.TreatmentService;
 import org.openmrs.module.treatmentapp.model.TriageDetail;
 import org.openmrs.module.treatmentapp.model.TriageSummary;
 import org.openmrs.ui.framework.SimpleObject;
@@ -27,21 +28,21 @@ public class TriageSummaryFragmentController {
 		
 		Patient patient = Context.getPatientService().getPatient(patientId);
 		
-		MchService mchService = Context.getService(MchService.class);
-		EncounterType mchEncType = null;
+		TreatmentService treatmentService = Context.getService(TreatmentService.class);
+		EncounterType treatmentncType = null;
 		
-		if (mchService.enrolledInANC(patient)) {
-			mchEncType = Context.getEncounterService().getEncounterTypeByUuid(
-			    EhrMchMetadata._MchEncounterType.ANC_TRIAGE_ENCOUNTER_TYPE);
-		} else if (mchService.enrolledInPNC(patient)) {
-			mchEncType = Context.getEncounterService().getEncounterTypeByUuid(
-			    EhrMchMetadata._MchEncounterType.PNC_TRIAGE_ENCOUNTER_TYPE);
-		} else {
-			mchEncType = Context.getEncounterService().getEncounterTypeByUuid(
-			    EhrMchMetadata._MchEncounterType.CWC_TRIAGE_ENCOUNTER_TYPE);
+		if (treatmentService.enrolledInChemo(patient)) {
+			treatmentncType = Context.getEncounterService().getEncounterTypeByUuid(
+			    EhrMchMetadata.TreatmentEncounterType.CHEMO_TRIAGE_ENCOUNTER_TYPE);
+		} else if (treatmentService.enrolledInRadio(patient)) {
+			treatmentncType = Context.getEncounterService().getEncounterTypeByUuid(
+			    EhrMchMetadata.TreatmentEncounterType.RADIO_TRIAGE_ENCOUNTER_TYPE);
+		} else if (treatmentService.enrolledInSurgery(patient)) {
+			treatmentncType = Context.getEncounterService().getEncounterTypeByUuid(
+			    EhrMchMetadata.TreatmentEncounterType.SURGERY_TRIAGE_ENCOUNTER_TYPE);
 		}
 		
-		List<Encounter> encounters = dashboardService.getEncounter(patient, null, mchEncType, null);
+		List<Encounter> encounters = dashboardService.getEncounter(patient, null, treatmentncType, null);
 		
 		List<TriageSummary> triageSummaries = new ArrayList<TriageSummary>();
 		

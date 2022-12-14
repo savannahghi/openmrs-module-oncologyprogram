@@ -160,7 +160,7 @@
 		<h3>TRIAGE SUMMARY INFORMATION</h3>
 	</div>
 		<div class="info-body">
-			<% if(enrolledInAnc){%>
+			<% if(enrolledInChemo){%>
 			 <label><span class="status active"></span>Weight:</label>
              <span>{{-weight}}</span>
              <br>
@@ -177,7 +177,7 @@
 			<span>{{-height}}</span>
 			<br>
 			<%}
-			else if (enrolledInPnc) { %>
+			else if (enrolledInRadio) { %>
 			
 			<label><span class="status active"></span>Temperature:</label>
 			<span>{{-temperature}}</span>

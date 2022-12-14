@@ -6,6 +6,7 @@ import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.hospitalcore.*;
 import org.openmrs.module.hospitalcore.model.*;
+import org.openmrs.module.treatmentapp.api.TreatmentService;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
 

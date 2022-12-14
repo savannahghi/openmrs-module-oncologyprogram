@@ -267,7 +267,7 @@
 
             <li>
                 <i class="icon-chevron-right link"></i>
-                <a href="${ui.pageLink('patientqueueapp', 'mchTriageQueue')}">Mother Child Health</a>
+                <a href="${ui.pageLink('treatmentapp', 'treatmentProgram')}">Treatment</a>
             </li>
 
             <li>
@@ -317,7 +317,7 @@
 </div>
 
 <% if (enrolledInAnc) { %>
-${ui.includeFragment("treatmentapp", "antenatalTriage", [patientId: patientId, queueId: queueId])}
+${ui.includeFragment("treatmentapp", "chemoTriage", [patientId: patientId, queueId: queueId])}
 <% } else if (enrolledInPnc) { %>
 ${ui.includeFragment("treatmentapp", "postnatalTriage", [patientId: patientId, queueId: queueId])}
 <% } else if (enrolledInCwc) { %>

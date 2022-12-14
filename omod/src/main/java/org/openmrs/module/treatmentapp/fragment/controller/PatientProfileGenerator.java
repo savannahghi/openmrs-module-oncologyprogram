@@ -4,6 +4,7 @@ import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.treatmentapp.api.MchService;
+import org.openmrs.module.treatmentapp.api.TreatmentService;
 import org.openmrs.ui.framework.SimpleObject;
 
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ public class PatientProfileGenerator {
 	
 	public static String generatePatientProfile(Patient patient, String program) {
 		List<SimpleObject> patientProfile = new ArrayList<SimpleObject>();
-		List<Obs> profileObs = Context.getService(MchService.class).getPatientProfile(patient, program);
+		List<Obs> profileObs = Context.getService(TreatmentService.class).getPatientProfile(patient, program);
 		
 		for (Obs singleProfileObs : profileObs) {
 			SimpleObject profileInfo = new SimpleObject();
@@ -28,7 +29,7 @@ public class PatientProfileGenerator {
 	
 	public static String generateHistoricalPatientProfile(Patient patient, String program) {
 		List<SimpleObject> patientProfile = new ArrayList<SimpleObject>();
-		List<Obs> profileObs = Context.getService(MchService.class).getHistoricalPatientProfile(patient, program);
+		List<Obs> profileObs = Context.getService(TreatmentService.class).getHistoricalPatientProfile(patient, program);
 		for (Obs singleProfileObs : profileObs) {
 			SimpleObject profileInfo = new SimpleObject();
 			profileInfo.put("name", singleProfileObs.getConcept().getDisplayString());

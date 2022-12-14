@@ -125,6 +125,12 @@ public class EhrMchMetadata {
 		
 		public static final String CWC_TRIAGE_ENCOUNTER_TYPE = "150932f2-fac6-11ea-b158-4b1b80bfe51c";
 	}
+
+	public static final class TreatmentEncounterType{
+        public static final String CHEMO_TRIAGE_ENCOUNTER_TYPE ="d93e1886-775b-11ed-a1eb-0242ac120002";
+        public static final String RADIO_TRIAGE_ENCOUNTER_TYPE ="e7f6105e-775b-11ed-a1eb-0242ac120002";
+        public static final String SURGERY_TRIAGE_ENCOUNTER_TYPE ="ef8c3852-775b-11ed-a1eb-0242ac120002";
+    }
 	
 	public static final class _MchProgram {
 		

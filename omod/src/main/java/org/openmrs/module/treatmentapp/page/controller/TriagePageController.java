@@ -10,6 +10,7 @@ import org.openmrs.module.hospitalcore.model.PatientSearch;
 import org.openmrs.module.kenyaui.annotation.AppPage;
 import org.openmrs.module.treatmentapp.EhrMchMetadata;
 import org.openmrs.module.treatmentapp.api.MchService;
+import org.openmrs.module.treatmentapp.api.TreatmentService;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -17,17 +18,17 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-@AppPage("patientqueueapp.mchtriage")
+@AppPage("patientqueueapp.triage")
 public class TriagePageController {
 	
-	private static final int MAX_CWC_DURATION = 5;
+	private static final int MAX_CWC_DURATION = 13;
 	
-	private static final int MAX_ANC_PNC_DURATION = 9;
+	private static final int MAX_ANC_PNC_DURATION = 13;
 	
 	public void get(@RequestParam("patientId") Patient patient, @RequestParam(value = "queueId") Integer queueId,
 	        @RequestParam(value = "isEdit", required = false) Boolean isEdit,
 	        @RequestParam(value = "encounterId", required = false) String encounterId, PageModel model) {
-		MchService mchService = Context.getService(MchService.class);
+		TreatmentService mchService = Context.getService(TreatmentService.class);
 		model.addAttribute("patient", patient);
 		
 		if (isEdit != null) {
@@ -50,9 +51,9 @@ public class TriagePageController {
 			model.addAttribute("gender", "Female");
 		}
 		
-		boolean enrolledInANC = mchService.enrolledInANC(patient);
-		boolean enrolledInPNC = mchService.enrolledInPNC(patient);
-		boolean enrolledInCWC = mchService.enrolledInCWC(patient);
+		boolean enrolledInANC = mchService.enrolledInChemo(patient);
+		boolean enrolledInPNC = mchService.enrolledInRadio(patient);
+		boolean enrolledInCWC = mchService.enrolledInSurgery(patient);
 		
 		model.addAttribute("enrolledInAnc", enrolledInANC);
 		model.addAttribute("enrolledInPnc", enrolledInPNC);
@@ -61,15 +62,15 @@ public class TriagePageController {
 		Program program = null;
 		
 		if (enrolledInANC) {
-			model.addAttribute("title", "ANC Triage");
+			model.addAttribute("title", "Chemo Triage");
 			minEnrollmentDate.add(Calendar.MONTH, -MAX_ANC_PNC_DURATION);
 			program = Context.getProgramWorkflowService().getProgramByUuid(EhrMchMetadata._MchProgram.ANC_PROGRAM);
 		} else if (enrolledInPNC) {
-			model.addAttribute("title", "PNC Triage");
+			model.addAttribute("title", "Radio Triage");
 			minEnrollmentDate.add(Calendar.MONTH, -MAX_ANC_PNC_DURATION);
 			program = Context.getProgramWorkflowService().getProgramByUuid(EhrMchMetadata._MchProgram.PNC_PROGRAM);
 		} else if (enrolledInCWC) {
-			model.addAttribute("title", "CWC Triage");
+			model.addAttribute("title", "Surgery Triage");
 			program = Context.getProgramWorkflowService().getProgramByUuid(EhrMchMetadata._MchProgram.CWC_PROGRAM);
 			minEnrollmentDate.add(Calendar.YEAR, -MAX_CWC_DURATION);
 		} else {
