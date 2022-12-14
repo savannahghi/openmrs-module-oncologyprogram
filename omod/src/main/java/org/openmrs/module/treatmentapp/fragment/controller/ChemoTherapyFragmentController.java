@@ -84,6 +84,13 @@ public class ChemoTherapyFragmentController {
 	public SimpleObject getChemotherapyCycleDetails(@RequestParam("id") Integer cycleId, UiUtils ui) {
 		List<PatientRegimen> chemoDetails;
 		InventoryCommonService patientRegimenService = Context.getService(InventoryCommonService.class);
+		
+		//Fetch answers to the cancer disease status concept that mirror the HL7 coding for cancer disease status
+		Concept cancerOutcomes = Context.getConceptService().getConceptByUuid(
+		    EhrMchMetadata.ChemoTherapyConstants.CANCER_DISEASE_STATUS);
+		Collection<ConceptAnswer> outcomesAnswers = cancerOutcomes.getAnswers();
+		List<SimpleObject> outcomes = SimpleObject.fromCollection(outcomesAnswers, ui, "answerConcept.id",
+		    "answerConcept.name");
 		Cycle cycle = patientRegimenService.getCycleById(cycleId);
 		
 		if (cycle != null) {
@@ -93,7 +100,7 @@ public class ChemoTherapyFragmentController {
 			return SimpleObject.create("regimenName", cycle.getRegimenId().getRegimenType().getName(), "cycleName",
 			    cycle.getName(), "cycleDrugs", drugs, "summaryNotes", cycle.getSummaryNotes(), "active", cycle.getActive(),
 			    "dispenseStatus", cycle.getDispenseStatus() != null ? cycle.getDispenseStatus().getName().getName() : "",
-			    "outcome", cycle.getOutcome() != null ? cycle.getOutcome().getName().getName() : "");
+			    "outcome", cycle.getOutcome() != null ? cycle.getOutcome().getName().getName() : "", "outcomes", outcomes);
 		} else {
 			return SimpleObject.create("success", false, "msg", "No cycle with requested ID");
 		}

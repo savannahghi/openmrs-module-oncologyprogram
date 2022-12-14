@@ -111,6 +111,13 @@ public class EhrMchMetadata {
 		
 	}
 	
+	public static final class ChemoTherapyConstants {
+		
+		public static final String CANCER_DISEASE_STATUS = "163050AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+		
+		public static final String MEDICATION_DISPENSE_STATUS = "167157AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+	}
+	
 	public static final class _MchEncounterType {
 		
 		public static final String ANC_ENCOUNTER_TYPE = "ae378f6e-f292-11ea-8ef8-0bb1ae4b7f42";
@@ -125,12 +132,15 @@ public class EhrMchMetadata {
 		
 		public static final String CWC_TRIAGE_ENCOUNTER_TYPE = "150932f2-fac6-11ea-b158-4b1b80bfe51c";
 	}
-
-	public static final class TreatmentEncounterType{
-        public static final String CHEMO_TRIAGE_ENCOUNTER_TYPE ="d93e1886-775b-11ed-a1eb-0242ac120002";
-        public static final String RADIO_TRIAGE_ENCOUNTER_TYPE ="e7f6105e-775b-11ed-a1eb-0242ac120002";
-        public static final String SURGERY_TRIAGE_ENCOUNTER_TYPE ="ef8c3852-775b-11ed-a1eb-0242ac120002";
-    }
+	
+	public static final class TreatmentEncounterType {
+		
+		public static final String CHEMO_TRIAGE_ENCOUNTER_TYPE = "d93e1886-775b-11ed-a1eb-0242ac120002";
+		
+		public static final String RADIO_TRIAGE_ENCOUNTER_TYPE = "e7f6105e-775b-11ed-a1eb-0242ac120002";
+		
+		public static final String SURGERY_TRIAGE_ENCOUNTER_TYPE = "ef8c3852-775b-11ed-a1eb-0242ac120002";
+	}
 	
 	public static final class _MchProgram {
 		
