@@ -658,13 +658,13 @@
    <div class="identifiers">
        <p>Regimen Details</p>
        <em>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Current:</em>
-       <span>CHOP</span>
+       <span id = "currentRegimen"></span>
        <br>
        <em>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Cycle:</em>
-       <span>3 of 6</span>
+       <span id = "currentCycle"></span>
        <br>
        <em>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Status:</em>
-       <span>Active</span>
+       <span id = "currentStatus"></span>
        <br>
    </div>
     <div class="identifiers">

@@ -89,7 +89,7 @@ public class ChemoTherapyFragmentController {
 		Concept cancerOutcomes = Context.getConceptService().getConceptByUuid(
 		    EhrMchMetadata.ChemoTherapyConstants.CANCER_DISEASE_STATUS);
 		Collection<ConceptAnswer> outcomesAnswers = cancerOutcomes.getAnswers();
-		List<SimpleObject> outcomes = SimpleObject.fromCollection(outcomesAnswers, ui, "conceptAnswerId", "concept.name",
+		List<SimpleObject> outcomes = SimpleObject.fromCollection(outcomesAnswers, ui, "answerConcept.id",
 		    "answerConcept.name");
 		Cycle cycle = patientRegimenService.getCycleById(cycleId);
 		

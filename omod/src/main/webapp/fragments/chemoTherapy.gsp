@@ -204,6 +204,9 @@ function CycleDrug() {
               cycleDetails = data;
               var chemoTemplate =  _.template(jq("#chemo-template").html());
               jq("#defaultContainer").html(chemoTemplate(data));
+              document.getElementById("currentRegimen").textContent = cycleDetails.regimenName;
+              document.getElementById("currentCycle").textContent = cycleDetails.cycleName;
+              document.getElementById("currentStatus").textContent = cycleDetails.active ? "Active" : "Inactive";
           })
           .fail(function() { console.log("error occurred while fetching cycle details"); })
           .always(function() { console.log("Completed fetching cycle details"); });
@@ -407,7 +410,10 @@ function CycleDrug() {
     }
 
         function myfunction(event) {
-            cycleDetails.outcome = event.target.id;
+            cycleDetails.outcome = {
+                "id":event.target.id,
+                "name": event.target.value
+            };
         }
 
 
@@ -437,7 +443,7 @@ function CycleDrug() {
         jq.getJSON('${ ui.actionLink("treatmentapp", "chemoTherapy" ,"updateRegimenCycle") }',
               { cycleId,
                'active':false,
-               'outcome':cycleDetails.outcome,
+               'outcome':cycleDetails.outcome.id,
                'summaryNotes':cycleDetails.summaryNotes
                }
           ).success(function (data) {
@@ -474,7 +480,7 @@ function CycleDrug() {
 .sidebar{
     width: 283px;
     flex-shrink: 0;
-    background-color: rgba(22,22,22,0.4);
+    //background-color: rgba(22,22,22,0.4);
     height: 100%;
     overflow: auto;
 }
@@ -482,9 +488,9 @@ function CycleDrug() {
 .cont{
   flex-grow: 1;
   padding: 2em;
-  background-image: radial-gradient(rgba(0, 0, 0, .4), rgba(0, 0, 0, .8)), url('../public/banner.png');
-  background-size: cover;
-  background-position: center;
+  //background-image: radial-gradient(rgba(0, 0, 0, .4), rgba(0, 0, 0, .8)), url('../public/banner.png');
+  //background-size: cover;
+  //background-position: center;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -973,14 +979,10 @@ font-size: 3em;
           <span id="test"><i class="icon-medicine"></i>  Visit Outcome </span>
       </span>
 
-        <input type="radio" id="1000543" name="cycle_outcome" value="Stable Disease">
-        <label for="stable_disease">Stable Disease</label><br>
-        <input type="radio" id="1000544" name="cycle_outcome" value="Progressed">
-        <label for="progressed">Progressed</label><br>
-        <input type="radio" id="1000545" name="cycle_outcome" value="Partial Remission">
-        <label for="partial_remission">Partial Remission</label><br>
-        <input type="radio" id="1000546" name="cycle_outcome" value="Complete Remission">
-        <label for="complete_remission">Complete Remission</label>
+        {{ _.each(cycleDetails.outcomes, function(oc, idx) { }}
+            <input type="radio" id={{-oc.answerConcept.id }} name="cycle_outcome" value='{{-oc.answerConcept.name }}'>
+            <label for={{-oc.answerConcept.id }}>{{-oc.answerConcept.name }}</label><br>
+        {{ }); }}
 
     </div>
     <div class="chemoItem">
@@ -998,20 +1000,32 @@ font-size: 3em;
 
       <div class = "contItem">
         <div class = "inf">
-            <div>Regimen:</div>
-            <div>Cycle: </div>
-            <div>Premedication: </div>
-            <div>Chemo Medication:</div>
-            <div>Visit Outcome:</div>
-            <div>Cycle Notes: </div>
+            <div><label>Regimen:</label></div>
+            <div><label>Cycle: </label></div>
+            <div><label>Premedication: </label></div>
+            <div><label>Chemo Medication:</label></div>
+            <div><label>Visit Outcome:</label></div>
+            <div><label>Cycle Notes: </label></div>
         </div>
         <div class = "inf">
-            <div>{{-regimenName }}</div>
-            <div>{{-cycleName }}</div>
-            <div>Grade 3</div>
-            <div>The patient presents with stage 2 breast cancer and should begin a round of chemotherapy on the CHOP regimen </div>
-            <div>{{-outcome }}</div>
-            <div>{{-summaryNotes }}</div>
+            <div><label>{{-regimenName }}</label></div>
+            <div><label>{{-cycleName }}</label></div>
+            <div>
+                {{ _.each(cycleDetails.cycleDrugs, function(cd, idx) { }}
+                    {{ if (cd.tag === "Pre-Medication") { }}
+                        <label>{{-cd.medication}}</label> <label>({{-cd.dose}}),</label>
+                    {{ } }}
+                {{ }); }}
+            </div>
+            <div>
+                {{ _.each(cycleDetails.cycleDrugs, function(cd, idx) { }}
+                    {{ if (cd.tag === "Chemotherapy") { }}
+                        <label>{{-cd.medication}}</label> <label>({{-cd.dose}}),</label>
+                    {{ } }}
+                {{ }); }}
+            </div>
+            <div><label>{{-outcome.name }}</label></div>
+            <div><label>{{-summaryNotes }}</label></div>
         </div>
       </div>
 
