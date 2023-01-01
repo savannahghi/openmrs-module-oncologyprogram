@@ -31,6 +31,10 @@ function DrugCategory(catObj){
 	this.id = catObj.id;
 	this.label = catObj.label;
 }
+function DrugUnit(unitObj){
+	this.id = unitObj.id;
+	this.label = unitObj.label;
+}
 
 function CycleDrug() {
 	var self = this;
@@ -49,6 +53,9 @@ function CycleDrug() {
 
 	self.category = ko.observable();
 	self.categoryOpts = ko.observableArray([]);
+
+	self.unit = ko.observable();
+	self.unitOpts = ko.observableArray([]);
 
 	self.comment = ko.observable();
 }
@@ -157,6 +164,7 @@ function CycleDrug() {
                         });
                         cycleDrug.drug().drugUnitsOptions(drugUnit);
                     });
+
                     const categories = [
                         {"id":"1", "label": "Pre-Medication"},
                         {"id":"2", "label": "Chemotherapy"},
@@ -169,6 +177,19 @@ function CycleDrug() {
                         });
                     });
                     cycleDrug.drug().categoryOpts(drugCategories);
+
+                    const units = [
+                        {"id":"1", "label": "mg"},
+                        {"id":"2", "label": "ml"},
+                    ]
+
+                    var drugUnits = jq.map(units, function(drugUnit) {
+                        return new DrugUnit({
+                            id: drugUnit.id,
+                            label: drugUnit.label
+                        });
+                    });
+                    cycleDrug.drug().unitOpts(drugUnits);
 
                     jq.getJSON('${ui.actionLink("patientdashboardapp","clinicalNotes","getDrugRoutes")}')
                     .success(function(data) {
@@ -306,7 +327,7 @@ function CycleDrug() {
         function addDrug(){
             var drugName = jq("#drugName").val();
             var drugDosage = {};
-            drugDosage.id = jq("#drugDosageSelect option:selected").val();
+            drugDosage.value = jq("#drugDosage").val();
             drugDosage.text = jq("#drugDosageSelect option:selected").text();
 
             var dosageUnit = {};
@@ -329,7 +350,7 @@ function CycleDrug() {
                   cycleId,
                   drugId,
                   drugName,
-                  "dosage":drugDosage.text,
+                  "dosage":drugDosage.value + ":" + drugDosage.text,
                   "dosageUnit":dosageUnit.text,
                   "route":routesSelect.id,
                   "tag":tagSelect.text,
@@ -759,13 +780,14 @@ font-size: 3em;
                 </li>
                 <li>
                     <label>Dosage<span class="important">*<span></label>
+                    <input class="drug-dosage" id="drugDosage" type="text" style="width: 60px !important;" >
                     <select id="drugDosageSelect"
-                        style="width: 125px !important;"
-                        data-bind="options: cycleDrug.drug().dosageOpts, value: cycleDrug.drug().dosage, optionsValue: 'id', optionsText: 'label',  optionsCaption: 'Select Dosage'">
+                        style="width: 65px !important;"
+                        data-bind="options: cycleDrug.drug().unitOpts, value: cycleDrug.drug().unit, optionsValue: 'id', optionsText: 'label',  optionsCaption: 'Select Dosage'">
                     </select>
                     <select id="drugUnitsSelect"
                         data-bind="options: cycleDrug.drug().drugUnitsOptions, value: cycleDrug.drug().drugUnit, optionsValue: 'id', optionsText: 'label',  optionsCaption: 'Select Unit'"
-                        style="width: 125px !important;">
+                        style="width: 120px !important;">
                     </select>
 
                 </li>
