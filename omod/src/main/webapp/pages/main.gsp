@@ -93,7 +93,7 @@
 		else {
 			jq("#drugName").removeClass('red');
 		}
-	/*
+
 		if (jq("#drugDosage").val().trim() == ''){
 			jq("#drugDosage").addClass('red');
 			error ++;
@@ -101,7 +101,7 @@
 		else {
 			jq("#drugDosage").removeClass('red');
 		}
-	*/
+
 		if (jq('#drugUnitsSelect :selected').text() == "Select Unit"){
 			jq("#drugUnitsSelect").addClass('red');
 			error ++;
@@ -150,6 +150,7 @@
 		else {
 			jq("#frequencysSelect").removeClass('red');
 		}
+
 /*
 		if (jq("#numberOfDays").val().trim() == '0' || jq("#numberOfDays").val().trim() == ''){
 			jq("#numberOfDays").addClass('red');
@@ -159,6 +160,15 @@
 			jq("#numberOfDays").removeClass('red');
 		}
 */
+
+		if (jq("#comment").val().trim() == ''){
+			jq("#comment").addClass('red');
+			error ++;
+		}
+		else {
+			jq("#comment").removeClass('red');
+		}
+
 		if (error == 0){
 			return true;
 		} else{
@@ -480,7 +490,7 @@
 		cursor: pointer;
 	}
 	.dialog-content textarea {
-		border: 1px solid #aaa !important;
+		//border: 1px solid #aaa !important;
 		margin: 10px;
 		width: 90% !important;
 	}	
