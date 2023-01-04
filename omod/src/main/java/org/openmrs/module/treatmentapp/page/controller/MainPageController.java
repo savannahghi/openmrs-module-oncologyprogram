@@ -21,13 +21,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
 public class MainPageController {
-	
-	private static final int MAX_CWC_DURATION = 5;
 	
 	private static final int MAX_ANC_PNC_DURATION = 9;
 	
@@ -44,6 +41,7 @@ public class MainPageController {
 			SimpleObject profileInfo = new SimpleObject();
 			profileInfo.put("regimenId", regimen.getId());
 			profileInfo.put("name", regimen.getRegimenType().getName());
+			profileInfo.put("displayString", regimen.getDisplayString());
 			profileInfo.put("icon", "icon-hospital");
 			profileInfo.put("cycles",
 			    SimpleObject.fromCollection(regimen.getCycles(), uiUtils, "id", "name", "icon", "active", "summaryNotes"));
