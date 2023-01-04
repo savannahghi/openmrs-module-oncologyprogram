@@ -168,6 +168,7 @@ function CycleDrug() {
                     const categories = [
                         {"id":"1", "label": "Pre-Medication"},
                         {"id":"2", "label": "Chemotherapy"},
+                        {"id":"3", "label": "Post-Medication"},
                     ]
 
                     var drugCategories = jq.map(categories, function(drugCat) {
@@ -978,6 +979,59 @@ font-size: 3em;
       </table>
     </div>
 
+
+    <div class="chemoItem">
+      <span class = "sidebar-title">
+          <span id="test"><i class="icon-medicine"></i>  Post-Medication </span>
+          <i class="icon-plus add-drug" title="Add a pre-medication" onclick = "processClick(this)" data-tag = "post-medication"></i>
+      </span>
+        <table id="postMedList">
+          <thead>
+            <tr style="border-bottom: 1px solid #eee;">
+              <th>#</th>
+              <th>Medication</th>
+              <th>Dosage</th>
+              <th>Route</th>
+              <th>Dosing Unit</th>
+              <th>Comment</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{ _.each(cycleDrugs, function(drug, index) { }}
+              {{ if(drug?.tag === "Post-Medication"){ }}
+                <tr style="border: 1px solid #eee;">
+                  <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">
+                    {{=index+1}}
+                    {{if(dispenseStatus === 'Pending Dispense') { }}
+                           <input type="checkbox" id={{-drug.id}} name={{-drug.id}} value={{-drug.id}}>
+                    {{ } }}
+                  </td>
+                  <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.medication}}</td>
+                  <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.dose}}</td>
+                  <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.route}}</td>
+                  <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.dosingUnit}}</td>
+                  <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.comment}}</td>
+                  <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">
+                    <a><i id="stockOutList" class="icon-edit link row-actions"
+                            title="Edit Drug"
+                            onclick = "processClick(this)"
+                            data-medication = '{{-drug.medication}}'
+                            data-drugId = '{{-drug.id}}'
+                            data-dose = '{{-drug.dose}}'
+                            data-dosingUnit = '{{-drug.dosingUnit}}'
+                            data-route = '{{-drug.route}}'
+                            data-tag = '{{-drug.tag}}'
+                            data-comment = '{{-drug.comment}}'></i></a>&nbsp;&nbsp;&nbsp;
+                    <a><i class="icon-trash link row-actions" title="Delete Drug" onclick = "deleteCycleDrug(this)" data-drugId = {{-drug.id}} data-drugName = {{-drug.medication}}></i></a>
+                  </td>
+                </tr>
+              {{ } }}
+            {{ }); }}
+          </tbody>
+      </table>
+    </div>
+
     <div class="chemoItem">
           <span class = "sidebar-title">
               <span><i class="icon-edit "></i>  Cycle Summary Notes</span>
@@ -1024,8 +1078,9 @@ font-size: 3em;
         <div class = "inf">
             <div><label>Regimen:</label></div>
             <div><label>Cycle: </label></div>
-            <div><label>Premedication: </label></div>
+            <div><label>Pre-Medication: </label></div>
             <div><label>Chemo Medication:</label></div>
+            <div><label>Post-Medication:</label></div>
             <div><label>Visit Outcome:</label></div>
             <div><label>Cycle Notes: </label></div>
         </div>
@@ -1042,6 +1097,13 @@ font-size: 3em;
             <div>
                 {{ _.each(cycleDetails.cycleDrugs, function(cd, idx) { }}
                     {{ if (cd.tag === "Chemotherapy") { }}
+                        <label>{{-cd.medication}}</label> <label>({{-cd.dose}}),</label>
+                    {{ } }}
+                {{ }); }}
+            </div>
+            <div>
+                {{ _.each(cycleDetails.cycleDrugs, function(cd, idx) { }}
+                    {{ if (cd.tag === "Post-Medication") { }}
                         <label>{{-cd.medication}}</label> <label>({{-cd.dose}}),</label>
                     {{ } }}
                 {{ }); }}
