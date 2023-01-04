@@ -223,6 +223,9 @@ function CycleDrug() {
           jq.getJSON('${ ui.actionLink("treatmentapp", "chemoTherapy" ,"getChemotherapyCycleDetails") }',
               { 'id' : cycleId }
           ).success(function (data) {
+
+          //let display = (data.cycleDrugs.map(x => x.medication)).join("/");
+          //console.log(display);
               cycleDetails = data;
               var chemoTemplate =  _.template(jq("#chemo-template").html());
               jq("#defaultContainer").html(chemoTemplate(data));
@@ -835,7 +838,14 @@ font-size: 3em;
           <div id = {{-drug.name}} class = "sidebar-item">
               <div class = "sidebar-title"> 
                   <span> 
-                    <i class= {{-drug.icon}} ></i>  {{-drug.name}}
+                    <i class= {{-drug.icon}} ></i>
+                        {{ if (drug.displayString) { }}
+                          {{-drug.displayString}}
+                        {{ } else { }}
+                          {{-drug.name}}
+                        {{ } }}
+
+
                   </span>
                   <i class="icon-chevron-down toggle-btn" onclick = "toggleCssClass(this)"></i>
               </div>

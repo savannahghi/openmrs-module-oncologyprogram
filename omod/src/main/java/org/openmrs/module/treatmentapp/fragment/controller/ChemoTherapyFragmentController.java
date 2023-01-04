@@ -209,6 +209,24 @@ public class ChemoTherapyFragmentController {
 		patientRegimen.setDosingUnit(dosageUnit);
 		patientRegimen.setMedication(drugName);
 		
+		//Update display string for the patient regimen
+		if (cycle.getActive()) {
+			Set<PatientRegimen> patientRegimens = cycle.getPatientRegimens();
+			StringBuilder csvBuilder = new StringBuilder();
+			String SEPARATOR = "/";
+			for (PatientRegimen pr : patientRegimens) {
+				if (pr.getTag().equals("Chemotherapy")) {
+					csvBuilder.append(pr.getMedication());
+					csvBuilder.append(SEPARATOR);
+				}
+			}
+			String csv = csvBuilder.toString();
+			csv = csv.substring(0, csv.length() - SEPARATOR.length());
+			Regimen cycleRegimen = cycle.getRegimenId();
+			cycleRegimen.setDisplayString(csv);
+			patientRegimenService.updateRegimen(cycleRegimen);
+		}
+		
 		PatientRegimen createdPatientRegimen = patientRegimenService.createPatientRegimen(patientRegimen);
 		return SimpleObject.create("patientRegimen", SimpleObject.fromObject(createdPatientRegimen, uiUtils, "id",
 		    "medication", "dosingUnit", "dose", "route", "comment", "tag"));
