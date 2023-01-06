@@ -208,7 +208,8 @@ public class ChemoTherapyFragmentController {
 		patientRegimen.setDose(dosage);
 		patientRegimen.setDosingUnit(dosageUnit);
 		patientRegimen.setMedication(drugName);
-		
+		PatientRegimen createdPatientRegimen = patientRegimenService.createPatientRegimen(patientRegimen);
+		cycle.getPatientRegimens().add(createdPatientRegimen);
 		//Update display string for the patient regimen
 		if (cycle.getActive()) {
 			Set<PatientRegimen> patientRegimens = cycle.getPatientRegimens();
@@ -227,7 +228,6 @@ public class ChemoTherapyFragmentController {
 			patientRegimenService.updateRegimen(cycleRegimen);
 		}
 		
-		PatientRegimen createdPatientRegimen = patientRegimenService.createPatientRegimen(patientRegimen);
 		return SimpleObject.create("patientRegimen", SimpleObject.fromObject(createdPatientRegimen, uiUtils, "id",
 		    "medication", "dosingUnit", "dose", "route", "comment", "tag"));
 	}
