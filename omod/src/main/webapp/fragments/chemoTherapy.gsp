@@ -976,7 +976,19 @@ font-size: 3em;
                   <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.route}}</td>
                   <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.dosingUnit}}</td>
                   <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.comment}}</td>
-                  <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;"><a><i id="stockOutList" class="icon-edit link row-actions" title="Edit Drug" onclick = "processClick(this)"></i></a>&nbsp;&nbsp;&nbsp;<a><i class="icon-trash link row-actions" title="Delete Drug"></i></a></td>
+                  <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">
+                  <a><i id="stockOutList" class="icon-edit link row-actions"
+                                              title="Edit Drug"
+                                              onclick = "processClick(this)"
+                                              data-medication = '{{-drug.medication}}'
+                                              data-drugId = '{{-drug.id}}'
+                                              data-dose = '{{-drug.dose}}'
+                                              data-dosingUnit = '{{-drug.dosingUnit}}'
+                                              data-route = '{{-drug.route}}'
+                                              data-tag = '{{-drug.tag}}'
+                                              data-comment = '{{-drug.comment}}'></i></a>&nbsp;&nbsp;&nbsp;
+                                      <a><i class="icon-trash link row-actions" title="Delete Drug" onclick = "deleteCycleDrug(this)" data-drugId = {{-drug.id}} data-drugName = {{-drug.medication}}></i></a>
+                  </td>
                 </tr>
               {{ } }}
             {{ }); }}
