@@ -505,7 +505,6 @@ function CycleDrug() {
 .sidebar{
     width: 283px;
     flex-shrink: 0;
-    //background-color: rgba(22,22,22,0.4);
     height: 100%;
     overflow: auto;
 }
@@ -513,10 +512,6 @@ function CycleDrug() {
 .cont{
   flex-grow: 1;
   padding: 2em;
-  //background-image: radial-gradient(rgba(0, 0, 0, .4), rgba(0, 0, 0, .8)), url('../public/banner.png');
-  //background-size: cover;
-  //background-position: center;
-  display: flex;
   flex-direction: column;
   justify-content: center;
   text-align: center;
