@@ -619,7 +619,7 @@ font-size: 3em;
 
 
 .sidebar-item.selected{
-  background-color: rgba(255, 255, 255, .1);
+  background-color: rgba(69, 30, 30, .1);
 }
 
 
@@ -630,7 +630,7 @@ font-size: 3em;
 }
 .sidebar-title span i{
   display: inline-block;
-  width: 1.5em;
+  width: 1.2em;
 }
 .sidebar-title .toggle-btn{
   cursor: pointer;
@@ -691,8 +691,6 @@ font-size: 3em;
 .cycle-complete {
     background: #116;
     color: white;
-    letter-spacing: 1px;
-    margin: 5px;
     display: inline;
     padding: 3px 8px;
     font-size: 0.8em;
