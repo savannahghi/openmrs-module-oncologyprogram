@@ -832,7 +832,7 @@ font-size: 3em;
       {{ _.each(drugs, function(drug, index) { }}
           <div id = {{-drug.name}} class = "sidebar-item">
               <div class = "sidebar-title"> 
-                  <span> 
+                  <span style="word-break: break-all;">
                     <i class= {{-drug.icon}} ></i>
                         {{ if (drug.displayString) { }}
                           {{-drug.displayString}}
