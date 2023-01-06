@@ -505,7 +505,6 @@ function CycleDrug() {
 .sidebar{
     width: 283px;
     flex-shrink: 0;
-    //background-color: rgba(22,22,22,0.4);
     height: 100%;
     overflow: auto;
 }
@@ -513,10 +512,6 @@ function CycleDrug() {
 .cont{
   flex-grow: 1;
   padding: 2em;
-  //background-image: radial-gradient(rgba(0, 0, 0, .4), rgba(0, 0, 0, .8)), url('../public/banner.png');
-  //background-size: cover;
-  //background-position: center;
-  display: flex;
   flex-direction: column;
   justify-content: center;
   text-align: center;
@@ -624,7 +619,7 @@ font-size: 3em;
 
 
 .sidebar-item.selected{
-  background-color: rgba(255, 255, 255, .1);
+  background-color: rgba(69, 30, 30, .1);
 }
 
 
@@ -635,7 +630,7 @@ font-size: 3em;
 }
 .sidebar-title span i{
   display: inline-block;
-  width: 1.5em;
+  width: 1.2em;
 }
 .sidebar-title .toggle-btn{
   cursor: pointer;
@@ -696,8 +691,6 @@ font-size: 3em;
 .cycle-complete {
     background: #116;
     color: white;
-    letter-spacing: 1px;
-    margin: 5px;
     display: inline;
     padding: 3px 8px;
     font-size: 0.8em;
@@ -837,7 +830,7 @@ font-size: 3em;
       {{ _.each(drugs, function(drug, index) { }}
           <div id = {{-drug.name}} class = "sidebar-item">
               <div class = "sidebar-title"> 
-                  <span> 
+                  <span style="word-break: break-all;">
                     <i class= {{-drug.icon}} ></i>
                         {{ if (drug.displayString) { }}
                           {{-drug.displayString}}
@@ -981,7 +974,19 @@ font-size: 3em;
                   <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.route}}</td>
                   <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.dosingUnit}}</td>
                   <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">{{-drug.comment}}</td>
-                  <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;"><a><i id="stockOutList" class="icon-edit link row-actions" title="Edit Drug" onclick = "processClick(this)"></i></a>&nbsp;&nbsp;&nbsp;<a><i class="icon-trash link row-actions" title="Delete Drug"></i></a></td>
+                  <td style="border: 1px solid #eee; padding: 5px 10px; margin: 0;">
+                  <a><i id="stockOutList" class="icon-edit link row-actions"
+                                              title="Edit Drug"
+                                              onclick = "processClick(this)"
+                                              data-medication = '{{-drug.medication}}'
+                                              data-drugId = '{{-drug.id}}'
+                                              data-dose = '{{-drug.dose}}'
+                                              data-dosingUnit = '{{-drug.dosingUnit}}'
+                                              data-route = '{{-drug.route}}'
+                                              data-tag = '{{-drug.tag}}'
+                                              data-comment = '{{-drug.comment}}'></i></a>&nbsp;&nbsp;&nbsp;
+                                      <a><i class="icon-trash link row-actions" title="Delete Drug" onclick = "deleteCycleDrug(this)" data-drugId = {{-drug.id}} data-drugName = {{-drug.medication}}></i></a>
+                  </td>
                 </tr>
               {{ } }}
             {{ }); }}

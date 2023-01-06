@@ -208,14 +208,15 @@ public class ChemoTherapyFragmentController {
 		patientRegimen.setDose(dosage);
 		patientRegimen.setDosingUnit(dosageUnit);
 		patientRegimen.setMedication(drugName);
-		
+		PatientRegimen createdPatientRegimen = patientRegimenService.createPatientRegimen(patientRegimen);
+		cycle.getPatientRegimens().add(createdPatientRegimen);
 		//Update display string for the patient regimen
 		if (cycle.getActive()) {
 			Set<PatientRegimen> patientRegimens = cycle.getPatientRegimens();
 			StringBuilder csvBuilder = new StringBuilder();
 			String SEPARATOR = "/";
 			for (PatientRegimen pr : patientRegimens) {
-				if (pr.getTag().equals("Chemotherapy")) {
+				if (pr.getTag().equals("Chemotherapy") && !pr.getVoided()) {
 					csvBuilder.append(pr.getMedication());
 					csvBuilder.append(SEPARATOR);
 				}
@@ -227,7 +228,6 @@ public class ChemoTherapyFragmentController {
 			patientRegimenService.updateRegimen(cycleRegimen);
 		}
 		
-		PatientRegimen createdPatientRegimen = patientRegimenService.createPatientRegimen(patientRegimen);
 		return SimpleObject.create("patientRegimen", SimpleObject.fromObject(createdPatientRegimen, uiUtils, "id",
 		    "medication", "dosingUnit", "dose", "route", "comment", "tag"));
 	}
@@ -241,6 +241,26 @@ public class ChemoTherapyFragmentController {
 		patientRegimen.setDateVoided(new Date());
 		
 		patientRegimenService.voidPatientRegimen(patientRegimen);
+		
+		Cycle cycle = patientRegimen.getCycleId();
+		
+		//Update display string for the after deleting a line drug
+		if (cycle.getActive()) {
+			Set<PatientRegimen> patientRegimens = cycle.getPatientRegimens();
+			StringBuilder csvBuilder = new StringBuilder();
+			String SEPARATOR = "/";
+			for (PatientRegimen pr : patientRegimens) {
+				if (pr.getTag().equals("Chemotherapy") && !pr.getVoided()) {
+					csvBuilder.append(pr.getMedication());
+					csvBuilder.append(SEPARATOR);
+				}
+			}
+			String csv = csvBuilder.toString();
+			csv = csv.substring(0, csv.length() - SEPARATOR.length());
+			Regimen cycleRegimen = cycle.getRegimenId();
+			cycleRegimen.setDisplayString(csv);
+			patientRegimenService.updateRegimen(cycleRegimen);
+		}
 		return SimpleObject.create("success", true, "id", drugId);
 	}
 	
