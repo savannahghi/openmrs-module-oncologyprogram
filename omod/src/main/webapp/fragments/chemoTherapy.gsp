@@ -434,19 +434,40 @@ function CycleDrug() {
         }
     }
 
-        function myfunction(event) {
-            cycleDetails.outcome = {
-                "id":event.target.id,
-                "name": event.target.value
-            };
+    function myfunction(event) {
+        cycleDetails.outcome = {
+            "id":event.target.id,
+            "name": event.target.value
+        };
+    }
+
+    const postDrugAction = async (requestBody) => {
+    //TODO - update the request
+    //'Authorization', 'Basic ' + base64.encode(username + ":" + password)
+      const response = await fetch('http://localhost:8080/http://88.99.86.114:5001/order_request', {
+        method: 'GET',
+        body: requestBody,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
         }
+      });
+      const serverResponse = await response.json(); //extract JSON from the http response
+      console.log(serverResponse);
+      // Process the returned response - normally would be an acknowledgement at this point
+      // Updates to be asynchronously sent once the pharmacy is done processing the drugs
+      jq().toastmessage('showSuccessToast', serverResponse.resourceType);
+
+    }
 
 
     function processPrescription(){
-        //Hide or unhide appropriate buttons
-        jq().toastmessage('showSuccessToast', 'Sending request to pharmacy')
+        jq().toastmessage('showSuccessToast', 'Sending request to pharmacy');
         // TODO - Raise the external request to post the dispense order to the pharmacy and wait for updates on dispense in collaboration with CHAI folks
         // Add dispense status - Draft, Sent, Pending, Partially Fulfilled, Fulfilled, Failed
+        postDrugAction();
+
+
         cycleDetails.summaryNotes = document.getElementById("summary_notes").value;
         jq("#btn-request-dispense").hide();
         jq("#btn-administer-cycle").show();
