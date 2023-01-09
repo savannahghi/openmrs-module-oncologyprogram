@@ -446,7 +446,7 @@ function CycleDrug() {
     //'Authorization', 'Basic ' + base64.encode(username + ":" + password)
       const response = await fetch('http://localhost:8080/http://88.99.86.114:5001/order_request', {
         method: 'GET',
-        body: requestBody,
+        body: JSON.stringify(requestBody),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
@@ -465,6 +465,27 @@ function CycleDrug() {
         jq().toastmessage('showSuccessToast', 'Sending request to pharmacy');
         // TODO - Raise the external request to post the dispense order to the pharmacy and wait for updates on dispense in collaboration with CHAI folks
         // Add dispense status - Draft, Sent, Pending, Partially Fulfilled, Fulfilled, Failed
+
+        let cycleDrugs = cycleDetails.cycleDrugs;
+        let payload = {};
+        payload.MFLCODE = ${MFL_CODE};
+        payload.NUPI = '${patient.getPatientIdentifier()}';
+        payload.name = {
+                        "familyName" : "${patient.familyName}",
+                        "givenName" : "${patient.givenName}",
+                        "middleName" : "${patient.middleName ? patient.middleName : ''}"
+         }
+        payload.dateOfBirth = '${patient.birthdate}';
+        payload.phoneNumber = '';
+        payload.enrollmentDate = '${enrollmentDate}';
+        payload.birthdateEstimated = '${patient.birthdateEstimated}';
+        payload.nextOfKin = {};
+        payload.gender = '${gender}';
+        payload.medications = cycleDrugs;
+
+        console.log(payload);
+
+        //postDrugAction(payload);
         postDrugAction();
 
 

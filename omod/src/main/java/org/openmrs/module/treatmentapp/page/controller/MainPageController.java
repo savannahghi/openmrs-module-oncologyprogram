@@ -50,6 +50,11 @@ public class MainPageController {
 		
 		String details = SimpleObject.create("drugs", chemoProfile).toJson();
 		
+		model.addAttribute("MFL_CODE",
+		    Context.getAdministrationService().getGlobalProperty(EhrMchMetadata.ChemoTherapyConstants.MFL_CODE));
+		//model.addAttribute("NUPI","Get patient NUPI);
+		//model.addAttribute("phoneNumber","Get patient phoneNumber);
+		//model.addAttribute("nextOfKin","Get patient nextOfKin);
 		model.addAttribute("regimens", regimens);
 		model.addAttribute("patientCycles", details);
 		TreatmentService mchService = Context.getService(TreatmentService.class);
