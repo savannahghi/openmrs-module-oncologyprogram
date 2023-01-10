@@ -445,7 +445,7 @@ function CycleDrug() {
     //TODO - update the request
     //'Authorization', 'Basic ' + base64.encode(username + ":" + password)
       const response = await fetch('http://localhost:8080/http://88.99.86.114:5001/order_request', {
-        method: 'GET',
+        method: 'POST',
         body: JSON.stringify(requestBody),
         headers: {
           'Content-Type': 'application/json',
@@ -476,14 +476,16 @@ function CycleDrug() {
                         "middleName" : "${patient.middleName ? patient.middleName : ''}"
          }
         payload.dateOfBirth = '${patient.birthdate}';
-        payload.phoneNumber = '';
+        payload.phoneNumber = "${phoneNumber ? phoneNumber : ''}";
         payload.enrollmentDate = '${enrollmentDate}';
         payload.birthdateEstimated = '${patient.birthdateEstimated}';
-        payload.nextOfKin = {};
+        payload.nextOfKin = {
+                "name": "${nokName ? nokName : ''}",
+                "contact": "${nokContact ? nokContact : ''}",
+                "relationship": "${nokRelationship ? nokRelationship : ''}"
+            };
         payload.gender = '${gender}';
         payload.medications = cycleDrugs;
-
-        console.log(payload);
 
         //postDrugAction(payload);
         postDrugAction();

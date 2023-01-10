@@ -52,8 +52,15 @@ public class MainPageController {
 		
 		model.addAttribute("MFL_CODE",
 		    Context.getAdministrationService().getGlobalProperty(EhrMchMetadata.ChemoTherapyConstants.MFL_CODE));
-		//model.addAttribute("NUPI","Get patient NUPI);
-		//model.addAttribute("phoneNumber","Get patient phoneNumber);
+		
+		//model.addAttribute("NUPI","Get patient NUPI); // Could this be the same as the patient OpenMRS id? - No
+		
+		//Process patient number attribute
+		model.addAttribute("phoneNumber", patient.getAttribute(8));
+		model.addAttribute("nokName", patient.getAttribute(12));
+		model.addAttribute("nokContact", patient.getAttribute(9)); //71 or 9 or 86 ???
+		model.addAttribute("nokRelationship", patient.getAttribute(10));
+		
 		//model.addAttribute("nextOfKin","Get patient nextOfKin);
 		model.addAttribute("regimens", regimens);
 		model.addAttribute("patientCycles", details);
@@ -131,7 +138,7 @@ public class MainPageController {
 		model.addAttribute("patientType", patientType);
 		model.addAttribute("patientSearch", patientSearch);
 		model.addAttribute("previousVisit", hospitalCoreService.getLastVisitTime(patient));
-		model.addAttribute("patientCategory", patient.getAttribute(14));
+		model.addAttribute("patientCategory", patient.getAttribute(56));
 		//model.addAttribute("serviceOrderSize", serviceOrderList.size());
 		model.addAttribute("patientId", patient.getPatientId());
 		model.addAttribute("date", new Date());
