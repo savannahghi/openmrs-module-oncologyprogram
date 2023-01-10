@@ -648,7 +648,7 @@
 		<div class="tag">Outpatient</div>
 		<div class="tad">Last Visit: ${ui.formatDatePretty(previousVisit)}</div>
 
-        <div class="tad" id="enrollmentDate">Enrolled:</div>
+        <div class="tad" id="enrollmentDate">Enrolled:${enrollmentDate} </div>
 
         
     </div>

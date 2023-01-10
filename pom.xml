@@ -45,6 +45,8 @@
         <metadatadeployVersion>1.3</metadatadeployVersion>
         <ehrinventoryVersion>2.0.1-SNAPSHOT</ehrinventoryVersion>
         <legacyUiVersion>1.5.0</legacyUiVersion>
+        <webservicesVersion>1.2-SNAPSHOT</webservicesVersion>
+        <jsonVersion>20220924</jsonVersion>
         <patientdashboardappVersion>2.0.1-SNAPSHOT</patientdashboardappVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -200,6 +202,25 @@
                 <version>${legacyUiVersion}</version>
                 <scope>provided</scope>
             </dependency>
+            <dependency>
+                <groupId>org.openmrs.module</groupId>
+                <artifactId>webservices.rest-api</artifactId>
+                <version>${webservicesVersion}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.openmrs.module</groupId>
+                <artifactId>webservices.rest-omod</artifactId>
+                <version>${webservicesVersion}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.json</groupId>
+                <artifactId>json</artifactId>
+                <version>${jsonVersion}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 

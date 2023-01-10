@@ -4,6 +4,8 @@ import org.openmrs.api.context.Context;
 
 public class EhrMchMetadata {
 	
+	public static final String MODULE_ID = "treatmentapp";
+	
 	public static final class _AncConstantConceptQuestions {
 		
 		public static final String PARITY = "1053AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
@@ -116,6 +118,9 @@ public class EhrMchMetadata {
 		public static final String CANCER_DISEASE_STATUS = "163050AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 		
 		public static final String MEDICATION_DISPENSE_STATUS = "167157AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+		
+		public static final String MFL_CODE = MODULE_ID + ".facility_mflcode";
+		
 	}
 	
 	public static final class _MchEncounterType {

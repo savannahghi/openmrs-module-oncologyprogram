@@ -60,6 +60,14 @@
     /Required Global Properties -->
     <!-- Required global properties -->
 
+    <globalProperty>
+        <property>@MODULE_ID@.facility_mflcode</property>
+        <defaultValue>0</defaultValue>
+        <description>
+            Setting for the facility assigned MFL_CODE
+        </description>
+    </globalProperty>
+
 
     <!--
     <dwr>
@@ -107,4 +115,3 @@
         ImmunizationStockout.hbm.xml
     </mappingFiles>
 </module>
-
