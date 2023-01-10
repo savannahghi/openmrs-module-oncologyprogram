@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 
 @Controller
-@RequestMapping(value = "/rest/" + RestConstants.VERSION_1 + "/pharmacyrequest")
+@RequestMapping(value = "/rest/" + RestConstants.VERSION_1 + "/pharmacyresponse")
 public class PharmacyRequestsController extends BaseRestController {
 
     @RequestMapping(method = RequestMethod.GET)

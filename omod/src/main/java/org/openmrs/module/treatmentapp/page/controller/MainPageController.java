@@ -55,12 +55,16 @@ public class MainPageController {
 		
 		//model.addAttribute("NUPI","Get patient NUPI); // Could this be the same as the patient OpenMRS id? - No
 		
-		//Process patient number attribute
+		//Process patient additional attributes
+		model.addAttribute("maritalStatus", patient.getAttribute(5)); // 68 ??
 		model.addAttribute("phoneNumber", patient.getAttribute(8));
-		model.addAttribute("nokName", patient.getAttribute(12));
 		model.addAttribute("nokContact", patient.getAttribute(9)); //71 or 9 or 86 ???
 		model.addAttribute("nokRelationship", patient.getAttribute(10));
-		
+		model.addAttribute("nokName", patient.getAttribute(12));
+		model.addAttribute("idNumber", patient.getAttribute(13));
+		model.addAttribute("alternatePhone", patient.getAttribute(16));
+		model.addAttribute("nhifNumber", patient.getAttribute(74));
+
 		//model.addAttribute("nextOfKin","Get patient nextOfKin);
 		model.addAttribute("regimens", regimens);
 		model.addAttribute("patientCycles", details);

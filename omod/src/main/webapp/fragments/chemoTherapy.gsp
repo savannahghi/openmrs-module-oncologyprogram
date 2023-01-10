@@ -475,6 +475,13 @@ function CycleDrug() {
                         "givenName" : "${patient.givenName}",
                         "middleName" : "${patient.middleName ? patient.middleName : ''}"
          }
+        payload.patientAddress = {
+                    "county" : "${patient.personAddress.countyDistrict}",
+                    "subCounty" : "${patient.personAddress.stateProvince}",
+                    "ward" : "${patient.personAddress.address4}",
+                    "village" : "${patient.personAddress.cityVillage}"
+                    }
+
         payload.dateOfBirth = '${patient.birthdate}';
         payload.phoneNumber = "${phoneNumber ? phoneNumber : ''}";
         payload.enrollmentDate = '${enrollmentDate}';
@@ -486,9 +493,7 @@ function CycleDrug() {
             };
         payload.gender = '${gender}';
         payload.medications = cycleDrugs;
-
-        //postDrugAction(payload);
-        postDrugAction();
+        postDrugAction(payload);
 
 
         cycleDetails.summaryNotes = document.getElementById("summary_notes").value;
