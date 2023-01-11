@@ -120,7 +120,9 @@ public class EhrMchMetadata {
 		public static final String MEDICATION_DISPENSE_STATUS = "167157AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 		
 		public static final String MFL_CODE = MODULE_ID + ".facility_mflcode";
-		
+
+		public static final String NATIONAL_ID_STRING = "National ID";
+		public static final String NUPI_STRING = "National Unique patient identifier";
 	}
 	
 	public static final class _MchEncounterType {

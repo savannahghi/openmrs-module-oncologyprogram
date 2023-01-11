@@ -1,6 +1,7 @@
 package org.openmrs.module.treatmentapp.page.controller;
 
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientProgram;
 import org.openmrs.Program;
 import org.openmrs.api.context.Context;
@@ -50,11 +51,17 @@ public class MainPageController {
 		
 		String details = SimpleObject.create("drugs", chemoProfile).toJson();
 		
-		model.addAttribute("MFL_CODE",
+		model.addAttribute("mflCode",
 		    Context.getAdministrationService().getGlobalProperty(EhrMchMetadata.ChemoTherapyConstants.MFL_CODE));
 		
 		//model.addAttribute("NUPI","Get patient NUPI); // Could this be the same as the patient OpenMRS id? - No
-		
+
+		//Process National ID and NUPI
+		PatientIdentifier nationalId = patient.getPatientIdentifier(EhrMchMetadata.ChemoTherapyConstants.NATIONAL_ID_STRING);
+		PatientIdentifier nupi = patient.getPatientIdentifier(EhrMchMetadata.ChemoTherapyConstants.NUPI_STRING);
+		model.addAttribute("idNumber", nationalId.getIdentifier());
+		model.addAttribute("nupi", nupi.getIdentifier());
+
 		//Process patient additional attributes
 		model.addAttribute("maritalStatus", patient.getAttribute(5)); // 68 ??
 		model.addAttribute("phoneNumber", patient.getAttribute(8));
@@ -65,7 +72,8 @@ public class MainPageController {
 		model.addAttribute("alternatePhone", patient.getAttribute(16));
 		model.addAttribute("nhifNumber", patient.getAttribute(74));
 
-		//model.addAttribute("nextOfKin","Get patient nextOfKin);
+//		TODO Process latest observations
+
 		model.addAttribute("regimens", regimens);
 		model.addAttribute("patientCycles", details);
 		TreatmentService mchService = Context.getService(TreatmentService.class);

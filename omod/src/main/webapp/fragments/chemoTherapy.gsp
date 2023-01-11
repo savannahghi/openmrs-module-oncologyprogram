@@ -469,22 +469,33 @@ function CycleDrug() {
 
         let cycleDrugs = cycleDetails.cycleDrugs;
         let payload = {};
-        payload.MFLCODE = ${MFL_CODE};
-        payload.NUPI = '${patient.getPatientIdentifier()}';
-        payload.name = {
+        payload.mflCode = ${mflCode};
+        payload.nupi = '${nupi}';
+        payload.idNumber = '${idNumber}';
+        payload.nhifNumber = '${nhifNumber}';
+        payload.patientName = {
                         "familyName" : "${patient.familyName}",
                         "givenName" : "${patient.givenName}",
                         "middleName" : "${patient.middleName ? patient.middleName : ''}"
          }
+
         payload.patientAddress = {
                     "county" : "${patient.personAddress.countyDistrict}",
                     "subCounty" : "${patient.personAddress.stateProvince}",
                     "ward" : "${patient.personAddress.address4}",
                     "village" : "${patient.personAddress.cityVillage}"
                     }
+        payload.observation = {
+                    "weight" : "",
+                    "height" : "",
+                    "bloodPressure" : "",
+                    "bloodOxygen" : "",
+                    "temperature" : ""
+                    }
 
         payload.dateOfBirth = '${patient.birthdate}';
         payload.phoneNumber = "${phoneNumber ? phoneNumber : ''}";
+        payload.alternatePhone = "${alternatePhone ? alternatePhone : ''}";
         payload.enrollmentDate = '${enrollmentDate}';
         payload.birthdateEstimated = '${patient.birthdateEstimated}';
         payload.nextOfKin = {
@@ -492,7 +503,8 @@ function CycleDrug() {
                 "contact": "${nokContact ? nokContact : ''}",
                 "relationship": "${nokRelationship ? nokRelationship : ''}"
             };
-        payload.gender = '${gender}';
+        payload.gender = "${gender ? gender : ''}";
+        payload.maritalStatus = "${maritalStatus ? maritalStatus : ''}";
         payload.medications = cycleDrugs;
         postDrugAction(payload);
 
