@@ -444,8 +444,9 @@ function CycleDrug() {
     const postDrugAction = async (requestBody) => {
     //TODO - update the request
     //'Authorization', 'Basic ' + base64.encode(username + ":" + password)
-    //const response = await fetch('http://localhost:8080/http://88.99.86.114:5001/order_request', {
-      const response = await fetch('http://88.99.86.114:5001/order_request', {
+
+    const response = await fetch('http://localhost:8080/http://88.99.86.114:5001/order_request', {
+      //const response = await fetch('http://88.99.86.114:5001/order_request', {
         method: 'POST',
         body: JSON.stringify(requestBody),
         headers: {
@@ -470,8 +471,8 @@ function CycleDrug() {
         let cycleDrugs = cycleDetails.cycleDrugs;
         let payload = {};
         payload.mflCode = ${mflCode};
-        payload.nupi = '${nupi}';
-        payload.idNumber = '${idNumber}';
+        payload.nupi = '${nupi?.identifier}';
+        payload.idNumber = '${idNumber?.identifier}';
         payload.nhifNumber = '${nhifNumber}';
         payload.patientName = {
                         "familyName" : "${patient.familyName}",
