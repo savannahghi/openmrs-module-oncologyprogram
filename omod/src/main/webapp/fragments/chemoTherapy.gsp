@@ -445,8 +445,8 @@ function CycleDrug() {
     //TODO - update the request
     //'Authorization', 'Basic ' + base64.encode(username + ":" + password)
 
-    const response = await fetch('http://localhost:8080/http://88.99.86.114:5001/order_request', {
-      //const response = await fetch('http://88.99.86.114:5001/order_request', {
+    //const response = await fetch('http://localhost:8080/${openhimUrl}', {
+    const response = await fetch('${openhimUrl}', {
         method: 'POST',
         body: JSON.stringify(requestBody),
         headers: {

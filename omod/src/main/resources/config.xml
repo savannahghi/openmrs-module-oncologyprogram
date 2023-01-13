@@ -68,6 +68,14 @@
         </description>
     </globalProperty>
 
+    <globalProperty>
+        <property>@MODULE_ID@.openhim_url</property>
+        <defaultValue>http://88.99.86.114:5001/order_request</defaultValue>
+        <description>
+            Setting for the interoperability configurable OPENHIM URL
+        </description>
+    </globalProperty>
+
 
     <!--
     <dwr>
