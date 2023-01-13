@@ -458,7 +458,7 @@ function CycleDrug() {
       console.log(serverResponse);
       // Process the returned response - normally would be an acknowledgement at this point
       // Updates to be asynchronously sent once the pharmacy is done processing the drugs
-      jq().toastmessage('showSuccessToast', serverResponse.resourceType);
+      jq().toastmessage('showSuccessToast', serverResponse.msg);
 
     }
 
@@ -761,7 +761,6 @@ font-size: 3em;
     -moz-border-radius: 50px;
     border-radius: 50px;
 }
-
 
 
 
@@ -1153,42 +1152,54 @@ font-size: 3em;
       </span>
 
       <div class = "contItem">
-        <div class = "inf">
-            <div><label>Regimen:</label></div>
-            <div><label>Cycle: </label></div>
-            <div><label>Pre-Medication: </label></div>
-            <div><label>Chemo Medication:</label></div>
-            <div><label>Post-Medication:</label></div>
-            <div><label>Visit Outcome:</label></div>
-            <div><label>Cycle Notes: </label></div>
-        </div>
-        <div class = "inf">
-            <div><label>{{-regimenName }}</label></div>
-            <div><label>{{-cycleName }}</label></div>
-            <div>
-                {{ _.each(cycleDetails.cycleDrugs, function(cd, idx) { }}
-                    {{ if (cd.tag === "Pre-Medication") { }}
-                        <label>{{-cd.medication}}</label> <label>({{-cd.dose}}),</label>
-                    {{ } }}
-                {{ }); }}
-            </div>
-            <div>
-                {{ _.each(cycleDetails.cycleDrugs, function(cd, idx) { }}
-                    {{ if (cd.tag === "Chemotherapy") { }}
-                        <label>{{-cd.medication}}</label> <label>({{-cd.dose}}),</label>
-                    {{ } }}
-                {{ }); }}
-            </div>
-            <div>
+          <table>
+            <tr>
+              <td>Regimen</td>
+              <td>{{-regimenName }}</td>
+            </tr>
+            <tr>
+              <td>Cycle</td>
+              <td>{{-cycleName }}</td>
+            </tr>
+            <tr>
+              <td>Pre-Medication</td>
+              <td>
+                    {{ _.each(cycleDetails.cycleDrugs, function(cd, idx) { }}
+                        {{ if (cd.tag === "Pre-Medication") { }}
+                            <label>{{-cd.medication}}</label> <label>({{-cd.dose}}),</label>
+                        {{ } }}
+                    {{ }); }}
+              </td>
+            </tr>
+            <tr>
+              <td>Chemo Medication</td>
+              <td>
+                  {{ _.each(cycleDetails.cycleDrugs, function(cd, idx) { }}
+                      {{ if (cd.tag === "Chemotherapy") { }}
+                          <label>{{-cd.medication}}</label> <label>({{-cd.dose}}),</label>
+                      {{ } }}
+                  {{ }); }}
+              </td>
+            </tr>
+            <tr>
+              <td>Post-Medication</td>
+              <td>
                 {{ _.each(cycleDetails.cycleDrugs, function(cd, idx) { }}
                     {{ if (cd.tag === "Post-Medication") { }}
                         <label>{{-cd.medication}}</label> <label>({{-cd.dose}}),</label>
                     {{ } }}
                 {{ }); }}
-            </div>
-            <div><label>{{-outcome.name }}</label></div>
-            <div><label>{{-summaryNotes }}</label></div>
-        </div>
+              </td>
+            </tr>
+            <tr>
+              <td>Visit Outcome</td>
+              <td>{{-outcome.name }}</td>
+            </tr>
+            <tr>
+              <td>Cycle Notes</td>
+              <td>{{-summaryNotes }}</td>
+            </tr>
+          </table>
       </div>
 
     </div>
