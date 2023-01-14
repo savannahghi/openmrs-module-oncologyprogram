@@ -444,8 +444,9 @@ function CycleDrug() {
     const postDrugAction = async (requestBody) => {
     //TODO - update the request
     //'Authorization', 'Basic ' + base64.encode(username + ":" + password)
-    //const response = await fetch('http://localhost:8080/http://88.99.86.114:5001/order_request', {
-      const response = await fetch('http://88.99.86.114:5001/order_request', {
+
+    //const response = await fetch('http://localhost:8080/${openhimUrl}', {
+    const response = await fetch('${openhimUrl}', {
         method: 'POST',
         body: JSON.stringify(requestBody),
         headers: {
@@ -457,7 +458,7 @@ function CycleDrug() {
       console.log(serverResponse);
       // Process the returned response - normally would be an acknowledgement at this point
       // Updates to be asynchronously sent once the pharmacy is done processing the drugs
-      jq().toastmessage('showSuccessToast', serverResponse.resourceType);
+      jq().toastmessage('showSuccessToast', serverResponse.msg);
 
     }
 
@@ -469,22 +470,33 @@ function CycleDrug() {
 
         let cycleDrugs = cycleDetails.cycleDrugs;
         let payload = {};
-        payload.MFLCODE = ${MFL_CODE};
-        payload.NUPI = '${patient.getPatientIdentifier()}';
-        payload.name = {
+        payload.mflCode = ${mflCode};
+        payload.nupi = '${nupi?.identifier}';
+        payload.idNumber = '${idNumber?.identifier}';
+        payload.nhifNumber = '${nhifNumber}';
+        payload.patientName = {
                         "familyName" : "${patient.familyName}",
                         "givenName" : "${patient.givenName}",
                         "middleName" : "${patient.middleName ? patient.middleName : ''}"
          }
+
         payload.patientAddress = {
                     "county" : "${patient.personAddress.countyDistrict}",
                     "subCounty" : "${patient.personAddress.stateProvince}",
                     "ward" : "${patient.personAddress.address4}",
                     "village" : "${patient.personAddress.cityVillage}"
                     }
+        payload.observation = {
+                    "weight" : "",
+                    "height" : "",
+                    "bloodPressure" : "",
+                    "bloodOxygen" : "",
+                    "temperature" : ""
+                    }
 
         payload.dateOfBirth = '${patient.birthdate}';
         payload.phoneNumber = "${phoneNumber ? phoneNumber : ''}";
+        payload.alternatePhone = "${alternatePhone ? alternatePhone : ''}";
         payload.enrollmentDate = '${enrollmentDate}';
         payload.birthdateEstimated = '${patient.birthdateEstimated}';
         payload.nextOfKin = {
@@ -492,7 +504,8 @@ function CycleDrug() {
                 "contact": "${nokContact ? nokContact : ''}",
                 "relationship": "${nokRelationship ? nokRelationship : ''}"
             };
-        payload.gender = '${gender}';
+        payload.gender = "${gender ? gender : ''}";
+        payload.maritalStatus = "${maritalStatus ? maritalStatus : ''}";
         payload.medications = cycleDrugs;
         postDrugAction(payload);
 
@@ -748,7 +761,6 @@ font-size: 3em;
     -moz-border-radius: 50px;
     border-radius: 50px;
 }
-
 
 
 
@@ -1140,42 +1152,54 @@ font-size: 3em;
       </span>
 
       <div class = "contItem">
-        <div class = "inf">
-            <div><label>Regimen:</label></div>
-            <div><label>Cycle: </label></div>
-            <div><label>Pre-Medication: </label></div>
-            <div><label>Chemo Medication:</label></div>
-            <div><label>Post-Medication:</label></div>
-            <div><label>Visit Outcome:</label></div>
-            <div><label>Cycle Notes: </label></div>
-        </div>
-        <div class = "inf">
-            <div><label>{{-regimenName }}</label></div>
-            <div><label>{{-cycleName }}</label></div>
-            <div>
-                {{ _.each(cycleDetails.cycleDrugs, function(cd, idx) { }}
-                    {{ if (cd.tag === "Pre-Medication") { }}
-                        <label>{{-cd.medication}}</label> <label>({{-cd.dose}}),</label>
-                    {{ } }}
-                {{ }); }}
-            </div>
-            <div>
-                {{ _.each(cycleDetails.cycleDrugs, function(cd, idx) { }}
-                    {{ if (cd.tag === "Chemotherapy") { }}
-                        <label>{{-cd.medication}}</label> <label>({{-cd.dose}}),</label>
-                    {{ } }}
-                {{ }); }}
-            </div>
-            <div>
+          <table>
+            <tr>
+              <td>Regimen</td>
+              <td>{{-regimenName }}</td>
+            </tr>
+            <tr>
+              <td>Cycle</td>
+              <td>{{-cycleName }}</td>
+            </tr>
+            <tr>
+              <td>Pre-Medication</td>
+              <td>
+                    {{ _.each(cycleDetails.cycleDrugs, function(cd, idx) { }}
+                        {{ if (cd.tag === "Pre-Medication") { }}
+                            <label>{{-cd.medication}}</label> <label>({{-cd.dose}}),</label>
+                        {{ } }}
+                    {{ }); }}
+              </td>
+            </tr>
+            <tr>
+              <td>Chemo Medication</td>
+              <td>
+                  {{ _.each(cycleDetails.cycleDrugs, function(cd, idx) { }}
+                      {{ if (cd.tag === "Chemotherapy") { }}
+                          <label>{{-cd.medication}}</label> <label>({{-cd.dose}}),</label>
+                      {{ } }}
+                  {{ }); }}
+              </td>
+            </tr>
+            <tr>
+              <td>Post-Medication</td>
+              <td>
                 {{ _.each(cycleDetails.cycleDrugs, function(cd, idx) { }}
                     {{ if (cd.tag === "Post-Medication") { }}
                         <label>{{-cd.medication}}</label> <label>({{-cd.dose}}),</label>
                     {{ } }}
                 {{ }); }}
-            </div>
-            <div><label>{{-outcome.name }}</label></div>
-            <div><label>{{-summaryNotes }}</label></div>
-        </div>
+              </td>
+            </tr>
+            <tr>
+              <td>Visit Outcome</td>
+              <td>{{-outcome.name }}</td>
+            </tr>
+            <tr>
+              <td>Cycle Notes</td>
+              <td>{{-summaryNotes }}</td>
+            </tr>
+          </table>
       </div>
 
     </div>
