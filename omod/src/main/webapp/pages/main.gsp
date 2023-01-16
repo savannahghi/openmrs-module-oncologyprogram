@@ -695,19 +695,18 @@
 <div class="mch-tabs" style="margin-top:5px!important;">
 	<ul>
         <% if (enrolledInChemo){ %>
-        <li id="ct"><a href="#clinical-notes">Chemotherapy</a></li>
+        <li id="ct"><a href="#treatment-cycles">Chemotherapy</a></li>
         <% } else if (enrolledInSurgery) { %>
-        <li id="st"><a href="#clinical-notes">Surgery</a></li>
+        <li id="st"><a href="#treatment-cycles">Surgery</a></li>
         <% } else if (enrolledInRadio) { %>
-        <li id="rt"><a href="#clinical-notes">Radiotherapy</a></li>
+        <li id="rt"><a href="#treatment-cycles">Radiotherapy</a></li>
         <% }%>
 		<li id="ti"><a href="#triage-info">Triage Information</a></li>
-		<li id="cs"><a href="#clinical-summary">Clinical History</a></li>
 		<li id="lr"><a href="#investigations">Lab Reports</a></li>
 		<li id="rr"><a href="#radio">Radiology Reports</a></li>
 	</ul>
 	
-	<div id="clinical-notes">
+	<div id="treatment-cycles">
         <% if (enrolledInChemo){ %>
              ${ui.includeFragment("treatmentapp","chemoTherapy", [patientId: patient.patientId, queueId: queueId])}
         <% } else if (enrolledInSurgery) { %>
@@ -718,14 +717,11 @@
     </div>
 
 	<div id="triage-info">
-        ${ ui.includeFragment("treatmentapp", "triageSummary", [patientId: patientId]) }
+        ${ ui.includeFragment("patientdashboardapp", "triageInfo", [patientId: patientId, queueId: queueId]) }
     </div>
 	
-	<div id="clinical-summary">
-	</div>
-	
 	<div id="investigations">
-		${ ui.includeFragment("patientdashboardapp", "investigations", [patientId: patientId]) }
+	    ${ ui.includeFragment("patientdashboardapp", "investigations", [patientId: patientId]) }
 	</div>
 
     <div id="radio">
