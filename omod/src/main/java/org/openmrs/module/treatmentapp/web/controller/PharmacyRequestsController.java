@@ -48,60 +48,60 @@ public class PharmacyRequestsController extends BaseRestController {
 			String comment = medicationObject.getString("comment");
 			String tag = medicationObject.getString("tag");
 			String dispenseStatus = medicationObject.getString("dispenseStatus");
-
-			returnObject.add("message", updateMedicationStatus(medicationId, medication, dose, dosingUnit, route,
-					comment, tag, dispenseStatus));
+			
+			returnObject.add("message",
+			    updateMedicationStatus(medicationId, medication, dose, dosingUnit, route, comment, tag, dispenseStatus));
 		}
 		
 		return returnObject;
 	}
 	
-	private String updateMedicationStatus(int medicationId, String medication, String dose, String dosingUnit,
-										  String route, String comment, String tag, String dispenseStatus) {
-
+	private String updateMedicationStatus(int medicationId, String medication, String dose, String dosingUnit, String route,
+	        String comment, String tag, String dispenseStatus) {
+		
 		InventoryCommonService patientRegimenService = Context.getService(InventoryCommonService.class);
 		PatientRegimen patientRegimen = patientRegimenService.getPatientRegimenById(medicationId);
-
-//		TODO - Update for when a new drug is added by the pharmacist
-//		if (patientRegimen == null) {
-//			patientRegimen = new PatientRegimen();
-//		}
-
-//		Cycle cycle = patientRegimenService.getCycleById(patientRegimen.getCycleId().getId());
-
+		
+		//		TODO - Update for when a new drug is added by the pharmacist
+		//		if (patientRegimen == null) {
+		//			patientRegimen = new PatientRegimen();
+		//		}
+		
+		//		Cycle cycle = patientRegimenService.getCycleById(patientRegimen.getCycleId().getId());
+		
 		//TODO		Default dispense status of processed
 		Concept dispenseConcept = Context.getConceptService().getConceptByName(dispenseStatus);
 		patientRegimen.setDispenseStatus(dispenseConcept);
-//		patientRegimen.setCycleId(cycle);
+		//		patientRegimen.setCycleId(cycle);
 		patientRegimen.setComment(patientRegimen.getComment() + ": update => " + comment);
 		patientRegimen.setTag(tag);
-//		TODO - Reconcile with CHAI on route concepts
-//		patientRegimen.setRoute(route);
+		//		TODO - Reconcile with CHAI on route concepts
+		//		patientRegimen.setRoute(route);
 		patientRegimen.setDose(dose);
 		patientRegimen.setDosingUnit(dosingUnit);
 		patientRegimen.setMedication(medication);
 		PatientRegimen createdPatientRegimen = patientRegimenService.createPatientRegimen(patientRegimen);
-
-//		TODO - Do we want to replicate this?
-//		cycle.getPatientRegimens().add(createdPatientRegimen);
+		
+		//		TODO - Do we want to replicate this?
+		//		cycle.getPatientRegimens().add(createdPatientRegimen);
 		//Update display string for the patient regimen
-//		if (cycle.getActive()) {
-//			Set<PatientRegimen> patientRegimens = cycle.getPatientRegimens();
-//			StringBuilder csvBuilder = new StringBuilder();
-//			String SEPARATOR = "/";
-//			for (PatientRegimen pr : patientRegimens) {
-//				if (pr.getTag().equals("Chemotherapy") && !pr.getVoided()) {
-//					csvBuilder.append(pr.getMedication());
-//					csvBuilder.append(SEPARATOR);
-//				}
-//			}
-//			String csv = csvBuilder.toString();
-//			csv = csv.substring(0, csv.length() - SEPARATOR.length());
-//			Regimen cycleRegimen = cycle.getRegimenId();
-//			cycleRegimen.setDisplayString(csv);
-//			patientRegimenService.updateRegimen(cycleRegimen);
-//		}
-
+		//		if (cycle.getActive()) {
+		//			Set<PatientRegimen> patientRegimens = cycle.getPatientRegimens();
+		//			StringBuilder csvBuilder = new StringBuilder();
+		//			String SEPARATOR = "/";
+		//			for (PatientRegimen pr : patientRegimens) {
+		//				if (pr.getTag().equals("Chemotherapy") && !pr.getVoided()) {
+		//					csvBuilder.append(pr.getMedication());
+		//					csvBuilder.append(SEPARATOR);
+		//				}
+		//			}
+		//			String csv = csvBuilder.toString();
+		//			csv = csv.substring(0, csv.length() - SEPARATOR.length());
+		//			Regimen cycleRegimen = cycle.getRegimenId();
+		//			cycleRegimen.setDisplayString(csv);
+		//			patientRegimenService.updateRegimen(cycleRegimen);
+		//		}
+		
 		return "Update successful for drug  ==> " + medicationId;
 	}
 	
