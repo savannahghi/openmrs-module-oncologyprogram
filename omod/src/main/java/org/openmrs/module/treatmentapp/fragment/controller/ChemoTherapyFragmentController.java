@@ -5,10 +5,7 @@ import org.openmrs.*;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.hospitalcore.InventoryCommonService;
 import org.openmrs.module.hospitalcore.PatientDashboardService;
-import org.openmrs.module.hospitalcore.model.Cycle;
-import org.openmrs.module.hospitalcore.model.PatientRegimen;
-import org.openmrs.module.hospitalcore.model.Regimen;
-import org.openmrs.module.hospitalcore.model.RegimenType;
+import org.openmrs.module.hospitalcore.model.*;
 import org.openmrs.module.treatmentapp.EhrMchMetadata;
 import org.openmrs.module.treatmentapp.api.TreatmentService;
 import org.openmrs.module.treatmentapp.model.VisitSummary;
@@ -139,6 +136,7 @@ public class ChemoTherapyFragmentController {
 		Regimen regimen = new Regimen();
 		
 		RegimenType regimenType = patientRegimenService.getRegimenTypeById(regimenTypeId);
+		Set<DefaultRegimenMapping> regimenMappings = regimenType.getRegimenMappings();
 		regimen.setPatient(patient);
 		regimen.setRegimenType(regimenType);
 		
@@ -147,7 +145,19 @@ public class ChemoTherapyFragmentController {
 		regimenCycle.setName("Cycle 1 of " + regimenType.getCycles());
 		regimenCycle.setActive(true);
 		regimenCycle.setVoided(false);
+		Set<PatientRegimen> patientRegimenSet = new HashSet<PatientRegimen>();
 		
+		//		Add default drugs to the cycle
+		for (DefaultRegimenMapping drm : regimenMappings) {
+			PatientRegimen patientRegimen = new PatientRegimen();
+			patientRegimen.setMedication(drm.getMedication());
+			patientRegimen.setDose(drm.getDose());
+			patientRegimen.setDosingUnit(drm.getDosingUnit());
+			patientRegimen.setRoute(drm.getRoute());
+			patientRegimen.setTag(drm.getTag());
+			patientRegimenSet.add(patientRegimen);
+		}
+		regimenCycle.setPatientRegimens(patientRegimenSet);
 		Set<Cycle> cycles = new HashSet<Cycle>();
 		cycles.add(regimenCycle);
 		
