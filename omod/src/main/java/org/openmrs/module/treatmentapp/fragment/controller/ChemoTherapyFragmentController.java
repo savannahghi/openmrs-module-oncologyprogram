@@ -140,7 +140,6 @@ public class ChemoTherapyFragmentController {
 		regimen.setPatient(patient);
 		regimen.setRegimenType(regimenType);
 		
-		//		For an initiation, automatically create a default cycle
 		Cycle regimenCycle = new Cycle();
 		regimenCycle.setName("Cycle 1 of " + regimenType.getCycles());
 		regimenCycle.setActive(true);
@@ -185,6 +184,33 @@ public class ChemoTherapyFragmentController {
 		regimenCycle.setName("Cycle " + (regimen.getCycles().size() + 1) + " of " + regimen.getRegimenType().getCycles());
 		regimenCycle.setActive(true);
 		regimenCycle.setVoided(false);
+		
+		//		Auto-populate previous cycle regimens if available
+		if (regimen.getCycles().size() > 0) {
+			//            Sort the set first
+			List<Cycle> sortedCycles = new ArrayList<Cycle>(regimen.getCycles());
+			Collections.sort(sortedCycles, new Comparator<Cycle>() {
+				
+				@Override
+				public int compare(Cycle o1, Cycle o2) {
+					return o2.getDateCreated().compareTo(o1.getDateCreated());
+				}
+			});
+			//            Pull the topmost cycle
+			Cycle latestCycle = sortedCycles.get(0);
+			//            Copy previous drugs
+			Set<PatientRegimen> patientRegimenSet = new HashSet<PatientRegimen>();
+			for (PatientRegimen lcr : latestCycle.getPatientRegimens()) {
+				PatientRegimen patientRegimen = new PatientRegimen();
+				patientRegimen.setMedication(lcr.getMedication());
+				patientRegimen.setDose(lcr.getDose());
+				patientRegimen.setDosingUnit(lcr.getDosingUnit());
+				patientRegimen.setRoute(lcr.getRoute());
+				patientRegimen.setTag(lcr.getTag());
+				patientRegimenSet.add(patientRegimen);
+			}
+			regimenCycle.setPatientRegimens(patientRegimenSet);
+		}
 		regimen.getCycles().add(regimenCycle);
 		
 		Regimen createdRegimen = patientRegimenService.updateRegimen(regimen);
