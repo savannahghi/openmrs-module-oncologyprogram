@@ -122,6 +122,15 @@ jobs:
       - name: Compile and build clinical repository
         run: mvn clean install -DskipTests
 
+      - name: Check out webservices
+        uses: actions/checkout@v3
+        with:
+          repository: openmrs/openmrs-module-webservices.rest
+          ref: 1.x
+
+      - name: Compile and build webservice repository
+        run: mvn clean install -DskipTests
+
       - uses: actions/checkout@v3
 
       - name: Install dependencies
