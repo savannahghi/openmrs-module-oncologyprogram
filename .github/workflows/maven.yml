@@ -1,0 +1,139 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Java CI with Maven
+
+on:
+  push:
+    branches: [ "develop" ]
+  pull_request:
+    branches: [ "develop" ]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        platform: [ ubuntu-latest ]
+        java-version: [ 8 ]
+        maven: [ '3.6.3']
+
+    runs-on: ${{ matrix.platform }}
+    env:
+      PLATFORM: ${{ matrix.platform }}
+      JAVA_VERSION: ${{ matrix.java-version }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 8
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ matrix.java-version }}
+          distribution: adopt
+          cache: maven
+      
+      - name: Setup Maven Action
+        uses: s4u/setup-maven-action@v1.5.1
+        with:
+          java-version: ${{ matrix.java-version }}
+          maven-version: ${{ matrix.maven }}
+
+      # Enable caching dependencies to speed up the build
+      - name: Cache the Maven packages to speed up build
+        uses: actions/cache@v3
+        with:
+            path: ~/.m2
+            key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+            restore-keys: ${{ runner.os }}-m2
+
+      - name: Check out kenya core repository
+        uses: actions/checkout@v3
+        with:
+          repository: palladiumkenya/openmrs-module-kenyacore
+          ref: dev_1
+
+      - name: Compile and build kenya core repository
+        run: mvn clean install -DskipTests
+
+      - name: Check out kenya UI repository
+        uses: actions/checkout@v3
+        with:
+          repository: palladiumkenya/openmrs-module-kenyaui
+          ref: qa-test
+
+      - name: Compile and build kenya UI repository
+        run: mvn clean install -DskipTests
+
+      - name: Check out kenyaemr repository
+        uses: actions/checkout@v3
+        with:
+          repository: savannahghi/openmrs-module-kenyaemr
+          ref: v17.0.3
+
+      - name: Compile and build kenyaemr repository
+        run: mvn clean install -DskipTests
+
+      - name: Check out hospital core repository
+        uses: actions/checkout@v3
+        with:
+         repository: savannahghi/openmrs-module-hospitalcore
+         ref: develop
+
+      - name: Compile and build hospital core repository
+        run: mvn clean install -DskipTests
+
+      - name: Check out configs repository
+        uses: actions/checkout@v3
+        with:
+          repository: uonafya/ehrconfigs
+          ref: 2.x
+
+      - name: Compile and build configs repository
+        run: mvn clean install -DskipTests
+
+      - name: Check out inventory repository
+        uses: actions/checkout@v3
+        with:
+          repository: savannahghi/openmrs-module-inventory
+          ref: main
+
+      - name: Compile and build inventory repository
+        run: mvn clean install -DskipTests
+
+      - name: Check out labcore repository
+        uses: actions/checkout@v3
+        with:
+          repository: ngarivictor/ehrlaboratorycore
+          ref: 2.x
+
+      - name: Compile and build labcore repository
+        run: mvn clean install -DskipTests
+        
+      - name: Check out clinical repository
+        uses: actions/checkout@v3
+        with:
+          repository: savannahghi/openmrs-module-clinical
+          ref: develop
+
+      - name: Compile and build clinical repository
+        run: mvn clean install -DskipTests
+
+      - name: Check out webservices
+        uses: actions/checkout@v3
+        with:
+          repository: openmrs/openmrs-module-webservices.rest
+          ref: 1.x
+
+      - name: Compile and build webservice repository
+        run: mvn clean install -DskipTests
+
+      - uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: mvn clean install -DskipTests=true -Dmaven.javadoc.skip=true --batch-mode --show-version --file pom.xml
+      - name: Build with Maven
+        run: mvn test --batch-mode --file pom.xml
