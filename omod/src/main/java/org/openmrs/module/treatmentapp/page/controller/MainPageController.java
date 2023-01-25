@@ -20,10 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class MainPageController {
 	
@@ -91,7 +88,6 @@ public class MainPageController {
 		boolean enrolledInChemo = mchService.enrolledInChemo(patient);
 		boolean enrolledInSurgery = mchService.enrolledInSurgery(patient);
 		boolean enrolledInRadio = mchService.enrolledInRadio(patient);
-		
 		model.addAttribute("enrolledInChemo", enrolledInChemo);
 		model.addAttribute("enrolledInSurgery", enrolledInSurgery);
 		model.addAttribute("enrolledInRadio", enrolledInRadio);

@@ -177,6 +177,26 @@
 	}
 	
 	jq(function() {
+	    var enrolledPrograms = [];
+        if (${enrolledInChemo}) {
+            enrolledPrograms.push("Chemotherapy");
+        }
+        if (${enrolledInSurgery}) {
+            enrolledPrograms.push("Procedure/Surgery");
+        }
+        if (${enrolledInRadio}) {
+            enrolledPrograms.push("Radiotherapy");
+        }
+
+	    var select = document.getElementById("programsSelect");
+	    for(var i = 0; i < enrolledPrograms.length; i++){
+             var option = document.createElement("OPTION"),
+                 txt = document.createTextNode(enrolledPrograms[i]);
+             option.appendChild(txt);
+             option.setAttribute("value",enrolledPrograms[i]);
+             select.insertBefore(option,select.lastChild);
+	    }
+
 		jq(".mch-tabs").tabs();
 		jq('#agename').text(getReadableAge('${patient.birthdate}') + ' (' +moment('${patient.birthdate}').format('DD/MM/YYYY')+')');
 		
@@ -643,8 +663,12 @@
 		
 		<div id="stacont" class="status-container">
 				<span class="status active"></span>
-				Cycle Status
-			</div>
+				Enrolled Program
+        </div>
+        <div id="programs-combo" class="status-container">
+            <select name="programsSelect" id="programsSelect" style = "height: 20px !important;">
+            </select>
+        </div>
 		<div class="tag">Outpatient</div>
 		<div class="tad">Last Visit: ${ui.formatDatePretty(previousVisit)}</div>
 
