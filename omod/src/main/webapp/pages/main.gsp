@@ -177,6 +177,31 @@
 	}
 	
 	jq(function() {
+	    var enrolledPrograms = [];
+        if (${enrolledInChemo}) {
+            enrolledPrograms.push("Chemotherapy");
+        }
+        if (${enrolledInSurgery}) {
+            enrolledPrograms.push("Procedure/Surgery");
+        }
+        if (${enrolledInRadio}) {
+            enrolledPrograms.push("Radiotherapy");
+        }
+
+	    var select = document.getElementById("programsSelect");
+	    for(var i = 0; i < enrolledPrograms.length; i++){
+             var option = document.createElement("OPTION"),
+                 txt = document.createTextNode(enrolledPrograms[i]);
+             option.appendChild(txt);
+             option.setAttribute("value",enrolledPrograms[i]);
+             select.insertBefore(option,select.lastChild);
+             if(enrolledPrograms[i] === '${focusProgram}'){
+                 select.value = enrolledPrograms[i];
+             }
+	    }
+        select.addEventListener("change", function() {
+               window.location = "${ui.pageLink("treatmentapp", "main",[patientId: patientId, queueId: queueId])}focusProgram=" + select.value;
+        });
 		jq(".mch-tabs").tabs();
 		jq('#agename').text(getReadableAge('${patient.birthdate}') + ' (' +moment('${patient.birthdate}').format('DD/MM/YYYY')+')');
 		
@@ -643,8 +668,12 @@
 		
 		<div id="stacont" class="status-container">
 				<span class="status active"></span>
-				Cycle Status
-			</div>
+				Enrolled Program
+        </div>
+        <div id="programs-combo" class="status-container">
+            <select name="programsSelect" id="programsSelect" style = "height: 18px !important;">
+            </select>
+        </div>
 		<div class="tag">Outpatient</div>
 		<div class="tad">Last Visit: ${ui.formatDatePretty(previousVisit)}</div>
 
@@ -694,11 +723,11 @@
 
 <div class="mch-tabs" style="margin-top:5px!important;">
 	<ul>
-        <% if (enrolledInChemo){ %>
+        <% if (focusProgram == 'Chemotherapy'){ %>
         <li id="ct"><a href="#treatment-cycles">Chemotherapy</a></li>
-        <% } else if (enrolledInSurgery) { %>
+        <% } else if (focusProgram == 'Procedure/Surgery') { %>
         <li id="st"><a href="#treatment-cycles">Surgery</a></li>
-        <% } else if (enrolledInRadio) { %>
+        <% } else if (focusProgram == 'Radiotherapy') { %>
         <li id="rt"><a href="#treatment-cycles">Radiotherapy</a></li>
         <% }%>
 		<li id="ti"><a href="#triage-info">Triage Information</a></li>
@@ -707,11 +736,11 @@
 	</ul>
 	
 	<div id="treatment-cycles">
-        <% if (enrolledInChemo){ %>
+        <% if (focusProgram == 'Chemotherapy'){ %>
              ${ui.includeFragment("treatmentapp","chemoTherapy", [patientId: patient.patientId, queueId: queueId])}
-        <% } else if (enrolledInSurgery) { %>
+        <% } else if (focusProgram == 'Procedure/Surgery') { %>
              ${ui.includeFragment("treatmentapp","surgery", [patientId: patient.patientId, queueId: queueId])}
-        <% } else if (enrolledInRadio) { %>
+        <% } else if (focusProgram == 'Radiotherapy') { %>
             ${ui.includeFragment("treatmentapp","radioTherapy", [patientId: patient.patientId, queueId: queueId])}
         <% }%>
     </div>

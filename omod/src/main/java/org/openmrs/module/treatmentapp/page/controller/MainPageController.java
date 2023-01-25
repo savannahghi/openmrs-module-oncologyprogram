@@ -1,5 +1,6 @@
 package org.openmrs.module.treatmentapp.page.controller;
 
+import org.apache.commons.lang.StringUtils;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientProgram;
@@ -20,19 +21,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class MainPageController {
 	
 	private static final int MAX_ANC_PNC_DURATION = 9;
 	
 	protected Logger logger = LoggerFactory.getLogger(getClass());
-	
+
+	/**
+	 *
+	 * @param patient
+	 * @param queueId
+	 * @param focusProgram
+	 * @param model
+	 * @param config
+	 * @param uiUtils
+	 * @return
+	 */
 	public String get(@RequestParam("patientId") Patient patient, @RequestParam(value = "queueId") Integer queueId,
-	        PageModel model, FragmentConfiguration config, UiUtils uiUtils) {
+	        @RequestParam(value = "focusProgram", required = false) String focusProgram, PageModel model,
+	        FragmentConfiguration config, UiUtils uiUtils) {
 		
 		InventoryCommonService inventoryCommonService = Context.getService(InventoryCommonService.class);
 		List<Regimen> regimens = inventoryCommonService.getRegimens(patient, null, false);
@@ -91,10 +100,20 @@ public class MainPageController {
 		boolean enrolledInChemo = mchService.enrolledInChemo(patient);
 		boolean enrolledInSurgery = mchService.enrolledInSurgery(patient);
 		boolean enrolledInRadio = mchService.enrolledInRadio(patient);
-		
 		model.addAttribute("enrolledInChemo", enrolledInChemo);
 		model.addAttribute("enrolledInSurgery", enrolledInSurgery);
 		model.addAttribute("enrolledInRadio", enrolledInRadio);
+		if (!StringUtils.isEmpty(focusProgram)) {
+			model.addAttribute("focusProgram", focusProgram);
+		} else {
+			if (enrolledInChemo) {
+				model.addAttribute("focusProgram", "Chemotherapy");
+			} else if (enrolledInSurgery) {
+				model.addAttribute("focusProgram", "Procedure/Surgery");
+			} else if (enrolledInRadio) {
+				model.addAttribute("focusProgram", "Radiotherapy");
+			}
+		}
 		
 		Program program = null;
 		Calendar minEnrollmentDate = Calendar.getInstance();
