@@ -103,6 +103,15 @@ jobs:
 
       - name: Compile and build inventory repository
         run: mvn clean install -DskipTests
+
+      - name: Check out labcore repository
+        uses: actions/checkout@v3
+        with:
+          repository: ngarivictor/ehrlaboratorycore
+          ref: 2.x
+
+      - name: Compile and build labcore repository
+        run: mvn clean install -DskipTests
         
       - name: Check out clinical repository
         uses: actions/checkout@v3
