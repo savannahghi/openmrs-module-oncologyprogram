@@ -29,7 +29,8 @@ public class MainPageController {
 	protected Logger logger = LoggerFactory.getLogger(getClass());
 	
 	public String get(@RequestParam("patientId") Patient patient, @RequestParam(value = "queueId") Integer queueId,
-	        PageModel model, FragmentConfiguration config, UiUtils uiUtils) {
+	        @RequestParam(value = "focusProgram", required = false) String focusProgram, PageModel model,
+	        FragmentConfiguration config, UiUtils uiUtils) {
 		
 		InventoryCommonService inventoryCommonService = Context.getService(InventoryCommonService.class);
 		List<Regimen> regimens = inventoryCommonService.getRegimens(patient, null, false);
@@ -78,6 +79,7 @@ public class MainPageController {
 		TreatmentService mchService = Context.getService(TreatmentService.class);
 		model.addAttribute("patient", patient);
 		model.addAttribute("queueId", queueId);
+		model.addAttribute("focusProgram", focusProgram);
 		
 		if (patient.getGender().equals("M")) {
 			model.addAttribute("gender", "Male");
