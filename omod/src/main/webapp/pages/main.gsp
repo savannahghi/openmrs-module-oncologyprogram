@@ -671,7 +671,7 @@
 				Enrolled Program
         </div>
         <div id="programs-combo" class="status-container">
-            <select name="programsSelect" id="programsSelect" style = "height: 20px !important;">
+            <select name="programsSelect" id="programsSelect" style = "height: 18px !important;">
             </select>
         </div>
 		<div class="tag">Outpatient</div>

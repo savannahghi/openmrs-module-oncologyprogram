@@ -1,5 +1,6 @@
 package org.openmrs.module.treatmentapp.page.controller;
 
+import org.apache.commons.lang.StringUtils;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientProgram;
@@ -27,7 +28,17 @@ public class MainPageController {
 	private static final int MAX_ANC_PNC_DURATION = 9;
 	
 	protected Logger logger = LoggerFactory.getLogger(getClass());
-	
+
+	/**
+	 *
+	 * @param patient
+	 * @param queueId
+	 * @param focusProgram
+	 * @param model
+	 * @param config
+	 * @param uiUtils
+	 * @return
+	 */
 	public String get(@RequestParam("patientId") Patient patient, @RequestParam(value = "queueId") Integer queueId,
 	        @RequestParam(value = "focusProgram", required = false) String focusProgram, PageModel model,
 	        FragmentConfiguration config, UiUtils uiUtils) {
@@ -79,7 +90,6 @@ public class MainPageController {
 		TreatmentService mchService = Context.getService(TreatmentService.class);
 		model.addAttribute("patient", patient);
 		model.addAttribute("queueId", queueId);
-		model.addAttribute("focusProgram", focusProgram);
 		
 		if (patient.getGender().equals("M")) {
 			model.addAttribute("gender", "Male");
@@ -93,6 +103,17 @@ public class MainPageController {
 		model.addAttribute("enrolledInChemo", enrolledInChemo);
 		model.addAttribute("enrolledInSurgery", enrolledInSurgery);
 		model.addAttribute("enrolledInRadio", enrolledInRadio);
+		if (!StringUtils.isEmpty(focusProgram)) {
+			model.addAttribute("focusProgram", focusProgram);
+		} else {
+			if (enrolledInChemo) {
+				model.addAttribute("focusProgram", "Chemotherapy");
+			} else if (enrolledInSurgery) {
+				model.addAttribute("focusProgram", "Procedure/Surgery");
+			} else if (enrolledInRadio) {
+				model.addAttribute("focusProgram", "Radiotherapy");
+			}
+		}
 		
 		Program program = null;
 		Calendar minEnrollmentDate = Calendar.getInstance();
