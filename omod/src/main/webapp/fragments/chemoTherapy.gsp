@@ -445,23 +445,38 @@ function CycleDrug() {
     //TODO - update the request
     //'Authorization', 'Basic ' + base64.encode(username + ":" + password)
 
-    //const response = await fetch('http://localhost:8080/${openhimUrl}', {
-    const response = await fetch('${openhimUrl}', {
-        method: 'POST',
-        body: JSON.stringify(requestBody),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        }
-      });
-      const serverResponse = await response.json(); //extract JSON from the http response
-      console.log(serverResponse);
-      // Process the returned response - normally would be an acknowledgement at this point
-      // Updates to be asynchronously sent once the pharmacy is done processing the drugs
-      jq().toastmessage('showSuccessToast', serverResponse.msg);
+         const response = await fetch('${openhimUrl}', {
+            method: 'POST',
+            body: JSON.stringify(requestBody),
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            }
+          });
+          const serverResponse = await response.json(); //extract JSON from the http response
+          console.log(serverResponse);
+          // Process the returned response - normally would be an acknowledgement at this point
+          // Updates to be asynchronously sent once the pharmacy is done processing the drugs
+          jq().toastmessage('showSuccessToast', serverResponse.msg);
 
     }
 
+    const fetchDrugStatus = async (drugId) => {
+        const response = await fetch('${openhimUrl}'+ new URLSearchParams({
+            drugId
+        }));
+        const serverResponse = await response.json(); //extract JSON from the http response
+        console.log(serverResponse);
+        jq().toastmessage('showSuccessToast', serverResponse);
+
+    }
+
+
+    function requestDispenseStatus(prescriptionId){
+        jq().toastmessage('showSuccessToast', 'Fetching dispense status');
+        //Fetch drug IDs and supply them to the request
+
+    }
 
     function processPrescription(){
         jq().toastmessage('showSuccessToast', 'Sending request to pharmacy');
@@ -507,12 +522,14 @@ function CycleDrug() {
         payload.gender = "${gender ? gender : ''}";
         payload.maritalStatus = "${maritalStatus ? maritalStatus : ''}";
         payload.medications = cycleDrugs;
+        console.log(cycleDrugs);
         postDrugAction(payload);
 
 
         cycleDetails.summaryNotes = document.getElementById("summary_notes").value;
         jq("#btn-request-dispense").hide();
         jq("#btn-administer-cycle").show();
+        jq("#btn-refresh-cycle").show();
     }
 
     function addPatientCycle(){
@@ -1119,8 +1136,8 @@ font-size: 3em;
 
     <div class="chemoItem">
             <label id= "btn-request-dispense"class="button confirm next" style="float: right; width: auto!important;" onclick = "processPrescription()">Save</label>
-            <label id= "btn-administer-cycle" class="button confirm"
-            style="float: right; width: auto!important; display: none!important;" onclick = "loadNext('outcome')">Administer</label>
+            <label id= "btn-administer-cycle" class="button confirm" style="float: right; width: auto!important; display: none!important;" onclick = "loadNext('outcome')">Administer</label>
+            <label id= "btn-refresh-cycle" class="button confirm" style="float: right; width: auto!important; display: none!important;" onclick = "requestDispenseStatus()">Refresh</label>
             <label id= "btn-save-cycle" class="button cancel" style="width: auto!important;">Cancel Cycle</label>
     </div>
 </script>
