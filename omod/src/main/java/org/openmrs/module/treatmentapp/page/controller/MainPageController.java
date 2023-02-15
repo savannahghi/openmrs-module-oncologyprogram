@@ -1,15 +1,13 @@
 package org.openmrs.module.treatmentapp.page.controller;
 
 import org.apache.commons.lang.StringUtils;
-import org.openmrs.Patient;
-import org.openmrs.PatientIdentifier;
-import org.openmrs.PatientProgram;
-import org.openmrs.Program;
+import org.openmrs.*;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.hospitalcore.HospitalCoreService;
 import org.openmrs.module.hospitalcore.InventoryCommonService;
 import org.openmrs.module.hospitalcore.PatientQueueService;
 import org.openmrs.module.hospitalcore.model.*;
+import org.openmrs.module.hospitalcore.util.PatientDashboardConstants;
 import org.openmrs.module.treatmentapp.EhrMchMetadata;
 import org.openmrs.module.treatmentapp.api.ListItem;
 import org.openmrs.ui.framework.SimpleObject;
@@ -28,9 +26,8 @@ public class MainPageController {
 	private static final int MAX_ANC_PNC_DURATION = 9;
 	
 	protected Logger logger = LoggerFactory.getLogger(getClass());
-
+	
 	/**
-	 *
 	 * @param patient
 	 * @param queueId
 	 * @param focusProgram
@@ -82,6 +79,8 @@ public class MainPageController {
 		model.addAttribute("idNumber", patient.getAttribute(13));
 		model.addAttribute("alternatePhone", patient.getAttribute(16));
 		model.addAttribute("nhifNumber", patient.getAttribute(74));
+		//TODO fetch correct investigations
+		model.addAttribute("investigations","investigations");
 		
 		//		TODO Process latest observations
 		
@@ -146,7 +145,6 @@ public class MainPageController {
 			        + "&queueId=" + queueId;
 		}
 		
-		//        TODO modify code to ensure that the last program enrolled is pulled
 		List<PatientProgram> patientPrograms = Context.getProgramWorkflowService().getPatientPrograms(patient, program,
 		    minEnrollmentDate.getTime(), null, null, null, false);
 		
@@ -154,7 +152,6 @@ public class MainPageController {
 		PatientProgram patientProgram = null;
 		if (patientPrograms.size() > 0) {
 			patientProgram = patientPrograms.get(0);
-			//        TODO pull the correct enrollment Date
 			model.addAttribute("enrollmentDate", patientProgram.getDateEnrolled());
 		} else {
 			patientProgram = new PatientProgram();
@@ -178,6 +175,59 @@ public class MainPageController {
 		//  TODO add other patients attributes
 		return null;
 	}
+
+    public List<SimpleObject> getInvestigationResults(
+            @RequestParam("patientId") Integer patientId,
+            @RequestParam("orderId") Integer orderId,
+            UiUtils ui
+    ){
+        Patient patient = Context.getPatientService().getPatient(patientId);
+        Order labOrder = Context.getOrderService().getOrder(orderId);
+
+        Map<String, String> sortedResults = new TreeMap<String, String>();
+        List<SimpleObject> results = new ArrayList<SimpleObject>();
+        if (labOrder.getEncounter() != null) {
+            for (Obs obs : labOrder.getEncounter().getAllObs()) {
+                if (obs.hasGroupMembers()) {
+                    continue;
+                }
+                String resultDescription = obs.getConcept().getDisplayString();
+                if (obs.getObsGroup() != null) {
+                    resultDescription = obs.getObsGroup().getConcept().getDisplayString() + " (" + resultDescription + ")";
+                }
+                String resultValue = obs.getValueAsString(Context.getLocale()) +" :-->"+obs.getComment();
+                sortedResults.put(resultDescription, resultValue);
+            }
+        }
+        if (sortedResults.size() == 0) {
+            String nameOfLabEncounterType = Context.getAdministrationService().getGlobalProperty(PatientDashboardConstants.PROPERTY_LAB_ENCOUTNER_TYPE);
+            EncounterType labEncounterType = Context.getEncounterService().getEncounterTypeByUuid("11d3f37a-f282-11ea-a825-1b5b1ff1b854");
+            List<Encounter> labOrdersEncounters = Context.getEncounterService().getEncounters(patient, null, null, null, null, Arrays.asList(labEncounterType), null, null, null, false);
+            Date datePerfomed = null;
+            for (Encounter encounter: labOrdersEncounters) {
+                for (Obs obs : encounter.getAllObs()) {
+                    if (!obs.getOrder().getOrderId().equals(orderId)) {
+                        continue;
+                    } else if (obs.getOrder() == null) {
+                        continue;
+                    }
+                    String resultDescription = obs.getConcept().getDisplayString();
+                    if (obs.getObsGroup() != null) {
+                        resultDescription = obs.getObsGroup().getConcept().getDisplayString() + " (" + resultDescription + ")";
+                    }
+                    String resultValue = obs.getValueAsString(Context.getLocale()) +":-->"+obs.getComment();
+                    sortedResults.put(resultDescription, resultValue);
+                    if (datePerfomed == null) {
+                        datePerfomed = obs.getObsDatetime();
+                    }
+                }
+            }
+            for (Map.Entry<String, String> result : sortedResults.entrySet()) {
+                results.add(SimpleObject.create("label", result.getKey(), "value", result.getValue(), "datePerfomed", ui.formatDatePretty(datePerfomed)));
+            }
+        }
+        return results;
+    }
 	
 	class ChemoWrapper {
 		

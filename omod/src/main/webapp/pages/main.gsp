@@ -206,7 +206,7 @@
 		jq('#agename').text(getReadableAge('${patient.birthdate}') + ' (' +moment('${patient.birthdate}').format('DD/MM/YYYY')+')');
 		
 		jq("#cancelButton").on("click", function (e) {
-			window.location = '${ui.pageLink("patientqueueapp", "mchClinicQueue")}';            
+			window.location = '${ui.pageLink("patientqueueapp", "treatmentProgram")}';
         });
 		
 		jq("#symptom").autocomplete({			
