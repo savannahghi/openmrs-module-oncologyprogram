@@ -468,6 +468,8 @@ function CycleDrug() {
         // TODO - Raise the external request to post the dispense order to the pharmacy and wait for updates on dispense in collaboration with CHAI folks
         // Add dispense status - Draft, Sent, Pending, Partially Fulfilled, Fulfilled, Failed
 
+
+
         let cycleDrugs = cycleDetails.cycleDrugs;
         let payload = {};
         payload.mflCode = ${mflCode};

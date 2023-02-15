@@ -234,7 +234,6 @@ public class ChemoTherapyFragmentController {
 		
 		Cycle cycle = patientRegimenService.getCycleById(cycleId);
 		
-		//TODO		Default dispense status of processed
 		Concept dispenseConcept = Context.getConceptService().getConceptByUuid("167153AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 		patientRegimen.setDispenseStatus(dispenseConcept);
 		patientRegimen.setCycleId(cycle);
