@@ -46,7 +46,7 @@
         <ehrinventoryVersion>2.0.1-SNAPSHOT</ehrinventoryVersion>
         <legacyUiVersion>1.5.0</legacyUiVersion>
         <webservicesVersion>1.2-SNAPSHOT</webservicesVersion>
-        <jsonVersion>20220924</jsonVersion>
+        <jsonVersion>20230227</jsonVersion>
         <patientdashboardappVersion>2.0.1-SNAPSHOT</patientdashboardappVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
